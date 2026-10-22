@@ -186,6 +186,9 @@ def ollama_generate(prompt: str, model: str = DEFAULT_MODEL, schema: dict = None
         payload["system"] = system
     if schema is not None:
         payload["format"] = _strip_for_ollama(schema)
+        # Thinking models (glm-4.7-flash, qwen3, ...) otherwise put the JSON in
+        # the "thinking" field and leave "response" empty.
+        payload["think"] = False
     req = urllib.request.Request(
         f"{OLLAMA_HOST}/api/generate",
         data=json.dumps(payload).encode("utf-8"),
@@ -202,6 +205,8 @@ def ollama_generate(prompt: str, model: str = DEFAULT_MODEL, schema: dict = None
         sys.exit(f"Could not reach Ollama at {OLLAMA_HOST} ({exc}).\n"
                  "Start it with 'ollama serve' (or open the Ollama app) and try again.")
     text = body.get("response", "")
+    if schema is not None and not text.strip():
+        text = body.get("thinking", "")
     if schema is None:
         return text
     try:

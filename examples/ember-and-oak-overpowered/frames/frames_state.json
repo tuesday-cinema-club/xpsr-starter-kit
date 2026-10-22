@@ -1,0 +1,27 @@
+{
+  "project_id": "EMBER_OAK_SPOT_01",
+  "stage": "produce",
+  "status": "approved",
+  "draft_file": "examples/ember-and-oak-overpowered/frames/frames.json",
+  "checks": {
+    "schema": "pass",
+    "bible_match": "not_applicable"
+  },
+  "decision": "Approve",
+  "decided_by": "Workshop director (demo stand-in)",
+  "decided_at": "2026-10-22T23:23:52Z",
+  "notes": "First take, no rerolls. Same roaster in all three shots. Notes: chalkboard in shot 1 has pseudo-text; shot 3 has an extra customer in the background.",
+  "history": [
+    {
+      "at": "2026-10-22T23:08:32Z",
+      "event": "draft_written",
+      "by": "agent"
+    },
+    {
+      "at": "2026-10-22T23:23:52Z",
+      "event": "Approve",
+      "by": "Workshop director (demo stand-in)",
+      "note": "First take, no rerolls. Same roaster in all three shots. Notes: chalkboard in shot 1 has pseudo-text; shot 3 has an extra customer in the background."
+    }
+  ]
+}

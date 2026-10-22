@@ -2,7 +2,11 @@
 
 One complete run of the workshop build, done on one machine on 2026-10-22 with only local tools. Every file here is real output, including the mistakes. Use it to see what each stage produces before you run your own.
 
-![Still from the finished cut at 20 seconds: inside a small coffee shop, the roaster hands a bag across a wooden counter to a customer, with the caption "Same roaster, now a short walk closer. Stop in this week."](poster.jpg)
+![Animated preview of the finished cut, no sound: the roaster beside a drum roaster, a hand at an open bag of beans, then two people at a shop counter, ending on the typed card "Ember & Oak, Second shop now open". Captions are burned in.](cut-preview.webp)
+
+[Watch the full 30-second cut with sound (MP4)](cut.mp4). There is also [a version with a selectable caption track](cut_softsubs.mp4). The preview above loops without sound.
+
+The same job rerun with bigger models is in [the comparison](../ember-and-oak-overpowered/README.md).
 
 ## About the gate decisions in this example
 
@@ -82,7 +86,7 @@ The director's answers: for **neighbors who already walk past the new shop on th
 | `qc.json` | Gate 04 | Technical QC measurements. |
 | `audit.md` | Gate 04 | The 7-point audit, unsigned. |
 | `provenance.csv` | Every stage | Every asset, including 5 rejected takes. |
-| `poster.jpg` | Docs | A still from the cut. |
+| `poster.jpg`, `cut-preview.webp` | Docs | A still from the cut and a silent animated preview. |
 
 ## Run it yourself
 

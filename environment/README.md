@@ -83,7 +83,15 @@ Put each file in the ComfyUI folder shown:
 | `sd_xl_base_1.0.safetensors` | `models/checkpoints/` | 6.9 GB | huggingface.co/stabilityai/stable-diffusion-xl-base-1.0 |
 | `controlnet-depth-sdxl-1.0-small.safetensors` (rename from `diffusion_pytorch_model.fp16.safetensors`) | `models/controlnet/` | 320 MB | huggingface.co/diffusers/controlnet-depth-sdxl-1.0-small |
 
-FLUX.2 [klein] 4B works too; swap the checkpoint loader in your workflow. Optional motion: Wan 2.2 5B.
+For the stronger FLUX.2 [klein] 4B workflow (`workflows/flux2_klein_previs_reference.json`), add these from huggingface.co/Comfy-Org/Flux-2-Klein-4B (about 16 GB in total):
+
+| File | Folder | Size |
+| --- | --- | --- |
+| `flux-2-klein-4b.safetensors` | `models/diffusion_models/` | 7.8 GB |
+| `qwen_3_4b.safetensors` (text encoder) | `models/text_encoders/` | 8.0 GB |
+| `flux2-vae.safetensors` | `models/vae/` | 340 MB |
+
+It runs on an 8 GB card by keeping part of the model in system RAM, so 32 GB or more of RAM helps. Optional motion: Wan 2.2 5B.
 
 Render one test frame in the ComfyUI page at http://127.0.0.1:8188 before the workshop.
 

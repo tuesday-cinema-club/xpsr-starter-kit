@@ -1,0 +1,38 @@
+{
+  "project_id": "GRAND_CRU_WASH_01",
+  "stage": "produce",
+  "status": "approved",
+  "draft_file": "examples/grand-cru-car-wash/frames/frames.json",
+  "checks": {
+    "schema": "pass",
+    "bible_match": "not_applicable"
+  },
+  "decision": "Approve",
+  "decided_by": "Workshop director (demo stand-in)",
+  "decided_at": "2026-10-22T23:21:17Z",
+  "notes": "Shot 1 seed 7000 (car no longer looks dusty: specificity note); shot 2 take 1; shot 3 seed 8000 (attendant wears a fedora not in the bible: continuity note).",
+  "history": [
+    {
+      "at": "2026-10-22T23:18:03Z",
+      "event": "draft_written",
+      "by": "agent"
+    },
+    {
+      "at": "2026-10-22T23:18:28Z",
+      "event": "Revise",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Take 1: shot 2 approved. Shot 1 has an extra person inside the car and invented plate text. Shot 3 swaps roles (the driver is drying the car in the attendant's gloves) and has a person inside the car. Prompts tightened; two more seeds for shots 1 and 3."
+    },
+    {
+      "at": "2026-10-22T23:18:28Z",
+      "event": "takes_selected",
+      "by": "frames crew"
+    },
+    {
+      "at": "2026-10-22T23:21:17Z",
+      "event": "Approve",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Shot 1 seed 7000 (car no longer looks dusty: specificity note); shot 2 take 1; shot 3 seed 8000 (attendant wears a fedora not in the bible: continuity note)."
+    }
+  ]
+}

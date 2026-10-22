@@ -1,0 +1,60 @@
+{
+  "scene_id": "SC01",
+  "scene_name": "The Roast",
+  "shots": [
+    {
+      "shot_number": 1,
+      "framing": "Wide",
+      "lens_mm": 24,
+      "duration_sec": 8,
+      "camera_move": "Static",
+      "location_id": "roastery",
+      "characters": [
+        "roaster"
+      ],
+      "action_description": "The roaster stands at the drum roaster, adjusting a lever. The camera captures the east-facing window casting a long, honest shadow across the burlap sacks and the small drum machine. The room is quiet except for the low, rhythmic rumble of the machine.",
+      "visual_prompt": "A wide shot of the back room of the original roastery. An adult roaster in a rolled-up chambray shirt stands at a small drum roaster, adjusting a lever. The east-facing window is on the left, casting a long, soft shadow across a stack of burlap coffee sacks and a pallet. The lighting is early morning natural sidelight, creating soft contrast. The room is quiet, illuminated by warm practical bulbs.",
+      "voiceover_line": "Small batches roasted in our back room.",
+      "source_ids": [
+        "SRC-001"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 2,
+      "framing": "Medium",
+      "lens_mm": 50,
+      "duration_sec": 8,
+      "camera_move": "Static",
+      "location_id": "roastery",
+      "characters": [
+        "roaster"
+      ],
+      "action_description": "The roaster pulls a bag from the roaster and stamps a date onto the bag. The camera focuses on the stamping action and the roast date printed on the bag.",
+      "visual_prompt": "A medium shot of the roaster's hands. The roaster pulls a coffee bag from the roaster and stamps a date onto the bag. The camera focuses on the stamping action and the roast date printed on the bag. The lighting is early morning natural sidelight, creating soft contrast.",
+      "voiceover_line": "Every bag dated.",
+      "source_ids": [
+        "SRC-003"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 3,
+      "framing": "Wide",
+      "lens_mm": 24,
+      "duration_sec": 8,
+      "camera_move": "Static",
+      "location_id": "new_shop",
+      "characters": [
+        "regular"
+      ],
+      "action_description": "The regular walks up to the front counter of the new shop, peers through the hand-lettered window sign, and opens the door. The camera captures the street outside and the reclaimed oak counter.",
+      "visual_prompt": "A wide shot of the front counter of the second shop. An adult neighborhood regular in an olive rain jacket walks up to the counter, peers through a hand-lettered window sign reading 'Now Open', and opens the door. The camera captures the street visible outside and the reclaimed oak counter. The lighting is early morning natural sidelight, creating soft contrast.",
+      "voiceover_line": "And now a short walk closer.",
+      "source_ids": [
+        "SRC-002"
+      ],
+      "claims_sourced": true
+    }
+  ]
+}

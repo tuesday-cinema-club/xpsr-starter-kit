@@ -30,6 +30,13 @@ STATUS_FOR = {
     "Reject": "rejected",
     "Request Evidence": "evidence_requested",
 }
+# Which provenance rows each gate may stamp: a gate only decides on its own stage's assets.
+STAGES_FOR_GATE = {
+    "brief": set(),
+    "previs": {"shot_list"},
+    "produce": {"keyframe", "paint_over", "temporal"},
+    "present": {"dialogue", "captions", "edit"},
+}
 PROVENANCE_STATUS_FOR = {
     "Approve": "APPROVED",
     "Revise": "REVISE",
@@ -38,12 +45,12 @@ PROVENANCE_STATUS_FOR = {
 }
 
 
-def stamp_provenance(path: str, decision: str, by: str) -> int:
+def stamp_provenance(path: str, decision: str, by: str, gate_stage: str) -> int:
     with open(path, newline="", encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
     changed = 0
     for row in rows:
-        if row.get("status") == "PENDING_REVIEW":
+        if row.get("status") == "PENDING_REVIEW" and row.get("stage") in STAGES_FOR_GATE.get(gate_stage, set()):
             row["status"] = PROVENANCE_STATUS_FOR[decision]
             row["human_approver"] = by
             changed += 1
@@ -60,7 +67,7 @@ def main():
     p.add_argument("--decision", required=True, choices=GATE_DECISIONS)
     p.add_argument("--by", required=True, help="Name of the human making the decision")
     p.add_argument("--note", default="", help="Reason or instructions, e.g. what to revise")
-    p.add_argument("--provenance", help="provenance.csv: stamp this decision on rows still PENDING_REVIEW")
+    p.add_argument("--provenance", help="provenance.csv: stamp this decision on this gate's rows still PENDING_REVIEW")
     args = p.parse_args()
 
     state = load_json(args.state)
@@ -81,7 +88,7 @@ def main():
     say("ok", f"{state['stage']} gate: {args.decision} by {args.by}")
 
     if args.provenance and os.path.exists(args.provenance):
-        n = stamp_provenance(args.provenance, args.decision, args.by)
+        n = stamp_provenance(args.provenance, args.decision, args.by, state["stage"])
         say("ok", f"{n} provenance row(s) marked {PROVENANCE_STATUS_FOR[args.decision]}")
 
     if args.decision == "Approve":

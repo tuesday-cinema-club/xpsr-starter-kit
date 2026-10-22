@@ -1,0 +1,59 @@
+{
+  "project_id": "GRAND_CRU_WASH_01",
+  "stage": "previs",
+  "status": "approved",
+  "draft_file": "examples/grand-cru-car-wash/shots.json",
+  "checks": {
+    "schema": "pass",
+    "bible_match": "pass",
+    "unverified_sources": 0,
+    "total_runtime_sec": 30,
+    "attempts": 1,
+    "errors": []
+  },
+  "decision": "Approve",
+  "decided_by": "Workshop director (demo stand-in)",
+  "decided_at": "2026-10-22T23:18:28Z",
+  "notes": "Tightened prompts approved for take 2.",
+  "history": [
+    {
+      "at": "2026-10-22T23:13:41Z",
+      "event": "draft_written",
+      "by": "agent"
+    },
+    {
+      "at": "2026-10-22T23:14:10Z",
+      "event": "Revise",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Shot 1 line ('often mistaken for a vineyard') makes no sense. Shot 3: the sedan is still 'dusty' after the wash (continuity), and the action says the camera pans while camera_move is Static. The call to action from the brief is missing. Runtime 26s: use the full 30."
+    },
+    {
+      "at": "2026-10-22T23:14:10Z",
+      "event": "human_edit_rechecked",
+      "by": "checker"
+    },
+    {
+      "at": "2026-10-22T23:14:10Z",
+      "event": "Approve",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Human revision: rewritten lines, continuity fix, camera moves, call to action, 30s runtime."
+    },
+    {
+      "at": "2026-10-22T23:18:28Z",
+      "event": "Revise",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Frame review: visual prompts for shots 1 and 3 tightened (empty car, who holds the towel)."
+    },
+    {
+      "at": "2026-10-22T23:18:28Z",
+      "event": "human_edit_rechecked",
+      "by": "checker"
+    },
+    {
+      "at": "2026-10-22T23:18:28Z",
+      "event": "Approve",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Tightened prompts approved for take 2."
+    }
+  ]
+}

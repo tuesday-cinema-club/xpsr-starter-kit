@@ -1,0 +1,25 @@
+{
+  "project_title": "The Walk",
+  "client": "Ember & Oak Coffee",
+  "target_audience": "Neighbors who already walk past the new shop on their way to work",
+  "core_feeling": "That the roastery down the street is part of their morning, not a chain",
+  "call_to_action": "Stop in at the second shop this week",
+  "key_message": "Ember & Oak roasts small batches in the back room of its original shop and opens a second location a short walk away, with every bag labeled by roast date.",
+  "runtime_sec": 30,
+  "exclusions": [
+    "No slow-motion latte-art pour",
+    "No stock hipster-barista tropes or forced smiles",
+    "No claims we cannot source, such as best coffee in town"
+  ],
+  "tone": [
+    "Grounded",
+    "Warm",
+    "Communal",
+    "Made by hand"
+  ],
+  "references": [
+    "The handheld camera work of Richard Linklater's 'Before Sunrise' to capture the intimacy of a short walk",
+    "The natural lighting and grain of Terrence Malick's 'Days of Heaven' to emphasize the warmth of the roasting process",
+    "The ambient soundscape of 'The World of the Lonely Wolf' to create a grounded, communal atmosphere"
+  ]
+}

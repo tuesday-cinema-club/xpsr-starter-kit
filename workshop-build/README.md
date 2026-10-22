@@ -28,9 +28,10 @@ Total: 60 minutes.
 | --- | --- | --- |
 | Ember & Oak Coffee: a roaster opening a second shop | [`client-briefs/ember-and-oak.md`](client-briefs/ember-and-oak.md) | `templates/ember-and-oak-bible.json` |
 | Spoke Co-op: a bike-repair co-op recruiting members | [`client-briefs/spoke-coop.md`](client-briefs/spoke-coop.md) | `templates/spoke-coop-bible.json` |
+| Grand Cru Car Wash (ironic): a car wash that talks like a Temecula Valley tasting room | [`client-briefs/grand-cru-car-wash.md`](client-briefs/grand-cru-car-wash.md) | `templates/grand-cru-car-wash-bible.json` |
 | Your pitch: a real brand or idea from someone in the room | Copy [`templates/brief_template.md`](templates/brief_template.md) | Copy a bible from `templates/` and edit it |
 
-Both clients are fictional businesses written for practice.
+All three clients are fictional businesses written for practice. The car wash brief uses two real, sourced facts about the Temecula Valley.
 
 ## Crews
 
@@ -82,6 +83,7 @@ Say what the agent did, what broke, how you caught it, and where a human made it
 | --- | --- |
 | `client-briefs/ember-and-oak.md` | Client A, with a fact sheet you may cite. |
 | `client-briefs/spoke-coop.md` | Client B, with a fact sheet you may cite. |
+| `client-briefs/grand-cru-car-wash.md` | Client C, an ironic brief, with a fact sheet you may cite. |
 | `templates/brief_template.md` | Blank brief for writing by hand or your own pitch. |
 | `templates/provenance.csv` | Empty provenance ledger (header row only). |
 | `templates/audit_template.md` | Blank audit sheet for the Auditor. |

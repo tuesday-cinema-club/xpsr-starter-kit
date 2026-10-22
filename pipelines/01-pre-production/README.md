@@ -79,6 +79,8 @@ ollama pull qwen2.5:7b
 python3 pipelines/01-pre-production/run_breakdown.py ... --model qwen2.5:7b
 ```
 
+Larger models write more specific, better-sourced drafts but run several times slower: see [the comparison](../../examples/ember-and-oak-overpowered/README.md), where `glm-4.7-flash` took 90 seconds for a shot list that `llama3.2:3b` wrote in 14. Thinking models (such as `glm-4.7-flash` or `qwen3`) work too: the scripts switch thinking off for structured output, because otherwise Ollama returns the JSON in its `thinking` field and leaves the answer empty.
+
 Set `TCC_MODEL` to change the default for every script, and `OLLAMA_HOST` if Ollama runs somewhere other than `127.0.0.1:11434`.
 
 ## Troubleshooting

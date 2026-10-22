@@ -1,0 +1,63 @@
+{
+  "scene_id": "SC01",
+  "scene_name": "The Tasting",
+  "shots": [
+    {
+      "shot_number": 1,
+      "framing": "Medium",
+      "lens_mm": 50,
+      "duration_sec": 8,
+      "camera_move": "Static",
+      "location_id": "vineyard_road",
+      "characters": [
+        "driver"
+      ],
+      "action_description": "The dusty champagne-colored sedan crests a rolling golden hill. The driver, wearing a wide straw sun hat and cream linen shirt, peers through the windshield at a distant, modern structure with a chrome arch. The camera holds on the driver's face, which is framed by the brim of the hat, as they squint against the bright Southern California morning sun.",
+      "visual_prompt": "A medium shot of a driver in their 60s with silver hair and a wide straw sun hat. They are wearing a cream linen shirt and sunglasses pushed up on their forehead. They are driving a dusty champagne-colored sedan. The background is a two-lane country road between rows of grapevines on rolling golden hills, with scattered oak trees and a hot-air balloon drifting in the morning sky. The lighting is bright Southern California morning sun with soft haze over the hills.",
+      "voiceover_line": "The Temecula Valley is often mistaken for a vineyard, but the dust on your fender tells a different story.",
+      "source_ids": [
+        "SRC-001",
+        "SRC-004"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 2,
+      "framing": "Close Up",
+      "lens_mm": 85,
+      "duration_sec": 10,
+      "camera_move": "Static",
+      "location_id": "wash_tunnel",
+      "characters": [
+        "attendant"
+      ],
+      "action_description": "Inside the Grand Cru wash tunnel exit bay, the attendant stands behind a small wooden podium with a menu card. They hold a silver tastevin cup up to the light, inspecting it with a deadpan expression. The attendant wears a black vest over a crisp white shirt, a burgundy tie, and bright blue nitrile gloves.",
+      "visual_prompt": "A close-up shot of an attendant in their 30s with a neat dark beard. They are wearing a black vest over a crisp white shirt, a burgundy tie, and bright blue nitrile gloves. They are holding a silver tastevin cup up to the light, inspecting it with a deadpan expression. The background is the polished concrete floor of a car wash tunnel exit bay, with tall burgundy and champagne foam brushes and a chrome arch in the distance. The lighting is cool overhead light with warm sun spilling in from the exit.",
+      "voiceover_line": "We offer three vintages: the House Rinse, the Reserve Triple Foam, and the Grand Cru Ceramic.",
+      "source_ids": [
+        "SRC-002"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 3,
+      "framing": "Wide",
+      "lens_mm": 24,
+      "duration_sec": 8,
+      "camera_move": "Static",
+      "location_id": "wash_tunnel",
+      "characters": [
+        "attendant",
+        "driver"
+      ],
+      "action_description": "The driver exits the tunnel, stepping onto the polished concrete floor. The attendant, now holding a plush white hand towel, gently dries the driver's door handle. The driver smiles, looking at the car and then at the attendant. The camera pans slowly from the gleaming car to the attendant's face.",
+      "visual_prompt": "A wide shot of a car wash tunnel exit bay. A driver in their 60s with silver hair and a wide straw sun hat stands next to a dusty champagne-colored sedan. An attendant in a black vest and burgundy tie stands next to the driver, holding a plush white hand towel and gently drying the driver's door handle. The attendant has a neat dark beard and bright blue nitrile gloves. The background features a chrome arch and tall foam brushes. The lighting is cool overhead light with warm sun spilling in from the exit.",
+      "voiceover_line": "Each finished by hand. Now pouring in the Temecula Valley.",
+      "source_ids": [
+        "SRC-003",
+        "SRC-001"
+      ],
+      "claims_sourced": true
+    }
+  ]
+}

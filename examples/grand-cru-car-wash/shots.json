@@ -1,0 +1,64 @@
+{
+  "scene_id": "SC01",
+  "scene_name": "The Tasting",
+  "shots": [
+    {
+      "shot_number": 1,
+      "framing": "Wide",
+      "lens_mm": 35,
+      "duration_sec": 9,
+      "camera_move": "Push In",
+      "location_id": "vineyard_road",
+      "characters": [
+        "driver"
+      ],
+      "action_description": "On a vineyard road at sunrise, the driver stands beside a dusty champagne-colored sedan, draws one finger through the dust on the hood and studies it like the rim of a wine glass. A hot-air balloon drifts over the hills behind.",
+      "visual_prompt": "wide shot of a two-lane country road between rows of grapevines on rolling golden hills at sunrise, a dusty champagne-colored sedan parked on the road, the driver standing beside it inspecting a fingertip of dust from the hood, a hot-air balloon in the hazy morning sky, oak trees, nobody inside the car, plain blank license plate",
+      "voiceover_line": "Temecula Valley. Dozens of wineries. Balloons at sunrise. And on every fender, a fine layer of vineyard dust.",
+      "source_ids": [
+        "SRC-004",
+        "SRC-005"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 2,
+      "framing": "Close Up",
+      "lens_mm": 85,
+      "duration_sec": 9,
+      "camera_move": "Push In",
+      "location_id": "wash_tunnel",
+      "characters": [
+        "attendant"
+      ],
+      "action_description": "In the wash bay, the Wash Sommelier swirls a wine glass filled with pink car-wash foam, holds it up to the light, and nods gravely.",
+      "visual_prompt": "close up of a car wash attendant styled as a sommelier swirling a wine glass filled with thick pink and white car-wash foam, holding it up to the light with a grave expression, car wash brushes softly out of focus behind",
+      "voiceover_line": "Three vintages. The House Rinse. The Reserve Triple Foam. And, for the connoisseur, the Grand Cru Ceramic.",
+      "source_ids": [
+        "SRC-002"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 3,
+      "framing": "Wide",
+      "lens_mm": 24,
+      "duration_sec": 12,
+      "camera_move": "Pull Out",
+      "location_id": "wash_tunnel",
+      "characters": [
+        "attendant",
+        "driver"
+      ],
+      "action_description": "At the tunnel exit, the Wash Sommelier finishes the now gleaming sedan with a folded white hand towel while the driver looks on, approving, as if tasting a fine wine.",
+      "visual_prompt": "wide shot of a car wash tunnel exit bay, a gleaming freshly washed champagne-colored sedan with nobody inside, on the right the car wash attendant in a black vest, burgundy tie and blue gloves dries the driver's door with a folded white hand towel, on the left the driver in a straw sun hat and cream linen shirt stands back with empty hands, watching approvingly, chrome arch and tall foam brushes behind, warm sun spilling in",
+      "voiceover_line": "Finished by hand. Now pouring in the Temecula Valley. Book your Reserve Triple Foam this weekend.",
+      "source_ids": [
+        "SRC-003",
+        "SRC-001",
+        "SRC-002"
+      ],
+      "claims_sourced": true
+    }
+  ]
+}

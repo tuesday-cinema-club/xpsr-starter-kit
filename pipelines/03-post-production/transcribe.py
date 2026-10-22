@@ -26,12 +26,16 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 from common import append_provenance, say  # noqa: E402
 
 
-def run_openai_whisper(audio, model, language, out_srt):
+def run_openai_whisper(audio, model, language, out_srt, max_width=42, max_lines=2):
     exe = shutil.which("whisper")
     cmd = [exe] if exe else [sys.executable, "-m", "whisper"]
     with tempfile.TemporaryDirectory() as tmp:
+        # Word timestamps let Whisper break captions into readable lines
+        # (about 42 characters, at most 2 lines per caption).
         subprocess.run(cmd + [audio, "--model", model, "--language", language, "--output_format", "srt",
-                              "--output_dir", tmp, "--fp16", "False", "--verbose", "False"], check=True)
+                              "--output_dir", tmp, "--fp16", "False", "--verbose", "False",
+                              "--word_timestamps", "True", "--max_line_width", str(max_width),
+                              "--max_line_count", str(max_lines)], check=True)
         produced = os.path.join(tmp, os.path.splitext(os.path.basename(audio))[0] + ".srt")
         shutil.copyfile(produced, out_srt)
     return f"openai-whisper/{model}"
@@ -60,6 +64,8 @@ def main():
     p.add_argument("--model", default="base.en", help="openai-whisper model name (default base.en)")
     p.add_argument("--model-path", help="whisper.cpp ggml model file")
     p.add_argument("--language", default="en")
+    p.add_argument("--max-line-width", type=int, default=42, help="Characters per caption line (default 42)")
+    p.add_argument("--max-line-count", type=int, default=2, help="Lines per caption (default 2)")
     p.add_argument("--provenance", help="provenance.csv to append to")
     args = p.parse_args()
 
@@ -69,7 +75,8 @@ def main():
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     say("*", f"Transcribing {args.audio} with {engine} (offline) ...")
     if engine == "openai-whisper":
-        tool = run_openai_whisper(args.audio, args.model, args.language, args.out)
+        tool = run_openai_whisper(args.audio, args.model, args.language, args.out,
+                                  args.max_line_width, args.max_line_count)
     else:
         tool = run_whisper_cpp(args.audio, args.model_path, args.language, args.out)
 
@@ -79,7 +86,7 @@ def main():
     for cue in cues:
         lines = cue.splitlines()
         if len(lines) >= 3:
-            print(f"      {lines[1]}  {' '.join(lines[2:])}")
+            print(f"      {lines[1]}  {' / '.join(lines[2:])}")
     if args.provenance:
         append_provenance(args.provenance, asset_id=os.path.basename(args.out), stage="captions",
                           tool_or_model=tool, prompt_or_input=os.path.basename(args.audio))

@@ -176,7 +176,68 @@ def build_generic(ox, mats):
             "detail": Vector((ox, 2.0, 0.95))}
 
 
-SET_BUILDERS = {"roastery": build_roastery, "new_shop": build_new_shop}
+def car(name, base, mats, yaw=0.0):
+    """Grey-box sedan facing +Y. Returns the centre of the hood."""
+    x, y, z = base
+    parts = [box(f"{name}_body", (1.8, 4.4, 0.7), (x, y, z + 0.6), mats["prop"]),
+             box(f"{name}_cabin", (1.6, 2.2, 0.6), (x, y - 0.3, z + 1.25), mats["person_b"])]
+    for dx in (-0.9, 0.9):
+        for dy in (-1.4, 1.4):
+            parts.append(cylinder(f"{name}_wheel", 0.33, 0.25, (x + dx, y + dy, z + 0.33), mats["dark"],
+                                  rot=(0, math.radians(90), 0)))
+    for p_ in parts:
+        p_.rotation_euler.z += yaw
+    return Vector((x, y + 1.6, z + 1.0))
+
+
+def sun(ox, strength=2.0):
+    bpy.ops.object.light_add(type="SUN", location=(ox, -10, 20))
+    light = bpy.context.active_object
+    light.data.energy = strength
+    light.rotation_euler = (math.radians(50), 0, math.radians(30))
+
+
+def build_vineyard_road(ox, mats):
+    box("ground", (80, 80, 0.05), (ox, 20, -0.025), mats["floor"])
+    box("road", (4.0, 80, 0.02), (ox, 20, 0.01), mats["dark"])
+    for side in (-1, 1):
+        for i in range(6):
+            x = ox + side * (4.0 + i * 1.8)
+            box(f"vine_row_{side}_{i}", (0.45, 60, 1.3), (x, 25, 0.65), mats["sack"])
+    for i, (dx, r) in enumerate([(-25, 14), (5, 18), (30, 12)]):
+        sphere(f"hill_{i}", r, (ox + dx, 60, -r * 0.55), mats["wall"])
+    sphere("balloon", 2.2, (ox + 7, 40, 14), mats["person"])
+    box("balloon_basket", (0.8, 0.8, 0.6), (ox + 7, 40, 11.2), mats["dark"])
+    hood = car("sedan", (ox, 4.0, 0), mats)
+    driver_head = person("driver", (ox + 1.6, 3.2, 0), mats["person_b"], height=1.7)
+    sun(ox)
+    return {"center": Vector((ox, 4.0, 1.0)), "driver": driver_head, "detail": hood}
+
+
+def build_wash_tunnel(ox, mats):
+    box("floor", (12, 16, 0.05), (ox, 4, -0.025), mats["floor"])
+    for side in (-1, 1):
+        box(f"tunnel_wall_{side}", (0.2, 12, 3.6), (ox + side * 3.2, 7, 1.8), mats["wall"])
+        box(f"arch_pillar_{side}", (0.3, 0.3, 3.4), (ox + side * 2.6, 2.0, 1.7), mats["prop"])
+        cylinder(f"side_brush_{side}", 0.55, 2.4, (ox + side * 1.9, 6.5, 1.3), mats["sack"])
+    box("arch_beam", (5.5, 0.3, 0.3), (ox, 2.0, 3.4), mats["prop"])
+    cylinder("top_brush", 0.5, 3.2, (ox, 8.5, 2.3), mats["sack"], rot=(0, math.radians(90), 0))
+    box("tunnel_roof", (6.6, 12, 0.2), (ox, 7, 3.7), mats["wall"])
+    hood = car("sedan", (ox, 3.4, 0), mats)          # nosing out under the arch
+    box("podium", (0.6, 0.5, 1.1), (ox - 2.5, 0.2, 0.55), mats["prop"])
+    attendant_head = person("attendant", (ox + 1.35, 2.2, 0), mats["person"])
+    cylinder("flute", 0.04, 0.25, (ox + 1.1, 1.95, 1.25), mats["window"])
+    driver_head = person("driver", (ox - 1.5, 1.0, 0), mats["person_b"], height=1.7)
+    bpy.ops.object.light_add(type="AREA", location=(ox, 3, 3.4))
+    bpy.context.active_object.data.energy = 350
+    bpy.context.active_object.data.size = 4
+    sun(ox, 1.5)
+    return {"center": Vector((ox, 4.0, 1.2)), "attendant": attendant_head, "driver": driver_head,
+            "detail": Vector((ox + 1.1, 1.95, 1.3))}
+
+
+SET_BUILDERS = {"roastery": build_roastery, "new_shop": build_new_shop,
+                "vineyard_road": build_vineyard_road, "wash_tunnel": build_wash_tunnel}
 
 
 # --------------------------------------------------------------------------

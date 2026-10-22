@@ -30,7 +30,7 @@ python3 pipelines/03-post-production/transcribe.py --audio my-project/audio/vo.w
     --out my-project/captions.srt --provenance my-project/provenance.csv
 ```
 
-Uses openai-whisper (`base.en` by default) or whisper.cpp (`--engine whisper.cpp --model-path ggml-base.en.bin`). Audio never leaves the machine.
+Uses openai-whisper (`base.en` by default) or whisper.cpp (`--engine whisper.cpp --model-path ggml-base.en.bin`). Audio never leaves the machine. With openai-whisper, captions are broken at 42 characters and 2 lines (`--max-line-width`, `--max-line-count`), using word timestamps, so no caption becomes a wall of text. A person should still re-cut any caption that runs across a shot change.
 
 ![Terminal output: scratch_vo.py places three lines at 0.40, 8.40 and 17.40 seconds; then transcribe.py produces three caption cues, including the mistakes "our first shot" and "now short walk".](../../docs/images/09-vo-captions.png)
 

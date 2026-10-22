@@ -1,0 +1,6 @@
+source_id,claim,source,verified_by,verified_on
+SRC-001,Grand Cru Car Wash is opening in the Temecula Valley.,Client fact sheet (workshop-build/client-briefs/grand-cru-car-wash.md; fictional client),workshop facilitator,2026-10-22
+SRC-002,"The three wash packages are House Rinse, Reserve Triple Foam and Grand Cru Ceramic.",Client fact sheet (fictional client),workshop facilitator,2026-10-22
+SRC-003,Every wash ends with a hand-towel finish by an attendant.,Client fact sheet (fictional client),workshop facilitator,2026-10-22
+SRC-004,"Temecula Valley is promoted as Southern California wine country, with dozens of wineries.","Visit Temecula Valley, 'The perfect day trip to Temecula Valley' (cites nearly 50 wineries): https://www.visittemeculavalley.com/articles/post/the-perfect-day-trip-to-temecula-valley-in-california/ ; Travel Channel (more than 40): https://www.travelchannel.com/destinations/us/ca/articles/temecula-valley-wine-country-is-a-hidden-gem",Claude (web search; counts vary by source and year: say 'dozens'),2026-10-22
+SRC-005,Hot-air balloon flights over the valley are one of its signature activities.,"Visit Temecula Valley, 'Temecula Valley offers bucket list adventures': https://www.visittemeculavalley.com/articles/post/temecula-valley-offers-bucket-list-adventures-for-visitors/",Claude (web search),2026-10-22

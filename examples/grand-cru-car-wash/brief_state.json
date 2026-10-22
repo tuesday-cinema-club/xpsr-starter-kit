@@ -1,0 +1,35 @@
+{
+  "project_id": "The Sommelier of Suds",
+  "stage": "brief",
+  "status": "approved",
+  "draft_file": "examples/grand-cru-car-wash/brief.json",
+  "checks": {
+    "schema": "pass",
+    "bible_match": "not_applicable",
+    "attempts": 1,
+    "errors": []
+  },
+  "decision": "Approve",
+  "decided_by": "Workshop director (demo stand-in)",
+  "decided_at": "2026-10-22T23:11:53Z",
+  "notes": "Human rewrite of key message and references accepted.",
+  "history": [
+    {
+      "at": "2026-10-22T23:11:36Z",
+      "event": "draft_written",
+      "by": "agent"
+    },
+    {
+      "at": "2026-10-22T23:11:53Z",
+      "event": "Revise",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Key message is accurate but has no irony: it should sound like a tasting room. The Godfather reference does not match the film (its score is Nino Rota's themes, not a single sustained note). Use references that point at deadpan luxury played straight."
+    },
+    {
+      "at": "2026-10-22T23:11:53Z",
+      "event": "Approve",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Human rewrite of key message and references accepted."
+    }
+  ]
+}

@@ -23,7 +23,7 @@ blender -b --python-exit-code 1 -P pipelines/02-production/blender_previs.py -- 
 
 ![Six previs renders. Top row: grey clay renders of shot 1 (a figure beside a drum roaster), shot 2 (a coffee bag on a table) and shot 3 (two figures at a shop counter). Bottom row: the matching depth passes, with near objects white and far walls dark.](../../docs/images/05-blender-previs.jpg)
 
-**Gate:** the director approves the framing. Open `previs/previs.blend` in Blender to move a camera by hand, then rerender. The `roastery` and `new_shop` sets are hand-made for the demo; any other location id gets a generic room with a table and two figures.
+**Gate:** the director approves the framing. Open `previs/previs.blend` in Blender to move a camera by hand, then rerender. The `roastery`, `new_shop`, `vineyard_road` and `wash_tunnel` sets are hand-made for the examples; any other location id gets a generic room with a table and two figures.
 
 ## Pass 2: keyframes in ComfyUI
 
@@ -52,6 +52,8 @@ For each shot it uploads the depth pass, builds the prompt from the shot's `visu
 | `--depth-strength 0.45` | Loosen the depth guide (default 0.6 in the workflow). |
 | `--depth-end 0.45` | Stop applying depth partway through, so the model can add detail such as people. |
 | `--workflow pipelines/02-production/workflows/sdxl_txt2img.json` | Render with no depth pass at all. |
+| `--workflow pipelines/02-production/workflows/flux2_klein_previs_reference.json` | Use FLUX.2 [klein] 4B instead of SDXL (see below). |
+| `--lock-characters` | Append each on-screen character's `visual_lock` from the bible to the prompt. Strongly improves continuity. |
 
 ## What broke in the demo, and how we caught it
 
@@ -60,6 +62,38 @@ For each shot it uploads the depth pass, builds the prompt from the shot's `visu
 1. **Take 1 was rejected.** Shot 1 had no person: the grey-box figure became an apron on the wall. Shot 2 had no hand. Shot 3 put gibberish letters on a sign and became an outdoor kiosk.
 2. **Human fix:** the Frames crew rewrote the prompts to name the person explicitly, dropped the signage (real lettering goes on a typed end card) and added "lettering, signage" to the bible's negative prompt.
 3. **Take 2** fixed shot 1. Shots 2 and 3 got three seeds each with a looser depth guide, and the director picked one of each. All rejected and unpicked takes are kept as small JPEGs with their own provenance rows.
+
+## FLUX.2 [klein]: a stronger image model
+
+FLUX.2 [klein] 4B (Apache 2.0) is the model the participant guide recommends for GPU laptops. On the same 8 GB card it takes about 45 seconds per frame against SDXL's 22, but in our tests it produced usable frames on the first take. See [the comparison](../../examples/ember-and-oak-overpowered/README.md).
+
+```bash
+python3 pipelines/02-production/comfyui_client.py --shots my-project/shots.json \
+    --bible my-project/bible.json --previs my-project/previs --out my-project/frames \
+    --workflow pipelines/02-production/workflows/flux2_klein_previs_reference.json \
+    --lock-characters --comfyui-dir ~/ComfyUI
+```
+
+Models (from huggingface.co/Comfy-Org/Flux-2-Klein-4B): `flux-2-klein-4b.safetensors` in `models/diffusion_models/`, `qwen_3_4b.safetensors` in `models/text_encoders/`, `flux2-vae.safetensors` in `models/vae/`.
+
+How the previs guides it: FLUX.2 klein accepts a reference image. We tried two:
+
+1. **The grey clay render** as the reference: the model copied the grey figures literally, as statues and mannequins standing next to the real people.
+2. **The depth pass** as the reference, with the prompt saying "the reference image is a depth map": the layout followed the previs and the placeholders disappeared. This is what the workflow uses.
+
+Limits: the distilled model runs at CFG 1, so there is no negative prompt; the bible's `negative_prompt` is not applied. Generated text (chalkboards, license plates, logos) still appears and must be painted out.
+
+### Workflow conventions
+
+`comfyui_client.py` finds the nodes it fills in by role, so you can bring your own API-format workflow:
+
+| Role | How it is found |
+| --- | --- |
+| Model (hashed for provenance) | `CheckpointLoaderSimple` or `UNETLoader` |
+| Prompt | The `CLIPTextEncode` titled "Positive ..."; an optional `tcc_prompt_template` in its `_meta` wraps the prompt (`{prompt}` placeholder) |
+| Negative prompt (optional) | The `CLIPTextEncode` titled "Negative ..." |
+| Seed and steps | `KSampler`, or `RandomNoise` plus `Flux2Scheduler` |
+| Previs guide (optional) | A `LoadImage` node; `tcc_guide` in its `_meta` picks the pass: `depth` (default) or `grey` |
 
 ## Gate 03
 

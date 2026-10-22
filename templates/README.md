@@ -8,6 +8,7 @@ Starting points for your own project. Copy a file, rename it, and edit it by han
 | --- | --- | --- |
 | `ember-and-oak-bible.json` | Project bible for the Ember & Oak Coffee brief: characters, locations, palette, lighting, exclusions. | `schemas/bible.schema.json` |
 | `spoke-coop-bible.json` | Project bible for the Spoke Co-op brief. | `schemas/bible.schema.json` |
+| `grand-cru-car-wash-bible.json` | Project bible for the ironic Grand Cru Car Wash brief. | `schemas/bible.schema.json` |
 | `research_log.csv` | Empty evidence log. Every factual claim in a script or shot list needs a row here. | Read by `pipelines/01-pre-production/run_breakdown.py` |
 
 ## What goes in a project bible

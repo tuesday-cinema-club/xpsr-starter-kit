@@ -1,0 +1,176 @@
+{
+  "70": {
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load diffusion model (FLUX.2 klein 4B, distilled)"
+    },
+    "inputs": {
+      "unet_name": "flux-2-klein-4b.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "71": {
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load text encoder (Qwen3 4B)"
+    },
+    "inputs": {
+      "clip_name": "qwen_3_4b.safetensors",
+      "type": "flux2",
+      "device": "default"
+    }
+  },
+  "72": {
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE (FLUX.2)"
+    },
+    "inputs": {
+      "vae_name": "flux2-vae.safetensors"
+    }
+  },
+  "74": {
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Positive prompt (shot visual_prompt + bible style_prompt)",
+      "tcc_prompt_template": "{prompt}"
+    },
+    "inputs": {
+      "text": "REPLACED_BY_CLIENT",
+      "clip": [
+        "71",
+        0
+      ]
+    }
+  },
+  "66": {
+    "class_type": "EmptyFlux2LatentImage",
+    "_meta": {
+      "title": "Canvas 1344x768"
+    },
+    "inputs": {
+      "width": 1344,
+      "height": 768,
+      "batch_size": 1
+    }
+  },
+  "62": {
+    "class_type": "Flux2Scheduler",
+    "_meta": {
+      "title": "Scheduler (4 steps: distilled model)"
+    },
+    "inputs": {
+      "steps": 4,
+      "width": 1344,
+      "height": 768
+    }
+  },
+  "61": {
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "Sampler"
+    },
+    "inputs": {
+      "sampler_name": "euler"
+    }
+  },
+  "73": {
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "Noise (fixed seed for repeatability)"
+    },
+    "inputs": {
+      "noise_seed": 420891
+    }
+  },
+  "64": {
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "Sample"
+    },
+    "inputs": {
+      "noise": [
+        "73",
+        0
+      ],
+      "guider": [
+        "63",
+        0
+      ],
+      "sampler": [
+        "61",
+        0
+      ],
+      "sigmas": [
+        "62",
+        0
+      ],
+      "latent_image": [
+        "66",
+        0
+      ]
+    }
+  },
+  "65": {
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "Decode"
+    },
+    "inputs": {
+      "samples": [
+        "64",
+        0
+      ],
+      "vae": [
+        "72",
+        0
+      ]
+    }
+  },
+  "9": {
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save keyframe"
+    },
+    "inputs": {
+      "filename_prefix": "tcc_keyframe",
+      "images": [
+        "65",
+        0
+      ]
+    }
+  },
+  "76": {
+    "class_type": "ConditioningZeroOut",
+    "_meta": {
+      "title": "Empty negative (distilled model, CFG 1)"
+    },
+    "inputs": {
+      "conditioning": [
+        "74",
+        0
+      ]
+    }
+  },
+  "63": {
+    "class_type": "CFGGuider",
+    "_meta": {
+      "title": "Guider (CFG 1)"
+    },
+    "inputs": {
+      "model": [
+        "70",
+        0
+      ],
+      "positive": [
+        "74",
+        0
+      ],
+      "negative": [
+        "76",
+        0
+      ],
+      "cfg": 1.0
+    }
+  }
+}

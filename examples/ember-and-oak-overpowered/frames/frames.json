@@ -1,0 +1,32 @@
+{
+  "workflow": "flux2_klein_previs_reference.json",
+  "checkpoint": "flux-2-klein-4b.safetensors",
+  "checkpoint_sha256_short": "ec3d4e733a",
+  "controlnet": null,
+  "frames": [
+    {
+      "shot_number": 1,
+      "file": "shot_01_keyframe.png",
+      "seed": 420892,
+      "prompt": "The reference image is a depth map (near is white, far is black). Generate a finished photograph whose composition, camera angle and the positions and sizes of people and objects follow this depth map. Do not show the depth map itself. Scene: a middle-aged coffee roaster, a person with short salt-and-pepper hair, rolled-up chambray shirt and waxed canvas apron with a brass pin, standing beside a small drum coffee roaster, burlap coffee sacks on a pallet, chalkboard on the wall, early morning sidelight from one window, 35mm documentary photograph, natural window light, warm practical lighting, shallow depth of field, fine film grain, muted earth tones. Characters, exactly as described: The Roaster: Adult roaster in their 40s, short salt-and-pepper hair, rolled-up chambray shirt, waxed canvas apron with a brass pin, burn scar on left forearm",
+      "guide": "shot_01_depth.png",
+      "seconds": 48.1
+    },
+    {
+      "shot_number": 2,
+      "file": "shot_02_keyframe.png",
+      "seed": 420893,
+      "prompt": "The reference image is a depth map (near is white, far is black). Generate a finished photograph whose composition, camera angle and the positions and sizes of people and objects follow this depth map. Do not show the depth map itself. Scene: close up of a person's hand holding a grease pencil over a blank kraft paper coffee bag label, small burn scar on the forearm, roasted coffee beans spilling from the open bag, wooden work table, warm practical bulb light, 35mm documentary photograph, natural window light, warm practical lighting, shallow depth of field, fine film grain, muted earth tones. Characters, exactly as described: The Roaster: Adult roaster in their 40s, short salt-and-pepper hair, rolled-up chambray shirt, waxed canvas apron with a brass pin, burn scar on left forearm",
+      "guide": "shot_02_depth.png",
+      "seconds": 48.1
+    },
+    {
+      "shot_number": 3,
+      "file": "shot_03_keyframe.png",
+      "seed": 420894,
+      "prompt": "The reference image is a depth map (near is white, far is black). Generate a finished photograph whose composition, camera angle and the positions and sizes of people and objects follow this depth map. Do not show the depth map itself. Scene: interior of a small coffee shop seen from inside, reclaimed oak counter, two-group espresso machine, a coffee roaster in a waxed canvas apron behind the counter handing a kraft paper coffee bag to a customer in a cycling cap and olive rain jacket, large front window onto the street, morning light, 35mm documentary photograph, natural window light, warm practical lighting, shallow depth of field, fine film grain, muted earth tones. Characters, exactly as described: The Roaster: Adult roaster in their 40s, short salt-and-pepper hair, rolled-up chambray shirt, waxed canvas apron with a brass pin, burn scar on left forearm; The Regular: Adult neighborhood regular in their 20s, cycling cap, olive rain jacket, carries a dented enamel travel mug",
+      "guide": "shot_03_depth.png",
+      "seconds": 48.1
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "project_id": "GRAND_CRU_WASH_01",
+  "title": "Grand Cru Car Wash: Now Pouring in the Temecula Valley",
+  "characters": [
+    {
+      "id": "attendant",
+      "name": "The Wash Sommelier",
+      "visual_lock": "Car wash attendant in their 30s with a neat dark beard, styled like a sommelier: black vest over a crisp white shirt, burgundy tie, a silver tastevin cup on a chain around the neck, bright blue nitrile gloves",
+      "consent_on_file": false
+    },
+    {
+      "id": "driver",
+      "name": "The Driver",
+      "visual_lock": "Driver in their 60s with silver hair, wide straw sun hat, cream linen shirt, sunglasses pushed up on the forehead; drives a dusty champagne-colored sedan",
+      "consent_on_file": false
+    }
+  ],
+  "locations": [
+    {
+      "id": "vineyard_road",
+      "name": "Vineyard road, Temecula Valley",
+      "description": "Two-lane country road between rows of grapevines on rolling golden hills, scattered oak trees, a hot-air balloon drifting in the morning sky"
+    },
+    {
+      "id": "wash_tunnel",
+      "name": "Grand Cru wash tunnel, exit bay",
+      "description": "Express car wash tunnel exit: tall burgundy and champagne foam brushes, a chrome arch, drying blowers, polished concrete floor, a small wooden podium with a menu card"
+    }
+  ],
+  "visual_rules": {
+    "palette": ["#6D1A36", "#E8D9B5", "#9CAF88", "#A9C6DE", "#C0C4C8"],
+    "palette_names": ["burgundy", "champagne", "vine sage", "morning sky", "chrome"],
+    "lighting_key": "Bright Southern California morning sun with soft haze over the hills; inside the bay, cool overhead light with warm sun spilling in from the exit",
+    "aspect_ratio": "16:9",
+    "fps": 24,
+    "style_prompt": "glossy wine-commercial photography played completely straight, golden morning light, shallow depth of field, 35mm, deadpan luxury",
+    "negative_prompt": "lettering, signage, writing, logo, watermark, cartoon, cgi, 3d render, plastic skin, extra fingers, deformed hands"
+  },
+  "exclusions": [
+    "No naming or mocking real wineries or businesses",
+    "No water-waste or drought jokes",
+    "No bikini car-wash tropes"
+  ]
+}

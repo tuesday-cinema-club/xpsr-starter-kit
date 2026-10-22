@@ -1,0 +1,34 @@
+{
+  "workflow": "flux2_klein_previs_reference.json",
+  "checkpoint": "flux-2-klein-4b.safetensors",
+  "checkpoint_sha256_short": "ec3d4e733a",
+  "controlnet": null,
+  "frames": [
+    {
+      "shot_number": 1,
+      "file": "shot_01_keyframe.png",
+      "seed": 7001,
+      "prompt": "The reference image is a depth map (near is white, far is black). Generate a finished photograph whose composition, camera angle and the positions and sizes of people and objects follow this depth map. Do not show the depth map itself. Scene: wide shot of a two-lane country road between rows of grapevines on rolling golden hills at sunrise, a dusty champagne-colored sedan parked on the road, the driver standing beside it inspecting a fingertip of dust from the hood, a hot-air balloon in the hazy morning sky, oak trees, nobody inside the car, plain blank license plate, glossy wine-commercial photography played completely straight, golden morning light, shallow depth of field, 35mm, deadpan luxury. Characters, exactly as described: The Driver: Driver in their 60s with silver hair, wide straw sun hat, cream linen shirt, sunglasses pushed up on the forehead; drives a dusty champagne-colored sedan",
+      "guide": "shot_01_depth.png",
+      "seconds": 37.1,
+      "selected_from": "takes/shot_01_keyframe_s7000.png"
+    },
+    {
+      "shot_number": 2,
+      "file": "shot_02_keyframe.png",
+      "seed": 420893,
+      "prompt": "The reference image is a depth map (near is white, far is black). Generate a finished photograph whose composition, camera angle and the positions and sizes of people and objects follow this depth map. Do not show the depth map itself. Scene: close up of a car wash attendant styled as a sommelier swirling a wine glass filled with thick pink and white car-wash foam, holding it up to the light with a grave expression, car wash brushes softly out of focus behind, glossy wine-commercial photography played completely straight, golden morning light, shallow depth of field, 35mm, deadpan luxury. Characters, exactly as described: The Wash Sommelier: Car wash attendant in their 30s with a neat dark beard, styled like a sommelier: black vest over a crisp white shirt, burgundy tie, a silver tastevin cup on a chain around the neck, bright blue nitrile gloves",
+      "guide": "shot_02_depth.png",
+      "seconds": 47.1
+    },
+    {
+      "shot_number": 3,
+      "file": "shot_03_keyframe.png",
+      "seed": 8003,
+      "prompt": "The reference image is a depth map (near is white, far is black). Generate a finished photograph whose composition, camera angle and the positions and sizes of people and objects follow this depth map. Do not show the depth map itself. Scene: wide shot of a car wash tunnel exit bay, a gleaming freshly washed champagne-colored sedan with nobody inside, on the right the car wash attendant in a black vest, burgundy tie and blue gloves dries the driver's door with a folded white hand towel, on the left the driver in a straw sun hat and cream linen shirt stands back with empty hands, watching approvingly, chrome arch and tall foam brushes behind, warm sun spilling in, glossy wine-commercial photography played completely straight, golden morning light, shallow depth of field, 35mm, deadpan luxury. Characters, exactly as described: The Wash Sommelier: Car wash attendant in their 30s with a neat dark beard, styled like a sommelier: black vest over a crisp white shirt, burgundy tie, a silver tastevin cup on a chain around the neck, bright blue nitrile gloves; The Driver: Driver in their 60s with silver hair, wide straw sun hat, cream linen shirt, sunglasses pushed up on the forehead; drives a dusty champagne-colored sedan",
+      "guide": "shot_03_depth.png",
+      "seconds": 37.1,
+      "selected_from": "takes/shot_03_keyframe_s8000.png"
+    }
+  ]
+}

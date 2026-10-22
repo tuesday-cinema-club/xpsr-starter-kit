@@ -1,0 +1,25 @@
+{
+  "project_title": "The Sommelier of Suds",
+  "client": "Grand Cru Car Wash",
+  "target_audience": "Temecula Valley drivers whose cars wear a permanent layer of vineyard dust",
+  "core_feeling": "Amused that a car wash talks like a tasting room, and charmed enough to try it",
+  "call_to_action": "Book a Reserve Triple Foam this weekend",
+  "key_message": "Three vintages, from House Rinse to Grand Cru Ceramic, each finished by hand. Now pouring in the Temecula Valley.",
+  "runtime_sec": 30,
+  "exclusions": [
+    "No naming or mocking real wineries or businesses",
+    "No water-waste or drought jokes",
+    "No bikini car-wash tropes"
+  ],
+  "tone": [
+    "Deadpan",
+    "Mock-luxurious",
+    "Affectionate",
+    "Dry"
+  ],
+  "references": [
+    "Wes Anderson's The Grand Budapest Hotel (2014): symmetrical frames and deadpan formality",
+    "Alexander Payne's Sideways (2004): earnest wine-tasting language, played completely straight",
+    "Luxury car commercials: slow sliding shots over wet, gleaming paint"
+  ]
+}

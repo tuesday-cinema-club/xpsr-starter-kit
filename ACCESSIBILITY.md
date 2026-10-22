@@ -29,7 +29,9 @@ This repository is meant to be usable with a screen reader, with a keyboard only
 ## Video
 
 - Every cut is delivered twice: once with captions burned in (open captions, white on a mostly opaque dark box) and once with a selectable subtitle track (closed captions).
+- Captions are broken at 42 characters and 2 lines, and none runs across a shot change.
 - A person checks every Whisper caption against the audio before release.
+- Animated previews in the READMEs have no sound and loop. Each one has alt text describing the whole sequence and sits next to a link to the full cut with sound. If moving images are distracting, GitHub can stop them from playing automatically: Settings, Accessibility, Motion.
 - End cards use typed text, never text generated inside an image.
 
 ## Taking part without a laptop

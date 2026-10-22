@@ -1,0 +1,25 @@
+{
+  "project_id": "EMBER_OAK_SPOT_01",
+  "stage": "previs",
+  "status": "awaiting_review",
+  "draft_file": "examples/ember-and-oak-overpowered/shots.agent-draft.json",
+  "checks": {
+    "schema": "pass",
+    "bible_match": "pass",
+    "unverified_sources": 0,
+    "total_runtime_sec": 24,
+    "attempts": 1,
+    "errors": []
+  },
+  "decision": null,
+  "decided_by": null,
+  "decided_at": null,
+  "notes": "",
+  "history": [
+    {
+      "at": "2026-10-22T23:05:46Z",
+      "event": "draft_written",
+      "by": "agent"
+    }
+  ]
+}

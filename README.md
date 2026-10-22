@@ -15,7 +15,7 @@ You don't need to code, and a phone is enough to take part.
 | Attending the summit | [The participant guide](docs/participant-guide.md) |
 | Setting up a laptop | [Environment setup](environment/README.md) |
 | Running the 60-minute build | [Workshop build](workshop-build/README.md) |
-| Curious what the output looks like | [The worked example](examples/ember-and-oak-demo/README.md) |
+| Curious what the output looks like | [Watch the examples](#watch-the-examples) |
 | Using a screen reader | [Accessibility notes](ACCESSIBILITY.md) |
 
 ## Summit materials
@@ -93,21 +93,41 @@ Everything above, plus ComfyUI and one image model. See [the ComfyUI section of 
 | [`agents/`](agents/README.md) | Declarative agent cards and optional OpenClaw workspace files. |
 | [`pipelines/`](pipelines/README.md) | The runnable scripts for pre-production, production and post-production, and the gate tool. |
 | [`workshop-build/`](workshop-build/README.md) | The 60-minute build: client briefs, schedule, crews, templates, and the anti-slop rubric. |
-| [`templates/`](templates/README.md) | Project bibles for both clients and an empty research log. |
-| [`examples/`](examples/README.md) | A complete worked run, mistakes included, and a script to rerun it yourself. |
+| [`templates/`](templates/README.md) | Project bibles for all three clients and an empty research log. |
+| [`examples/`](examples/README.md) | Three complete worked runs, mistakes included, with the finished videos, and a script to rerun one yourself. |
 | [`tools/`](tools/README.md) | The screenshot helper used for the docs. |
 
-## The worked example
+## Watch the examples
 
-Everything in [`examples/ember-and-oak-demo/`](examples/ember-and-oak-demo/README.md) was produced by this kit on one machine with an 8 GB GPU, with no cloud calls. It is honest about what went wrong:
+Every example below was made by this kit on one machine with an 8 GB GPU, offline, for $0. The previews loop without sound; each link opens the full 30-second cut with sound and captions.
+
+### Ember & Oak, workshop models
+
+![Animated preview of the Ember & Oak cut made with the workshop models, no sound: the roaster beside a drum roaster, a hand at an open bag of beans, two people at a shop counter, then the typed card "Ember & Oak, Second shop now open".](examples/ember-and-oak-demo/cut-preview.webp)
+
+[Full cut with sound (MP4)](examples/ember-and-oak-demo/cut.mp4) · [How it was made, and what broke](examples/ember-and-oak-demo/README.md)
 
 - The brief agent credited Man with a Movie Camera to the wrong filmmaker. Caught at Gate 01.
 - The shot agent passed every machine check and still dressed the roaster in "a reclaimed oak apron". Caught at Gate 02.
 - The first keyframes had a missing person, a missing hand and a garbled sign. Caught at Gate 03, with every rejected take kept on record.
 - Whisper heard "shop" as "shot". Caught by a person reading the captions.
-- The final audit scores **5 of 7**: continuity fails and the cut is not signed. That is the audit doing its job.
+- Stand-in audit: **5 of 7**. Continuity fails and the cut is not signed. That is the audit doing its job.
 
-![Two rows of keyframes. Top row, rejected take 1: an apron where the roaster should be, a bag label with no hand, an outdoor kiosk with a garbled sign. Bottom row, approved frames: the roaster beside the drum roaster, a hand at an open bag of beans, two people at an indoor counter.](docs/images/08-keyframes-rejected-vs-approved.jpg)
+### Ember & Oak, bigger models
+
+![Animated preview of the Ember & Oak cut made with FLUX.2 klein, no sound: the same grey-haired roaster at a copper drum roaster, dating a coffee bag, then handing it to a customer in a cycling cap, ending on the typed card.](examples/ember-and-oak-overpowered/cut-preview.webp)
+
+[Full cut with sound (MP4)](examples/ember-and-oak-overpowered/cut.mp4) · [The model comparison](examples/ember-and-oak-overpowered/README.md)
+
+The same approved shot list rerun with `glm-4.7-flash` (about 30B parameters) and FLUX.2 [klein] 4B. Text drafts took up to 6 times longer, each keyframe twice as long, and the frames were usable on the first take, with the same roaster in every shot. Stand-in audit: **6 of 7**. The bigger models still invented a film reference, dropped the call to action and drew pseudo-text, so every gate still mattered.
+
+### Grand Cru Car Wash, an ironic spot
+
+![Animated preview of the Grand Cru Car Wash cut, no sound: a man in a straw hat by his sedan on a vineyard road under hot-air balloons, a bearded attendant dressed as a sommelier scowling at a wine glass of pink car-wash foam, the attendant towelling the car at the tunnel exit, and the end card "Grand Cru Car Wash, Now pouring in the Temecula Valley".](examples/grand-cru-car-wash/cut-preview.webp)
+
+[Full cut with sound (MP4)](examples/grand-cru-car-wash/cut.mp4) · [How it was made, and what broke](examples/grand-cru-car-wash/README.md)
+
+A fictional car wash opens in the Temecula Valley and talks about itself like a tasting room: three "vintages", a wash sommelier, foam swirled in a glass. The joke is on the car wash, never on the valley. Stand-in audit: **5 of 7**. The sommelier grew a fedora between shots.
 
 ## The $0 principle
 

@@ -30,3 +30,10 @@ Every image in `images/` comes from a real run of this kit on one machine (RTX 2
 | `09-vo-captions.png` | Scratch voiceover and Whisper captions, mistakes included |
 | `10-final-cut-stills.jpg` | Four stills from the finished cut |
 | `11-animatic-qc-audit.png` | Animatic, technical QC and pre-audit |
+| `12-sdxl-vs-flux2-klein.jpg` | The same shots from SDXL and from FLUX.2 klein |
+| `12a-glm-shot-breakdown.png` | The shot agent running on `glm-4.7-flash` |
+| `13-grand-cru-cut-stills.jpg` | Four stills from the car wash cut |
+| `13a-grand-cru-finish.png` | Car wash timeline, cut, QC and pre-audit |
+| `14-grand-cru-previs-to-keyframes.jpg` | Car wash depth passes, rejected take 1 and approved frames |
+
+The animated previews of each finished cut live in each example folder as `cut-preview.webp`.

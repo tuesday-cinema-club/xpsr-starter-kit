@@ -1,0 +1,25 @@
+{
+  "project_title": "The Sommelier of Suds",
+  "client": "Grand Cru Car Wash",
+  "target_audience": "Temecula Valley drivers whose cars wear a permanent layer of vineyard dust",
+  "core_feeling": "Amused that a car wash talks like a tasting room, and charmed enough to try it",
+  "call_to_action": "Book a Reserve Triple Foam this weekend",
+  "key_message": "Grand Cru Car Wash offers three wash packages and a hand-towel finish in the Temecula Valley.",
+  "runtime_sec": 30,
+  "exclusions": [
+    "No naming or mocking real wineries or businesses",
+    "No water-waste or drought jokes",
+    "No bikini car-wash tropes"
+  ],
+  "tone": [
+    "Deadpan",
+    "Mock-luxurious",
+    "Affectionate",
+    "Dry"
+  ],
+  "references": [
+    "The opening sequence of 'The Grand Budapest Hotel' where the lobby is introduced with slow, deliberate camera movements",
+    "The cinematography of Wong Kar-wai films, focusing on texture and light",
+    "The sound design of 'The Godfather', utilizing a single, sustained note to create tension and atmosphere"
+  ]
+}
