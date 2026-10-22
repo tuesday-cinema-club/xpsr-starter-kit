@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/tuesdaycinemaclub/starter-kit/schemas/bible.schema.json",
+  "$id": "https://github.com/tuesday-cinema-club/xpsr-starter-kit/schemas/bible.schema.json",
   "title": "ProjectBible",
   "description": "Continuity source of truth: characters, locations, visual rules and exclusions. Agents may read it; only humans edit it.",
   "type": "object",

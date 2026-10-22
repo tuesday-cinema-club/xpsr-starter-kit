@@ -35,8 +35,8 @@ Nothing to install. Open this page, read the [two client briefs](workshop-build/
 2. Copy the starter kit:
 
    ```bash
-   git clone https://github.com/tuesdaycinemaclub/starter-kit
-   cd starter-kit
+   git clone https://github.com/tuesday-cinema-club/xpsr-starter-kit
+   cd xpsr-starter-kit
    ```
 
 3. Test it. If the model replies, you're ready:

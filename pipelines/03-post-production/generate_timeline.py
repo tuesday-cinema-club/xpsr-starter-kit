@@ -125,7 +125,7 @@ def main():
         "global_start_time": rt(0, rate),
         "tracks": {"OTIO_SCHEMA": "Stack.1", "name": "tracks", "children": tracks, "source_range": None,
                    "effects": [], "markers": [], "enabled": True, "metadata": {}},
-        "metadata": {"generator": "tuesdaycinemaclub/starter-kit generate_timeline.py"},
+        "metadata": {"generator": "tuesday-cinema-club/xpsr-starter-kit generate_timeline.py"},
     }
     write_json(args.out, timeline)
     say("ok", f"{args.out}: {len(video)} clips, {total / rate:.1f}s at {rate:g} fps")

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/tuesdaycinemaclub/starter-kit/schemas/shot_breakdown.schema.json",
+  "$id": "https://github.com/tuesday-cinema-club/xpsr-starter-kit/schemas/shot_breakdown.schema.json",
   "title": "ShotBreakdown",
   "description": "Shot list written by the shot_breakdown agent and held at Gate 02 for director approval.",
   "type": "object",

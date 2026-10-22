@@ -10,7 +10,7 @@ Nothing to install.
 
 1. Free up 2 GB of space.
 2. Test the camera and voice memos.
-3. Bookmark the starter kit: github.com/tuesdaycinemaclub/starter-kit
+3. Bookmark the starter kit: github.com/tuesday-cinema-club/xpsr-starter-kit
 4. Bring a charger.
 
 ## Laptop (8 to 16 GB RAM, about 10 GB free)
@@ -37,8 +37,8 @@ Open Terminal (Mac or Linux) or PowerShell (Windows), paste one line, then press
 2. Copy the starter kit:
 
    ```bash
-   git clone https://github.com/tuesdaycinemaclub/starter-kit
-   cd starter-kit
+   git clone https://github.com/tuesday-cinema-club/xpsr-starter-kit
+   cd xpsr-starter-kit
    ```
 
 3. Test it. If the model replies, you are ready:

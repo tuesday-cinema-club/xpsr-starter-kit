@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/tuesdaycinemaclub/starter-kit/schemas/state.schema.json",
+  "$id": "https://github.com/tuesday-cinema-club/xpsr-starter-kit/schemas/state.schema.json",
   "title": "PipelineState",
   "description": "Gate record. An agent writes it with status awaiting_review; only a human decision moves it on.",
   "type": "object",

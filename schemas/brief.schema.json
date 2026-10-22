@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/tuesdaycinemaclub/starter-kit/schemas/brief.schema.json",
+  "$id": "https://github.com/tuesday-cinema-club/xpsr-starter-kit/schemas/brief.schema.json",
   "title": "CreativeBrief",
   "description": "One-page director brief: who it is for, what they should feel, what they should do next, and what the piece will never do.",
   "type": "object",

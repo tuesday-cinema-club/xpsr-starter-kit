@@ -55,7 +55,7 @@ def main():
     p.add_argument("--title", default="Terminal")
     p.add_argument("--out", required=True)
     p.add_argument("--width", type=int, default=1200)
-    p.add_argument("--prompt", default="~/starter-kit $")
+    p.add_argument("--prompt", default="~/xpsr-starter-kit $")
     args = p.parse_args()
 
     with open(args.log, encoding="utf-8", errors="replace") as f:

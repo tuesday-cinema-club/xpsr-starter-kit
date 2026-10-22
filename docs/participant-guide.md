@@ -4,6 +4,8 @@ Tuesday Cinema Club + XPSR Creator Summit, 10/24/26. Participant guide.
 
 Local-first creative AI pipelines, without the slop.
 
+> **Address update:** the printed handout lists `github.com/tuesdaycinemaclub/starter-kit`. The starter kit's correct address is **github.com/tuesday-cinema-club/xpsr-starter-kit**, used throughout this page.
+
 ## 1. Welcome
 
 In Part 1 (11:15 to 12:15) we learn to build creative pipelines with free, local, open-source AI. In Part 2 (after lunch) we build one together.
@@ -13,7 +15,7 @@ You don't need to code, and a phone is enough to take part. Look for **Phone OK*
 ## 2. Before you arrive
 
 - [ ] Sign up: forms.gle/CPfiNBCuZzs4QEXJ8 (Phone OK)
-- [ ] Bookmark the starter kit (briefs, templates, agent script): github.com/tuesdaycinemaclub (Phone OK)
+- [ ] Bookmark the starter kit (briefs, templates, agent script): github.com/tuesday-cinema-club/xpsr-starter-kit (Phone OK)
 - [ ] Set up your device with the table below. Only do your row.
 
 ### Setup by device
@@ -37,7 +39,7 @@ Open Terminal (Mac) or PowerShell (Windows), paste one line, then press Enter.
 2. Copy the starter kit to your laptop:
 
    ```bash
-   git clone https://github.com/tuesdaycinemaclub/starter-kit
+   git clone https://github.com/tuesday-cinema-club/xpsr-starter-kit
    ```
 
 3. Test it. If the model replies, you're ready:
@@ -146,7 +148,7 @@ Phone OK: record the voiceover.
 This week, copy the starter kit, swap in your own brand and run the pipeline again.
 
 ```bash
-git clone https://github.com/tuesdaycinemaclub/starter-kit
+git clone https://github.com/tuesday-cinema-club/xpsr-starter-kit
 ```
 
 ### Keep going: the six-session series
