@@ -1,0 +1,61 @@
+{
+  "scene_id": "SC01",
+  "scene_name": "Morning Light in the Roastery",
+  "shots": [
+    {
+      "shot_number": 1,
+      "framing": "Medium",
+      "lens_mm": 50,
+      "duration_sec": 8,
+      "camera_move": "Push In",
+      "location_id": "roastery",
+      "characters": [
+        "roaster"
+      ],
+      "action_description": "The roaster tips a scoop of freshly roasted beans into a cooling tray beside the small drum roaster and studies the color.",
+      "visual_prompt": "a middle-aged coffee roaster, a person with short salt-and-pepper hair, rolled-up chambray shirt and waxed canvas apron with a brass pin, standing beside a small drum coffee roaster, burlap coffee sacks on a pallet, chalkboard on the wall, early morning sidelight from one window",
+      "voiceover_line": "Every batch is roasted small, in the back room of our first shop.",
+      "source_ids": [
+        "SRC-001"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 2,
+      "framing": "Close Up",
+      "lens_mm": 85,
+      "duration_sec": 9,
+      "camera_move": "Static",
+      "location_id": "roastery",
+      "characters": [
+        "roaster"
+      ],
+      "action_description": "The roaster's hand, burn scar on the forearm, writes today's date on a kraft coffee bag label with a grease pencil.",
+      "visual_prompt": "close up of a person's hand holding a grease pencil over a blank kraft paper coffee bag label, small burn scar on the forearm, roasted coffee beans spilling from the open bag, wooden work table, warm practical bulb light",
+      "voiceover_line": "Every bag carries the day it was roasted.",
+      "source_ids": [
+        "SRC-003"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 3,
+      "framing": "Wide",
+      "lens_mm": 35,
+      "duration_sec": 13,
+      "camera_move": "Pull Out",
+      "location_id": "new_shop",
+      "characters": [
+        "roaster",
+        "regular"
+      ],
+      "action_description": "In the new shop, the roaster, in the same waxed canvas apron with the brass pin, hands a dated bag across the reclaimed oak counter to the regular in a cycling cap; 'Now Open' is lettered on the window behind them.",
+      "visual_prompt": "interior of a small coffee shop seen from inside, reclaimed oak counter, two-group espresso machine, a coffee roaster in a waxed canvas apron behind the counter handing a kraft paper coffee bag to a customer in a cycling cap and olive rain jacket, large front window onto the street, morning light",
+      "voiceover_line": "Same roaster, now a short walk closer. Stop in this week.",
+      "source_ids": [
+        "SRC-002"
+      ],
+      "claims_sourced": true
+    }
+  ]
+}

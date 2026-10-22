@@ -1,0 +1,69 @@
+{
+  "blender": "5.2.2 LTS",
+  "resolution": [
+    1344,
+    768
+  ],
+  "shots": [
+    {
+      "shot_number": 1,
+      "camera": "CAM_shot_01",
+      "lens_mm": 50,
+      "framing": "Medium",
+      "camera_move": "Push In",
+      "distance_m": 2.67,
+      "position_m": [
+        0.156,
+        -0.915,
+        1.275
+      ],
+      "target_m": [
+        -0.4,
+        1.7,
+        1.225
+      ],
+      "grey": "shot_01_grey.png",
+      "depth": "shot_01_depth.png"
+    },
+    {
+      "shot_number": 2,
+      "camera": "CAM_shot_02",
+      "lens_mm": 85,
+      "framing": "Close Up",
+      "camera_move": "Static",
+      "distance_m": 1.86,
+      "position_m": [
+        0.513,
+        -0.319,
+        1.1
+      ],
+      "target_m": [
+        0.9,
+        1.5,
+        1.05
+      ],
+      "grey": "shot_02_grey.png",
+      "depth": "shot_02_depth.png"
+    },
+    {
+      "shot_number": 3,
+      "camera": "CAM_shot_03",
+      "lens_mm": 35,
+      "framing": "Wide",
+      "camera_move": "Pull Out",
+      "distance_m": 5.44,
+      "position_m": [
+        41.682,
+        -3.225,
+        1.45
+      ],
+      "target_m": [
+        40.55,
+        2.1,
+        1.2
+      ],
+      "grey": "shot_03_grey.png",
+      "depth": "shot_03_depth.png"
+    }
+  ]
+}

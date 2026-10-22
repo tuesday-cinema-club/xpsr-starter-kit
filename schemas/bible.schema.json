@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/tuesdaycinemaclub/starter-kit/schemas/bible.schema.json",
+  "title": "ProjectBible",
+  "description": "Continuity source of truth: characters, locations, visual rules and exclusions. Agents may read it; only humans edit it.",
+  "type": "object",
+  "required": ["project_id", "title", "characters", "locations", "visual_rules", "exclusions"],
+  "properties": {
+    "project_id": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$" },
+    "title": { "type": "string" },
+    "characters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "visual_lock"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+          "name": { "type": "string" },
+          "visual_lock": { "type": "string", "description": "Fixed look: age range, hair, wardrobe, props." },
+          "consent_on_file": { "type": "boolean", "description": "True only if a real person's likeness or voice is used with written consent." },
+          "lora_reference": { "type": "string" }
+        }
+      }
+    },
+    "locations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "visual_rules": {
+      "type": "object",
+      "required": ["palette", "lighting_key", "aspect_ratio", "fps"],
+      "properties": {
+        "palette": { "type": "array", "items": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }, "minItems": 1 },
+        "palette_names": { "type": "array", "items": { "type": "string" } },
+        "lighting_key": { "type": "string" },
+        "aspect_ratio": { "type": "string", "enum": ["16:9", "9:16", "1:1", "4:5", "2.39:1"] },
+        "fps": { "type": "number", "enum": [23.976, 24, 25, 29.97, 30] },
+        "style_prompt": { "type": "string", "description": "Appended to every image prompt so frames share one look." },
+        "negative_prompt": { "type": "string" }
+      }
+    },
+    "exclusions": { "type": "array", "items": { "type": "string" } }
+  }
+}

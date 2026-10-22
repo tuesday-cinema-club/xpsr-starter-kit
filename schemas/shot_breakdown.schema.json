@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/tuesdaycinemaclub/starter-kit/schemas/shot_breakdown.schema.json",
+  "title": "ShotBreakdown",
+  "description": "Shot list written by the shot_breakdown agent and held at Gate 02 for director approval.",
+  "type": "object",
+  "required": ["scene_id", "scene_name", "shots"],
+  "properties": {
+    "scene_id": { "type": "string" },
+    "scene_name": { "type": "string" },
+    "shots": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["shot_number", "framing", "lens_mm", "duration_sec", "camera_move", "location_id", "characters", "action_description", "visual_prompt", "voiceover_line", "source_ids", "claims_sourced"],
+        "properties": {
+          "shot_number": { "type": "integer", "minimum": 1 },
+          "framing": { "type": "string", "enum": ["Extreme Wide", "Wide", "Medium", "Close Up", "Extreme Close Up"] },
+          "lens_mm": { "type": "integer", "minimum": 12, "maximum": 200 },
+          "duration_sec": { "type": "number", "minimum": 0.5, "maximum": 30.0 },
+          "camera_move": { "type": "string", "enum": ["Static", "Push In", "Pull Out", "Pan Left", "Pan Right", "Tilt Up", "Tilt Down", "Handheld"] },
+          "location_id": { "type": "string", "description": "Must match a location id in bible.json." },
+          "characters": { "type": "array", "items": { "type": "string" }, "description": "Character ids from bible.json. Empty if none on screen." },
+          "action_description": { "type": "string", "minLength": 5 },
+          "visual_prompt": { "type": "string", "minLength": 5 },
+          "voiceover_line": { "type": "string", "description": "Spoken line over this shot. Empty string for none." },
+          "source_ids": { "type": "array", "items": { "type": "string" }, "description": "research_log.csv ids that back any factual claim in this shot." },
+          "claims_sourced": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

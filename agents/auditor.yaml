@@ -1,0 +1,35 @@
+# Agent card: pre-auditor (Gate 04)
+# Not a language model. A script that fills in only what a machine can verify.
+# Implemented by pipelines/03-post-production/qc_check.py and pre_audit.py
+role: prefill_anti_slop_audit
+crew: Auditor (the human Auditor scores the rest)
+model: none
+inputs:
+  - <project>/cut.mp4
+  - <project>/brief.json
+  - <project>/shots.json
+  - <project>/research_log.csv
+  - <project>/provenance.csv
+  - bible.json
+tools:
+  - ffprobe
+  - ffmpeg ebur128 loudness meter
+write_permissions:
+  - <project>/qc.json
+  - <project>/audit.md
+checks_it_may_score:
+  - 2 Evidence
+  - 5 Technical QC
+  - 6 Provenance
+checks_reserved_for_humans:
+  - 1 Intent
+  - 3 Continuity (it only confirms character ids exist)
+  - 4 Specificity
+  - 7 Human signature (never filled by a script)
+forbidden:
+  - sign_release
+  - mark_human_checks_as_passed
+gate:
+  name: Gate 04 Present
+  decided_by: director
+  release_rule: 7 of 7 checks pass, check 7 signed by a named human

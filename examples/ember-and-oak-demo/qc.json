@@ -1,0 +1,42 @@
+{
+  "video": "cut.mp4",
+  "passed": true,
+  "checks": [
+    {
+      "check": "Aspect ratio",
+      "result": "pass",
+      "measured": "1920x1080",
+      "expected": "16:9"
+    },
+    {
+      "check": "Frame rate",
+      "result": "pass",
+      "measured": "24 fps",
+      "expected": "24 fps"
+    },
+    {
+      "check": "Runtime",
+      "result": "pass",
+      "measured": "30.00s",
+      "expected": "<= 30s"
+    },
+    {
+      "check": "Audio stream",
+      "result": "pass",
+      "measured": "aac",
+      "expected": "present"
+    },
+    {
+      "check": "Integrated loudness",
+      "result": "pass",
+      "measured": "-15.1 LUFS",
+      "expected": "-14.0 +/- 1.5 LUFS"
+    },
+    {
+      "check": "True peak",
+      "result": "pass",
+      "measured": "-1.5 dBTP",
+      "expected": "<= -1.0 dBTP"
+    }
+  ]
+}

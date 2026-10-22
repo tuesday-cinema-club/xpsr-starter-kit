@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/tuesdaycinemaclub/starter-kit/schemas/brief.schema.json",
+  "title": "CreativeBrief",
+  "description": "One-page director brief: who it is for, what they should feel, what they should do next, and what the piece will never do.",
+  "type": "object",
+  "required": ["project_title", "client", "target_audience", "core_feeling", "call_to_action", "key_message", "runtime_sec", "exclusions"],
+  "properties": {
+    "project_title": { "type": "string", "minLength": 3 },
+    "client": { "type": "string", "minLength": 2 },
+    "target_audience": { "type": "string", "minLength": 3, "description": "Who is it for?" },
+    "core_feeling": { "type": "string", "minLength": 3, "description": "What should they feel?" },
+    "call_to_action": { "type": "string", "minLength": 3, "description": "What should they do next?" },
+    "key_message": { "type": "string", "minLength": 3 },
+    "runtime_sec": { "type": "integer", "minimum": 5, "maximum": 120 },
+    "tone": { "type": "array", "items": { "type": "string" } },
+    "exclusions": {
+      "type": "array",
+      "description": "Things this piece will never do. At least three.",
+      "items": { "type": "string", "minLength": 3 },
+      "minItems": 3
+    },
+    "references": { "type": "array", "items": { "type": "string" } }
+  }
+}

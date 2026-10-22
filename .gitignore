@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Model weights: download separately, never commit
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.bin
+*.gguf
+*.onnx
+
+# Your own runs (the worked example in examples/ is committed on purpose)
+demo-run/
+my-project/
+drafts/
+output/
+renders/
+
+# Large media outside the worked example
+*.mp4
+*.mov
+*.mkv
+*.wav
+*.blend
+*.blend1
+!examples/**/*.mp4
+!examples/**/*.wav
+!examples/**/*.blend
+
+# Tool and OS artifacts
+.playwright-mcp/
+.DS_Store
+Thumbs.db

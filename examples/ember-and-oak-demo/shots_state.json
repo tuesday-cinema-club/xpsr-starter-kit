@@ -1,0 +1,59 @@
+{
+  "project_id": "EMBER_OAK_SPOT_01",
+  "stage": "previs",
+  "status": "approved",
+  "draft_file": "examples/ember-and-oak-demo/shots.json",
+  "checks": {
+    "schema": "pass",
+    "bible_match": "pass",
+    "unverified_sources": 0,
+    "total_runtime_sec": 30,
+    "attempts": 1,
+    "errors": []
+  },
+  "decision": "Approve",
+  "decided_by": "Workshop director (demo stand-in)",
+  "decided_at": "2026-10-22T22:12:23Z",
+  "notes": "Revised visual prompts approved for take 2.",
+  "history": [
+    {
+      "at": "2026-10-22T22:06:07Z",
+      "event": "draft_written",
+      "by": "agent (ollama/llama3.2:3b)"
+    },
+    {
+      "at": "2026-10-22T22:06:07Z",
+      "event": "Revise",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Shot 3 continuity: roaster's apron is waxed canvas with brass pin (bible), not 'reclaimed oak'; the sign is on the window. Every shot is static. The dated bag (SRC-003) is our most specific fact and never appears."
+    },
+    {
+      "at": "2026-10-22T22:06:07Z",
+      "event": "human_edit_rechecked",
+      "by": "checker"
+    },
+    {
+      "at": "2026-10-22T22:06:07Z",
+      "event": "Approve",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Human revision: continuity fix, camera moves, dated-bag insert."
+    },
+    {
+      "at": "2026-10-22T22:12:23Z",
+      "event": "Revise",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Frame review take 1: shot 1 has no person (roaster became an apron on the wall); shot 2 has no hand; shot 3 has gibberish sign text and reads as an outdoor kiosk. Frames crew to rewrite visual prompts; signage will be added by hand in the edit."
+    },
+    {
+      "at": "2026-10-22T22:12:23Z",
+      "event": "human_edit_rechecked",
+      "by": "checker"
+    },
+    {
+      "at": "2026-10-22T22:12:23Z",
+      "event": "Approve",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Revised visual prompts approved for take 2."
+    }
+  ]
+}

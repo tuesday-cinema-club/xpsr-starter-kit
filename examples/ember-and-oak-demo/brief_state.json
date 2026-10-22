@@ -1,0 +1,35 @@
+{
+  "project_id": "Ember & Oak Launch",
+  "stage": "brief",
+  "status": "approved",
+  "draft_file": "examples/ember-and-oak-demo/brief.json",
+  "checks": {
+    "schema": "pass",
+    "bible_match": "not_applicable",
+    "attempts": 1,
+    "errors": []
+  },
+  "decision": "Approve",
+  "decided_by": "Workshop director (demo stand-in)",
+  "decided_at": "2026-10-22T22:04:50Z",
+  "notes": "Human rewrite of key message and references accepted.",
+  "history": [
+    {
+      "at": "2026-10-22T22:04:34Z",
+      "event": "draft_written",
+      "by": "agent"
+    },
+    {
+      "at": "2026-10-22T22:04:50Z",
+      "event": "Revise",
+      "by": "Workshop director (demo stand-in)",
+      "note": "References are wrong: The Man with the Movie Camera is Dziga Vertov (1929), not Chris Cunningham. Key message 'community-driven approach' has no source in research_log.csv. Rewrite from SRC-001..003."
+    },
+    {
+      "at": "2026-10-22T22:04:50Z",
+      "event": "Approve",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Human rewrite of key message and references accepted."
+    }
+  ]
+}

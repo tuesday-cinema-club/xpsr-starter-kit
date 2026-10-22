@@ -1,0 +1,46 @@
+# Agent card: shot breakdown (Gate 02)
+# One agent, one job. Implemented by pipelines/01-pre-production/run_breakdown.py
+role: split_scene_into_shots
+crew: Writer
+model: ollama/llama3.2:3b          # qwen2.5:7b gives richer shot lists on 16 GB+ machines
+decoding:
+  temperature: 0
+  seed: 42                         # attempt N uses seed 42 + N - 1
+  format: schemas/shot_breakdown.schema.json
+inputs:
+  - <project>/brief.json           # must be approved at Gate 01
+  - <project>/bible.json
+  - <project>/research_log.csv
+tools:
+  - read_file
+  - write_json
+read_permissions:
+  - <project>/brief.json
+  - templates/ or <project>/bible.json
+  - <project>/research_log.csv
+write_permissions:
+  - <project>/shots.json
+  - <project>/shots_state.json
+  - <project>/provenance.csv       # append only
+forbidden:
+  - invent_facts
+  - add_unlisted_characters
+  - add_unlisted_locations
+  - alter_dialogue_after_approval
+  - delete_files
+deterministic_checks:              # run by the script, no model involved
+  - schema: shots.json matches schemas/shot_breakdown.schema.json
+  - bible_match: every location_id and character id exists in bible.json
+  - sources: every source_id exists in research_log.csv; spoken lines must cite one
+  - runtime: total between 80 and 100 percent of the brief runtime
+retry:
+  max_attempts: 3                  # checker errors are sent back to the model
+  on_exhausted: hold at gate with status awaiting_review and checks.schema or bible_match = fail
+output_target: <project>/shots.json
+schema: schemas/shot_breakdown.schema.json
+gate:
+  name: Gate 02 Previs
+  decided_by: director
+  exits: [Approve, Revise, Reject, Request Evidence]
+  recheck_after_human_edit: python3 pipelines/01-pre-production/run_breakdown.py ... --check-only
+  command: python3 pipelines/gate.py --state <project>/shots_state.json --decision <exit> --by "<name>"

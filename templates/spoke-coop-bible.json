@@ -1,0 +1,39 @@
+{
+  "project_id": "SPOKE_COOP_SPOT_01",
+  "title": "Spoke Co-op: Fix It Together",
+  "characters": [
+    {
+      "id": "mechanic",
+      "name": "Volunteer Mechanic",
+      "visual_lock": "Adult volunteer in their 50s, grey beard, faded co-op t-shirt, grease on knuckles, reading glasses on a cord",
+      "consent_on_file": false
+    },
+    {
+      "id": "newcomer",
+      "name": "Newcomer",
+      "visual_lock": "Adult newcomer in their 20s, braided hair under a beanie, denim jacket with patches, first time holding a wrench",
+      "consent_on_file": false
+    }
+  ],
+  "locations": [
+    {
+      "id": "workshop",
+      "name": "Co-op workshop floor",
+      "description": "Converted garage, pegboard wall of labelled tools, three repair stands, bikes hanging from ceiling hooks, roll-up door half open"
+    }
+  ],
+  "visual_rules": {
+    "palette": ["#1F2A30", "#E8B33E", "#C2452D", "#D9D4C7"],
+    "palette_names": ["workshop slate", "safety yellow", "brick red", "concrete"],
+    "lighting_key": "Overcast daylight through the roll-up door, fluorescent fill, gritty contrast",
+    "aspect_ratio": "16:9",
+    "fps": 24,
+    "style_prompt": "handheld documentary photograph, overcast daylight, gritty texture, honest workshop details, muted color with safety-yellow accents",
+    "negative_prompt": "lens flare, neon, glossy advertising, cgi, 3d render, text, watermark, logo, extra fingers, deformed hands"
+  },
+  "exclusions": [
+    "No lycra racing montage",
+    "No 'save the planet' slogans",
+    "No implying repairs are free if parts cost money"
+  ]
+}

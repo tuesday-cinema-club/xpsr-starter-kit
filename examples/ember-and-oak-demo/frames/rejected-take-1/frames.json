@@ -1,0 +1,32 @@
+{
+  "workflow": "sdxl_depth_controlnet.json",
+  "checkpoint": "sd_xl_base_1.0.safetensors",
+  "checkpoint_sha256_short": "31e35c80fc",
+  "controlnet": "controlnet-depth-sdxl-1.0-small.safetensors",
+  "frames": [
+    {
+      "shot_number": 1,
+      "file": "shot_01_keyframe.png",
+      "seed": 420892,
+      "prompt": "roaster in rolled-up chambray shirt and waxed canvas apron with a brass pin, standing beside a small drum roaster, burlap coffee sacks on a pallet, chalkboard roast log on the wall, early morning sidelight from one window, 35mm documentary photograph, natural window light, warm practical lighting, shallow depth of field, fine film grain, muted earth tones",
+      "depth_pass": "shot_01_depth.png",
+      "seconds": 77.1
+    },
+    {
+      "shot_number": 2,
+      "file": "shot_02_keyframe.png",
+      "seed": 420893,
+      "prompt": "close up of a hand with a small burn scar on the forearm writing a date on a kraft paper coffee bag label with a grease pencil, roasted beans visible in the open bag, warm practical bulb light, 35mm documentary photograph, natural window light, warm practical lighting, shallow depth of field, fine film grain, muted earth tones",
+      "depth_pass": "shot_02_depth.png",
+      "seconds": 22.2
+    },
+    {
+      "shot_number": 3,
+      "file": "shot_03_keyframe.png",
+      "seed": 420894,
+      "prompt": "wide shot of a small coffee shop, reclaimed oak counter, two-group espresso machine, a roaster in a waxed canvas apron handing a kraft coffee bag to a customer in a cycling cap and olive rain jacket, hand-lettered window sign, street visible outside, morning light, 35mm documentary photograph, natural window light, warm practical lighting, shallow depth of field, fine film grain, muted earth tones",
+      "depth_pass": "shot_03_depth.png",
+      "seconds": 22.1
+    }
+  ]
+}

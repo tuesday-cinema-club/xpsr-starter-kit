@@ -1,0 +1,290 @@
+{
+  "OTIO_SCHEMA": "Timeline.1",
+  "name": "Ember & Oak launch, rough cut",
+  "global_start_time": {
+    "OTIO_SCHEMA": "RationalTime.1",
+    "rate": 24.0,
+    "value": 0.0
+  },
+  "tracks": {
+    "OTIO_SCHEMA": "Stack.1",
+    "name": "tracks",
+    "children": [
+      {
+        "OTIO_SCHEMA": "Track.1",
+        "name": "V1 Keyframes",
+        "kind": "Video",
+        "children": [
+          {
+            "OTIO_SCHEMA": "Clip.1",
+            "name": "Shot 1: Medium 50mm",
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 0.0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 192.0
+              }
+            },
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "name": "shot_01_keyframe.png",
+              "target_url": "frames/shot_01_keyframe.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 0.0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 192.0
+                }
+              },
+              "available_image_bounds": null,
+              "metadata": {}
+            },
+            "effects": [],
+            "markers": [],
+            "enabled": true,
+            "metadata": {
+              "tcc": {
+                "camera_move": "Push In",
+                "action": "The roaster tips a scoop of freshly roasted beans into a cooling tray beside the small drum roaster and studies the color.",
+                "voiceover_line": "Every batch is roasted small, in the back room of our first shop."
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.1",
+            "name": "Shot 2: Close Up 85mm",
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 0.0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 216.0
+              }
+            },
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "name": "shot_02_keyframe.png",
+              "target_url": "frames/shot_02_keyframe.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 0.0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 216.0
+                }
+              },
+              "available_image_bounds": null,
+              "metadata": {}
+            },
+            "effects": [],
+            "markers": [],
+            "enabled": true,
+            "metadata": {
+              "tcc": {
+                "camera_move": "Static",
+                "action": "The roaster's hand, burn scar on the forearm, writes today's date on a kraft coffee bag label with a grease pencil.",
+                "voiceover_line": "Every bag carries the day it was roasted."
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.1",
+            "name": "Shot 3: Wide 35mm",
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 0.0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 312.0
+              }
+            },
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "name": "shot_03_keyframe.png",
+              "target_url": "frames/shot_03_keyframe.png",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 0.0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 312.0
+                }
+              },
+              "available_image_bounds": null,
+              "metadata": {}
+            },
+            "effects": [],
+            "markers": [],
+            "enabled": true,
+            "metadata": {
+              "tcc": {
+                "camera_move": "Pull Out",
+                "action": "In the new shop, the roaster, in the same waxed canvas apron with the brass pin, hands a dated bag across the reclaimed oak counter to the regular in a cycling cap; 'Now Open' is lettered on the window behind them.",
+                "voiceover_line": "Same roaster, now a short walk closer. Stop in this week."
+              }
+            }
+          }
+        ],
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "metadata": {}
+      },
+      {
+        "OTIO_SCHEMA": "Track.1",
+        "name": "A1 Voiceover",
+        "kind": "Audio",
+        "children": [
+          {
+            "OTIO_SCHEMA": "Clip.1",
+            "name": "Voiceover",
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 0.0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 720.0
+              }
+            },
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "name": "vo_scratch.wav",
+              "target_url": "audio/vo_scratch.wav",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 0.0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 720.0
+                }
+              },
+              "available_image_bounds": null,
+              "metadata": {}
+            },
+            "effects": [],
+            "markers": [
+              {
+                "OTIO_SCHEMA": "Marker.2",
+                "name": "Every batch is roasted small in the back room of our first shop.",
+                "color": "GREEN",
+                "comment": "caption",
+                "marked_range": {
+                  "OTIO_SCHEMA": "TimeRange.1",
+                  "start_time": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 0.0
+                  },
+                  "duration": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 120.0
+                  }
+                },
+                "metadata": {}
+              },
+              {
+                "OTIO_SCHEMA": "Marker.2",
+                "name": "Every bag carries the day it was roasted.",
+                "color": "GREEN",
+                "comment": "caption",
+                "marked_range": {
+                  "OTIO_SCHEMA": "TimeRange.1",
+                  "start_time": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 192.0
+                  },
+                  "duration": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 72.0
+                  }
+                },
+                "metadata": {}
+              },
+              {
+                "OTIO_SCHEMA": "Marker.2",
+                "name": "Same roaster, now a short walk closer. Stop in this week.",
+                "color": "GREEN",
+                "comment": "caption",
+                "marked_range": {
+                  "OTIO_SCHEMA": "TimeRange.1",
+                  "start_time": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 408.0
+                  },
+                  "duration": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 120.0
+                  }
+                },
+                "metadata": {}
+              }
+            ],
+            "enabled": true,
+            "metadata": {}
+          }
+        ],
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "metadata": {}
+      }
+    ],
+    "source_range": null,
+    "effects": [],
+    "markers": [],
+    "enabled": true,
+    "metadata": {}
+  },
+  "metadata": {
+    "generator": "tuesdaycinemaclub/starter-kit generate_timeline.py"
+  }
+}

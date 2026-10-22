@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/tuesdaycinemaclub/starter-kit/schemas/state.schema.json",
+  "title": "PipelineState",
+  "description": "Gate record. An agent writes it with status awaiting_review; only a human decision moves it on.",
+  "type": "object",
+  "required": ["project_id", "stage", "status", "draft_file", "checks", "decision", "decided_by", "decided_at", "history"],
+  "properties": {
+    "project_id": { "type": "string" },
+    "stage": { "type": "string", "enum": ["brief", "previs", "produce", "present"] },
+    "status": { "type": "string", "enum": ["in_progress", "awaiting_review", "approved", "revise", "rejected", "evidence_requested"] },
+    "draft_file": { "type": "string" },
+    "checks": {
+      "type": "object",
+      "required": ["schema"],
+      "properties": {
+        "schema": { "type": "string", "enum": ["pass", "fail"] },
+        "bible_match": { "type": "string", "enum": ["pass", "fail", "not_applicable"] },
+        "unverified_sources": { "type": "integer", "minimum": 0 },
+        "total_runtime_sec": { "type": "number" },
+        "attempts": { "type": "integer", "minimum": 1 },
+        "errors": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "decision": { "type": ["string", "null"], "enum": ["Approve", "Revise", "Reject", "Request Evidence", null] },
+    "decided_by": { "type": ["string", "null"] },
+    "decided_at": { "type": ["string", "null"] },
+    "notes": { "type": "string" },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["at", "event", "by"],
+        "properties": {
+          "at": { "type": "string" },
+          "event": { "type": "string" },
+          "by": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  }
+}

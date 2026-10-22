@@ -1,0 +1,36 @@
+# Agent card: brief writer (Gate 01)
+# One agent, one job. Implemented by pipelines/01-pre-production/draft_brief.py
+role: draft_creative_brief
+crew: Writer
+model: ollama/llama3.2:3b          # any local Ollama model; override with --model
+decoding:
+  temperature: 0                   # repeatable-ish: same inputs give near-identical drafts
+  seed: 42
+  format: schemas/brief.schema.json   # Ollama constrains output to this schema
+inputs:
+  - workshop-build/client-briefs/<client>.md
+  - research_log.csv               # the only facts it may use
+  - director answers: who / feel / do      # copied verbatim, never rewritten
+  - exclusions (3 or more)                 # copied verbatim, never rewritten
+tools:
+  - read_file
+  - write_json
+read_permissions:
+  - workshop-build/client-briefs/
+  - <project>/research_log.csv
+write_permissions:
+  - <project>/brief.json
+  - <project>/brief.md
+  - <project>/brief_state.json
+forbidden:
+  - invent_facts
+  - change_director_answers
+  - drop_or_soften_exclusions
+  - network_calls_beyond_localhost
+output_target: <project>/brief.json
+schema: schemas/brief.schema.json
+gate:
+  name: Gate 01 Brief
+  decided_by: director
+  exits: [Approve, Revise, Reject, Request Evidence]
+  command: python3 pipelines/gate.py --state <project>/brief_state.json --decision <exit> --by "<name>"

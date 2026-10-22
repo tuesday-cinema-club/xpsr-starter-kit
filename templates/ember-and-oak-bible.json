@@ -1,0 +1,56 @@
+{
+  "project_id": "EMBER_OAK_SPOT_01",
+  "title": "Ember & Oak: Second Shop Launch",
+  "characters": [
+    {
+      "id": "roaster",
+      "name": "The Roaster",
+      "visual_lock": "Adult roaster in their 40s, short salt-and-pepper hair, rolled-up chambray shirt, waxed canvas apron with a brass pin, burn scar on left forearm",
+      "consent_on_file": false
+    },
+    {
+      "id": "regular",
+      "name": "The Regular",
+      "visual_lock": "Adult neighborhood regular in their 20s, cycling cap, olive rain jacket, carries a dented enamel travel mug",
+      "consent_on_file": false
+    }
+  ],
+  "locations": [
+    {
+      "id": "roastery",
+      "name": "Original roastery, back room",
+      "description": "Small drum roaster, burlap coffee sacks stacked on a pallet, chalkboard roast log, one east-facing window"
+    },
+    {
+      "id": "new_shop",
+      "name": "Second shop, front counter",
+      "description": "Reclaimed oak counter, two-group espresso machine, hand-lettered window sign reading 'Now Open', street visible outside"
+    }
+  ],
+  "visual_rules": {
+    "palette": [
+      "#3B2F2F",
+      "#A0522D",
+      "#D4A373",
+      "#E9DCC9",
+      "#4A5D4F"
+    ],
+    "palette_names": [
+      "roast brown",
+      "sienna",
+      "toasted tan",
+      "steamed milk",
+      "street green"
+    ],
+    "lighting_key": "Early morning natural sidelight from one window, warm practical bulbs, soft contrast, no hard rim light",
+    "aspect_ratio": "16:9",
+    "fps": 24,
+    "style_prompt": "35mm documentary photograph, natural window light, warm practical lighting, shallow depth of field, fine film grain, muted earth tones",
+    "negative_prompt": "lens flare, neon, oversaturated, plastic skin, cgi, 3d render, text, watermark, logo, extra fingers, deformed hands, stock photo smile, lettering, signage, writing, outdoor kiosk"
+  },
+  "exclusions": [
+    "No slow-motion latte-art pour",
+    "No stock 'hipster barista' tropes or forced smiles",
+    "No claims we cannot source (no 'best coffee in town')"
+  ]
+}

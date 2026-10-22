@@ -1,0 +1,24 @@
+{
+  "project_title": "Ember & Oak Launch",
+  "client": "Ember & Oak Coffee",
+  "target_audience": "Neighbors who already walk past the new shop on their way to work",
+  "core_feeling": "That the roastery down the street is part of their morning, not a chain",
+  "call_to_action": "Stop in at the second shop this week",
+  "key_message": "Small batches roasted in our back room, every bag dated, and now a short walk closer.",
+  "runtime_sec": 30,
+  "exclusions": [
+    "No slow-motion latte-art pour",
+    "No stock hipster-barista tropes or forced smiles",
+    "No claims we cannot source, such as best coffee in town"
+  ],
+  "tone": [
+    "Grounded",
+    "Warm",
+    "Communal"
+  ],
+  "references": [
+    "Dziga Vertov, Man with a Movie Camera (1929): a city waking up, observed rather than staged",
+    "Morning window light in documentary still photography: one source, honest shadows",
+    "Room tone of a working roastery: drum rumble, beans cracking, a door bell"
+  ]
+}

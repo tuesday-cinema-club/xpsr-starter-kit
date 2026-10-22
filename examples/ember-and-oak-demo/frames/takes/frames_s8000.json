@@ -1,0 +1,24 @@
+{
+  "workflow": "sdxl_depth_controlnet.json",
+  "checkpoint": "sd_xl_base_1.0.safetensors",
+  "checkpoint_sha256_short": "31e35c80fc",
+  "controlnet": "controlnet-depth-sdxl-1.0-small.safetensors",
+  "frames": [
+    {
+      "shot_number": 2,
+      "file": "shot_02_keyframe_s8000.png",
+      "seed": 8002,
+      "prompt": "close up of a person's hand holding a grease pencil over a blank kraft paper coffee bag label, small burn scar on the forearm, roasted coffee beans spilling from the open bag, wooden work table, warm practical bulb light, 35mm documentary photograph, natural window light, warm practical lighting, shallow depth of field, fine film grain, muted earth tones",
+      "depth_pass": "shot_02_depth.png",
+      "seconds": 22.0
+    },
+    {
+      "shot_number": 3,
+      "file": "shot_03_keyframe_s8000.png",
+      "seed": 8003,
+      "prompt": "interior of a small coffee shop seen from inside, reclaimed oak counter, two-group espresso machine, a coffee roaster in a waxed canvas apron behind the counter handing a kraft paper coffee bag to a customer in a cycling cap and olive rain jacket, large front window onto the street, morning light, 35mm documentary photograph, natural window light, warm practical lighting, shallow depth of field, fine film grain, muted earth tones",
+      "depth_pass": "shot_03_depth.png",
+      "seconds": 22.0
+    }
+  ]
+}

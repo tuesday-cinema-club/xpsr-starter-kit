@@ -1,0 +1,58 @@
+{
+  "scene_id": "SC01",
+  "scene_name": "Morning Light in the Roastery",
+  "shots": [
+    {
+      "shot_number": 1,
+      "framing": "Medium",
+      "lens_mm": 50,
+      "duration_sec": 8,
+      "camera_move": "Static",
+      "location_id": "roastery",
+      "characters": [
+        "roaster"
+      ],
+      "action_description": "The roaster wipes sweat from their forehead with the back of their hand as they inspect a batch of freshly roasted beans.",
+      "visual_prompt": "Early morning natural sidelight from one window, warm practical bulbs, soft contrast, no hard rim light. The roaster is in front of the drum roaster, wearing a rolled-up chambray shirt and waxed canvas apron with a brass pin.",
+      "voiceover_line": "We source our green coffee from two importers who publish their farm partners.",
+      "source_ids": [
+        "SRC-004"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 2,
+      "framing": "Wide",
+      "lens_mm": 35,
+      "duration_sec": 10,
+      "camera_move": "Static",
+      "location_id": "roastery",
+      "characters": [
+        "regular"
+      ],
+      "action_description": "The regular walks into the roastery, cycling cap and olive rain jacket, carrying a dented enamel travel mug.",
+      "visual_prompt": "Soft contrast, warm practical bulbs. The regular is walking towards the counter, with the burlap coffee sacks stacked on a pallet in the background.",
+      "voiceover_line": "",
+      "source_ids": [],
+      "claims_sourced": false
+    },
+    {
+      "shot_number": 3,
+      "framing": "Medium",
+      "lens_mm": 50,
+      "duration_sec": 12,
+      "camera_move": "Static",
+      "location_id": "new_shop",
+      "characters": [
+        "roaster"
+      ],
+      "action_description": "The roaster stands behind the counter in the new shop, wearing a reclaimed oak apron with a hand-lettered sign reading 'Now Open'.",
+      "visual_prompt": "Reclaimed oak counter, two-group espresso machine. The roaster is standing behind the counter, with the street visible outside through the window.",
+      "voiceover_line": "Stop in at our second shop this week.",
+      "source_ids": [
+        "SRC-002"
+      ],
+      "claims_sourced": true
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "project_title": "Ember & Oak Launch",
+  "client": "Ember & Oak Coffee",
+  "target_audience": "Neighbors who already walk past the new shop on their way to work",
+  "core_feeling": "That the roastery down the street is part of their morning, not a chain",
+  "call_to_action": "Stop in at the second shop this week",
+  "key_message": "Experience Ember & Oak's small-batch roasting and community-driven approach.",
+  "runtime_sec": 30,
+  "exclusions": [
+    "No slow-motion latte-art pour",
+    "No stock hipster-barista tropes or forced smiles",
+    "No claims we cannot source, such as best coffee in town"
+  ],
+  "tone": [
+    "Grounded",
+    "Warm",
+    "Communal"
+  ],
+  "references": [
+    "Filmmaker: Chris Cunningham (The Man with the Movie Camera)",
+    "Photographer: Gordon Parks (American Gothic)",
+    "Sound Designer: Walter Murch (Apocalypse Now)"
+  ]
+}
