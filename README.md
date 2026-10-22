@@ -18,6 +18,16 @@ You don't need to code, and a phone is enough to take part.
 | Curious what the output looks like | [The worked example](examples/ember-and-oak-demo/README.md) |
 | Using a screen reader | [Accessibility notes](ACCESSIBILITY.md) |
 
+## Summit materials
+
+These open in Google Drive, Docs and Slides. Anyone with the link can view them; no Google account is needed to read.
+
+| Material | What it is |
+| --- | --- |
+| [Presentation slides (Google Slides)](https://docs.google.com/presentation/d/1f4xDXcP211pzTOrO6uBBurJBfZXbqNYSe1a6GFWs85A/edit?usp=sharing) | The Part 1 deck: Agentic Workflows, Zero Cost, Infinite Potential. |
+| [Participant worksheet (Google Docs)](https://docs.google.com/document/d/15-wb-H50hgA4E_o1oEPeZRXIZxb96HkD6AdLwkj2xBM/edit?usp=sharing) | The printable handout. A screen-reader-friendly copy is in [the participant guide](docs/participant-guide.md). |
+| [Shared summit folder (Google Drive)](https://drive.google.com/drive/folders/1B5DcK_d1HLQPDtcZ6f6dGI4qb3_O1oRn?usp=sharing) | All summit files in one place. |
+
 ## Quickstart
 
 ### Phone

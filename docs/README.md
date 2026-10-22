@@ -7,7 +7,7 @@ Reference material for the Tuesday Cinema Club + XPSR Creator Summit, 10/24/26.
 | Document | What it is |
 | --- | --- |
 | [Participant guide](participant-guide.md) | The attendee handout: setup by device, Part 1 in one page, the 60-minute build, troubleshooting. |
-| [Part 1 talk outline](presentation-notes.md) | Talk structure with what to show from this repo for each idea. The deck itself is not in the repo yet. |
+| [Part 1 talk outline](presentation-notes.md) | Talk structure with what to show from this repo for each idea. The slides are in [the presentation deck on Google Slides](https://docs.google.com/presentation/d/1f4xDXcP211pzTOrO6uBBurJBfZXbqNYSe1a6GFWs85A/edit?usp=sharing). |
 | [Six-session series](six-session-curriculum.md) | What each session covers and which folders it uses. |
 | [Accessibility notes](../ACCESSIBILITY.md) | How this repository is written so it works with screen readers and without color. |
 

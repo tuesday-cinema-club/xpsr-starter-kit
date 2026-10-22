@@ -2,7 +2,7 @@
 
 Tuesday Cinema Club + XPSR Creator Summit, 10/24/26, 11:15 to 12:15.
 
-> **Status:** this outline is built from the participant guide and the ideas in this repository. The slide deck itself is not in the repo yet. Add speaker notes under each section, or place an exported PDF of the deck in this folder and link it here.
+> **Status:** this outline is built from the participant guide and the ideas in this repository, and maps each idea to something you can show from the repo. The slides themselves are in [the presentation deck on Google Slides](https://docs.google.com/presentation/d/1f4xDXcP211pzTOrO6uBBurJBfZXbqNYSe1a6GFWs85A/edit?usp=sharing).
 
 Each section lists the idea, what to show live from this repository, and the handout line it matches.
 
