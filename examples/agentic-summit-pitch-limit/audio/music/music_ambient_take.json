@@ -1,0 +1,17 @@
+{
+  "model": "facebook/musicgen-stereo-large",
+  "device": "cpu",
+  "half": false,
+  "prompt": "warm minimal ambient film underscore, slow felt piano motif over soft analog synthesizer pads, gentle tape warmth, hopeful and quietly determined, 80 bpm, no drums, instrumental",
+  "duration": 30,
+  "sample_rate": 32000,
+  "takes": [
+    {
+      "take": 1,
+      "file": "music_ambient_take_1.wav",
+      "seed": 801,
+      "seconds": 30.0,
+      "render_seconds": 1064.3
+    }
+  ]
+}

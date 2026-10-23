@@ -101,6 +101,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--shots", required=True)
     p.add_argument("--frames", required=True, help="Folder with shot_NN_keyframe.png")
+    p.add_argument("--music", help="Music bed for track A2")
     p.add_argument("--clips", help="Folder with approved shot_NN_motion.mp4 clips (used instead of stills)")
     p.add_argument("--audio", help="Voiceover audio for the audio track")
     p.add_argument("--captions", help="captions.srt: one marker per cue")
@@ -148,6 +149,8 @@ def main():
         tracks.append(track("A1 Voiceover", "Audio",
                             [clip("Voiceover", media_ref(args.audio, total, rate, base_dir), total, rate,
                                   markers=markers)]))
+    if args.music:
+        tracks.append(track("A2 Music", "Audio", [clip("Music", media_ref(args.music, total, rate, base_dir), total, rate)]))
 
     timeline = {
         "OTIO_SCHEMA": "Timeline.1",

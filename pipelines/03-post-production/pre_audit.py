@@ -76,7 +76,7 @@ def main():
         prov = list(csv.DictReader(f))
     logged = {r["asset_id"] for r in prov}
     assets = [os.path.splitext(os.path.basename(x))[0] for x in sorted(glob.glob(os.path.join(proj, "frames", "shot_*_keyframe.png")))]
-    assets += [os.path.basename(x) for x in sorted(glob.glob(os.path.join(proj, "audio", "*.wav")))]
+    assets += [os.path.basename(x) for x in sorted(glob.glob(os.path.join(proj, "audio", "**", "*.wav"), recursive=True))]
     for name in ("captions.srt", os.path.basename(args.cut)):
         if os.path.exists(os.path.join(proj, name)):
             assets.append(name)
@@ -98,7 +98,8 @@ def main():
         (6, "Provenance: every asset logged", "Pass" if prov_ok else "Fail", prov_note),
         (7, "Human signature (non-negotiable)", "Director only",
          "Not machine-checkable. Unsigned until a named human signs below."
-         + (f" Note: {', '.join(scratch)} is a SCRATCH stand-in and must be replaced by a human take." if scratch else "")),
+         + (f" Note: {', '.join(scratch)} {'is a SCRATCH stand-in' if len(scratch) == 1 else 'are SCRATCH stand-ins'}"
+            " and must be replaced by a human take." if scratch else "")),
     ]
 
     out = args.out or os.path.join(proj, "audit.md")

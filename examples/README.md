@@ -8,7 +8,7 @@ Complete runs, every file kept, mistakes included. Each README says what broke a
 | [`ember-and-oak-overpowered/`](ember-and-oak-overpowered/README.md) | `glm-4.7-flash`, FLUX.2 [klein] 4B | Revise, 6 of 7 | The same job with bigger models: timings, side-by-side frames, and what extra compute does and does not fix. |
 | [`grand-cru-car-wash/`](grand-cru-car-wash/README.md) | `glm-4.7-flash`, FLUX.2 [klein] 4B | Revise, 5 of 7 | A new, ironic brief: a car wash that talks like a Temecula Valley tasting room. |
 | [`agentic-summit-pitch/`](agentic-summit-pitch/README.md) | `llama3.2:3b`, FLUX.2 [klein] 4B + Piper TTS | Ready, 6 of 7 | The summit promo spot: pitch featuring the instructor with reference photo keyframing and local Piper audio. |
-| [`agentic-summit-pitch-limit/`](agentic-summit-pitch-limit/README.md) | `gpt-oss-120b`, FLUX.2 [dev] 32B, Wan 2.2 5B motion, Kokoro, Whisper `turbo` | Revise, 5 of 7 | The summit pitch with the biggest models an 8 GB card can run: real motion, about 8 and a half hours of machine time, and a prison-break film the gates caught. |
+| [`agentic-summit-pitch-limit/`](agentic-summit-pitch-limit/README.md) | `gpt-oss-120b`, FLUX.2 [dev] 32B, Wan 2.2 5B motion, Qwen3-TTS voice clone, MusicGen, Whisper `turbo` | Revise, 5 of 7 | The summit pitch with the biggest models an 8 GB card can run: real motion, about 8 and a half hours of machine time, a prison-break film the gates caught, and a before and after of the sound: the instructor's cloned voice over a generated music bed. |
 | `run_demo.sh` | Workshop stack | | Reruns the Ember & Oak build into a new folder and stops at every gate for you to decide. |
 
 ## Watch them

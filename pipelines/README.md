@@ -18,7 +18,7 @@ The studio works in three stages. Each stage ends at a human gate, and approved 
 | --- | --- | --- |
 | [`01-pre-production/`](01-pre-production/README.md) | Brief and shot list | `draft_brief.py`, `run_breakdown.py` |
 | [`02-production/`](02-production/README.md) | Previs, keyframes and motion | `blender_previs.py`, `comfyui_client.py`, `comfyui_motion.py`, `workflows/` |
-| [`03-post-production/`](03-post-production/README.md) | Sound, captions, cut, QC | `scratch_vo.py`, `transcribe.py`, `generate_timeline.py`, `assemble_animatic.py`, `qc_check.py`, `pre_audit.py` |
+| [`03-post-production/`](03-post-production/README.md) | Sound, captions, cut, QC | `scratch_vo.py`, `music_bed.py`, `transcribe.py`, `generate_timeline.py`, `assemble_animatic.py`, `qc_check.py`, `pre_audit.py` |
 
 ## Shared files
 

@@ -29,13 +29,13 @@
     {
       "check": "Integrated loudness",
       "result": "pass",
-      "measured": "-14.9 LUFS",
+      "measured": "-14.6 LUFS",
       "expected": "-14.0 +/- 1.5 LUFS"
     },
     {
       "check": "True peak",
       "result": "pass",
-      "measured": "-1.5 dBTP",
+      "measured": "-1.6 dBTP",
       "expected": "<= -1.0 dBTP"
     }
   ]

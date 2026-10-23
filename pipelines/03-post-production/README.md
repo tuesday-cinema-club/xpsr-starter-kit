@@ -5,6 +5,7 @@ From approved keyframes to a captioned, measured cut with a pre-filled audit. Ev
 | Step | Script | Writes |
 | --- | --- | --- |
 | Scratch voiceover (optional) | `scratch_vo.py` | `audio/vo_scratch.wav`, `audio/vo_scratch_script.txt` |
+| Music bed (optional) | `music_bed.py` | `audio/music/music_take_N.wav`, `music_take.json` |
 | Captions | `transcribe.py` | `captions.srt` |
 | Timeline for Kdenlive | `generate_timeline.py` | `timeline.otio` |
 | Animatic cut | `assemble_animatic.py` | `cut.mp4` (open captions), `cut_softsubs.mp4` (closed captions) |
@@ -29,6 +30,28 @@ For a more natural scratch voice, use Kokoro-82M (Apache 2.0), which needs `pip 
 python3 pipelines/03-post-production/scratch_vo.py --shots my-project/shots.json \
     --voice kokoro:am_michael --speed 1.1 --out my-project/audio/vo_scratch.wav
 ```
+
+To hear the lines in a real person's voice, clone it from a recording of that person with Qwen3-TTS (Apache 2.0). **Only clone a voice whose owner has agreed in writing**, and say in the credits that the voice is synthetic. The provenance row marks a clone as SCRATCH like any other synthetic voice, because it is not a performance:
+
+```bash
+~/tools/voice/.venv-qwen/bin/python pipelines/03-post-production/scratch_vo.py --shots my-project/shots.json \
+    --voice clone:my_voice.wav --ref-text @my_voice.txt \
+    --say '$840-a-year=eight hundred and forty dollar a year' --out my-project/audio/vo_clone.wav
+```
+
+`--ref-text` is exactly what the reference recording says (`@file` reads it from a file). Between 10 and 40 seconds of clean speech works. `--say WRITTEN=SPOKEN` respells a word for the voice only, for numbers, symbols and names a voice model stumbles over; the captions keep the written form. In the summit pitch the clone read "$840-a-year" as "$840-year" until it was respelled.
+
+### Music bed
+
+`music_bed.py` writes takes of a music bed with Meta's MusicGen (AudioCraft), at the spot's length, each with a fixed seed and a provenance row. Describe instruments, tempo and mood, never an artist. Audition prompts as 5-second clips first, then render full takes:
+
+```bash
+~/tools/audiocraft/.venv/bin/python pipelines/03-post-production/music_bed.py --shots my-project/shots.json \
+    --prompt "warm minimal ambient underscore, felt piano over soft synth pads, 80 bpm, no drums, instrumental" \
+    --takes 3 --out-dir my-project/audio/music
+```
+
+`facebook/musicgen-stereo-medium` (the default) runs on an 8 GB card in seconds. `facebook/musicgen-stereo-large` does not fit at full length: use `--device cpu` (about 25 minutes per 30-second take on 64 cores), or `--device cuda --half` for 5-second auditions. **MusicGen's weights are licensed CC-BY-NC 4.0: non-commercial use only.** A person listens to every take and picks one.
 
 ## 2. Captions with Whisper
 
@@ -63,12 +86,14 @@ python3 pipelines/03-post-production/assemble_animatic.py --shots my-project/sho
     --fps 24 --end-card "Ember & Oak / Second shop now open" --out my-project/cut.mp4
 ```
 
-Each still becomes a clip with a gentle digital move from its `camera_move` (Push In, Pull Out, Pan, Tilt, Handheld; Static stays still). Audio is normalized to minus 14 LUFS with a true peak at or below minus 1.5 dBTP. If QC then reports the loudness as too low, the voice is peaky and the true-peak ceiling stopped the normalizer short: add `--compress` to compress the voice gently first. The Kokoro voice in the summit pitch measured minus 15.9 LUFS without it and minus 14.9 with it. Two files come out:
+Each still becomes a clip with a gentle digital move from its `camera_move` (Push In, Pull Out, Pan, Tilt, Handheld; Static stays still). Audio is normalized to minus 14 LUFS with a true peak at or below minus 1.5 dBTP (minus 2 with `--music`, because a denser mix gains more peak in the AAC encoder). If QC then reports the loudness as too low, the voice is peaky and the true-peak ceiling stopped the normalizer short: add `--compress` to compress the voice gently first. The Kokoro voice in the summit pitch measured minus 15.9 LUFS without it and minus 14.9 with it. Two files come out:
 
 - `cut.mp4` has captions burned in: white text on a mostly opaque dark box, readable over any frame.
 - `cut_softsubs.mp4` has a selectable English subtitle track for players that support closed captions.
 
 The end card is typed by a person, so it is real, legible lettering instead of generated pseudo-text.
+
+With `--music my-project/audio/music/music_take_2.wav`, the picked take goes under the voice: 8 LU below it (`--music-lu`), ducked further while anyone speaks, with a fade in and a 2-second fade out. Pass the same file to `generate_timeline.py --music` to get it on its own track, A2, in Kdenlive.
 
 With `--clips my-project/motion`, any shot with an approved `shot_NN_motion.mp4` uses the motion clip, scaled to 1920 by 1080, instead of a still with a digital move. A clip shorter than its shot holds its last frame.
 

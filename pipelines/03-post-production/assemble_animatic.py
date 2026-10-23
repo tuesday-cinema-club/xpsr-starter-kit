@@ -22,6 +22,10 @@ from comfyui_motion.py) use it instead of the still. The motion already holds
 the camera move, so no digital move is added; a clip shorter than its shot
 holds its last frame.
 
+With --music, a music bed (for example a take from music_bed.py) goes under
+the voice: it sits --music-lu below the voice, ducks further while anyone
+speaks, fades in, and fades out over the last two seconds.
+
 Example:
     python3 pipelines/03-post-production/assemble_animatic.py \\
         --shots my-project/shots.json --frames my-project/frames \\
@@ -85,9 +89,12 @@ def main():
     p.add_argument("--captions", help="captions.srt to burn in and attach")
     p.add_argument("--fps", type=float, default=24.0)
     p.add_argument("--lufs", type=float, default=-14.0, help="Integrated loudness target (default -14 LUFS)")
+    p.add_argument("--music", help="Music bed under the voice (WAV), e.g. an approved take from music_bed.py")
+    p.add_argument("--music-lu", type=float, default=-8.0,
+                   help="Music level relative to the voice before ducking, in LU (default -8)")
     p.add_argument("--compress", action="store_true",
                    help="Gently compress the voice before normalizing; use when QC says the loudness is too low "
-                        "because peaks hit the -1.5 dBTP ceiling")
+                        "because peaks hit the true-peak ceiling")
     p.add_argument("--end-card", help="Text for the end card; use ' / ' for a line break")
     p.add_argument("--end-card-sec", type=float, default=3.0)
     p.add_argument("--out", default="cut.mp4")
@@ -153,10 +160,26 @@ def main():
             say("ok", f"End card: {' | '.join(lines)}")
 
         audio_args, audio_map = [], []
+        comp = "acompressor=threshold=-24dB:ratio=3:attack=5:release=120:makeup=4dB," if args.compress else ""
+        if args.audio and args.music:
+            # Premix: voice and bed at known loudness, the bed ducked by the voice (sidechain).
+            mix = os.path.join(tmp, "mix.wav")
+            ff(["-i", args.audio, "-i", args.music, "-filter_complex",
+                f"[0:a]aresample=48000,{comp}loudnorm=I=-16:TP=-2,apad,atrim=0:{total},asplit[vo][key];"
+                f"[1:a]aresample=48000,loudnorm=I={-16 + args.music_lu}:TP=-4,apad,atrim=0:{total},"
+                f"afade=t=in:d=0.8,afade=t=out:st={max(0.0, total - 2.0)}:d=2[bed];"
+                "[bed][key]sidechaincompress=threshold=0.02:ratio=6:attack=30:release=450:makeup=1[ducked];"
+                "[vo][ducked]amix=inputs=2:normalize=0:duration=first[out]",
+                "-map", "[out]", "-ac", "2", mix])
+            say("ok", f"Music: {os.path.basename(args.music)} {args.music_lu:g} LU under the voice, ducked while it speaks")
+            args_audio, comp = mix, ""
+        else:
+            args_audio = args.audio
         if args.audio:
-            audio_args = ["-i", args.audio]
-            comp = "acompressor=threshold=-24dB:ratio=3:attack=5:release=120:makeup=4dB," if args.compress else ""
-            audio_map = ["-map", "1:a", "-af", f"{comp}loudnorm=I={args.lufs}:TP=-1.5:LRA=11,aresample=48000",
+            audio_args = ["-i", args_audio]
+            # A voice-and-music mix overshoots its true peak more after AAC encoding, so leave more room.
+            tp = -2.0 if args.music else -1.5
+            audio_map = ["-map", "1:a", "-af", f"{comp}loudnorm=I={args.lufs}:TP={tp:g}:LRA=11,aresample=48000",
                          "-c:a", "aac", "-b:a", "192k"]
 
         soft = os.path.splitext(args.out)[0] + "_softsubs.mp4"
@@ -181,6 +204,7 @@ def main():
     append_provenance(prov, asset_id=os.path.basename(args.out), stage="edit",
                       tool_or_model="ffmpeg animatic (assemble_animatic.py)",
                       prompt_or_input=("approved motion clips + " if args.clips else "approved keyframes + ") + (os.path.basename(args.audio) if args.audio else "no audio")
+                      + (" + " + os.path.basename(args.music) if args.music else "")
                       + (" + " + os.path.basename(args.captions) if args.captions else ""))
     say(">", "Gate 04: screen the cut, then run qc_check.py and pre_audit.py.")
 

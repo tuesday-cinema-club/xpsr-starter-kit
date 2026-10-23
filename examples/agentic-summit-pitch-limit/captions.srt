@@ -1,29 +1,29 @@
 1
-00:00:00,400 --> 00:00:04,400
+00:00:00,710 --> 00:00:03,320
 Every tool in this pipeline runs on your
 own machine.
 
 2
-00:00:05,400 --> 00:00:09,600
+00:00:05,600 --> 00:00:09,450
 No cloud fees, no subscriptions, no coding
 required.
 
 3
-00:00:10,400 --> 00:00:14,600
+00:00:10,840 --> 00:00:14,760
 One agent, one job, and a human approves
 every gate.
 
 4
-00:00:15,400 --> 00:00:19,900
+00:00:15,760 --> 00:00:19,180
 Before anything ships, a person signs the
 anti-slop audit.
 
 5
-00:00:20,400 --> 00:00:25,400
+00:00:20,590 --> 00:00:24,790
 Free tools replace an $840-a-year Adobe
 plan.
 
 6
-00:00:25,400 --> 00:00:29,400
+00:00:25,430 --> 00:00:28,070
 October 24th, join the Tuesday Cinema
 Club.

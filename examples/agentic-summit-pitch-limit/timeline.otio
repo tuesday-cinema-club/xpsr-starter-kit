@@ -348,8 +348,8 @@
             },
             "media_reference": {
               "OTIO_SCHEMA": "ExternalReference.1",
-              "name": "vo_scratch.wav",
-              "target_url": "audio/vo_scratch.wav",
+              "name": "vo_clone.wav",
+              "target_url": "audio/vo_clone.wav",
               "available_range": {
                 "OTIO_SCHEMA": "TimeRange.1",
                 "start_time": {
@@ -378,12 +378,12 @@
                   "start_time": {
                     "OTIO_SCHEMA": "RationalTime.1",
                     "rate": 24.0,
-                    "value": 10.0
+                    "value": 17.0
                   },
                   "duration": {
                     "OTIO_SCHEMA": "RationalTime.1",
                     "rate": 24.0,
-                    "value": 96.0
+                    "value": 63.0
                   }
                 },
                 "metadata": {}
@@ -398,12 +398,12 @@
                   "start_time": {
                     "OTIO_SCHEMA": "RationalTime.1",
                     "rate": 24.0,
-                    "value": 130.0
+                    "value": 134.0
                   },
                   "duration": {
                     "OTIO_SCHEMA": "RationalTime.1",
                     "rate": 24.0,
-                    "value": 101.0
+                    "value": 92.0
                   }
                 },
                 "metadata": {}
@@ -418,12 +418,12 @@
                   "start_time": {
                     "OTIO_SCHEMA": "RationalTime.1",
                     "rate": 24.0,
-                    "value": 250.0
+                    "value": 260.0
                   },
                   "duration": {
                     "OTIO_SCHEMA": "RationalTime.1",
                     "rate": 24.0,
-                    "value": 101.0
+                    "value": 94.0
                   }
                 },
                 "metadata": {}
@@ -438,12 +438,12 @@
                   "start_time": {
                     "OTIO_SCHEMA": "RationalTime.1",
                     "rate": 24.0,
-                    "value": 370.0
+                    "value": 378.0
                   },
                   "duration": {
                     "OTIO_SCHEMA": "RationalTime.1",
                     "rate": 24.0,
-                    "value": 108.0
+                    "value": 82.0
                   }
                 },
                 "metadata": {}
@@ -458,12 +458,12 @@
                   "start_time": {
                     "OTIO_SCHEMA": "RationalTime.1",
                     "rate": 24.0,
-                    "value": 490.0
+                    "value": 494.0
                   },
                   "duration": {
                     "OTIO_SCHEMA": "RationalTime.1",
                     "rate": 24.0,
-                    "value": 120.0
+                    "value": 101.0
                   }
                 },
                 "metadata": {}
@@ -483,12 +483,65 @@
                   "duration": {
                     "OTIO_SCHEMA": "RationalTime.1",
                     "rate": 24.0,
-                    "value": 96.0
+                    "value": 63.0
                   }
                 },
                 "metadata": {}
               }
             ],
+            "enabled": true,
+            "metadata": {}
+          }
+        ],
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "metadata": {}
+      },
+      {
+        "OTIO_SCHEMA": "Track.1",
+        "name": "A2 Music",
+        "kind": "Audio",
+        "children": [
+          {
+            "OTIO_SCHEMA": "Clip.1",
+            "name": "Music",
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 0.0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 720.0
+              }
+            },
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "name": "music_pulse_take_1.wav",
+              "target_url": "audio/music/music_pulse_take_1.wav",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 0.0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 720.0
+                }
+              },
+              "available_image_bounds": null,
+              "metadata": {}
+            },
+            "effects": [],
+            "markers": [],
             "enabled": true,
             "metadata": {}
           }

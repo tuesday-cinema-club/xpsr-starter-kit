@@ -1,0 +1,24 @@
+{
+  "model": "facebook/musicgen-stereo-large",
+  "device": "cpu",
+  "half": false,
+  "prompt": "warm cinematic documentary score, softly pulsing analog synthesizer arpeggio, felt piano, low cello drone, steady and quietly defiant, gently building, 90 bpm, instrumental",
+  "duration": 30,
+  "sample_rate": 32000,
+  "takes": [
+    {
+      "take": 1,
+      "file": "music_pulse_take_1.wav",
+      "seed": 701,
+      "seconds": 30.0,
+      "render_seconds": 1222.0
+    },
+    {
+      "take": 2,
+      "file": "music_pulse_take_2.wav",
+      "seed": 702,
+      "seconds": 30.0,
+      "render_seconds": 1123.7
+    }
+  ]
+}

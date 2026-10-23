@@ -46,6 +46,8 @@ The demo in `examples/ember-and-oak-demo/` was produced on one machine on 2026-1
 
 ### Pushing the limit on the same machine
 
+Charts of these numbers, and estimates for bigger hardware, are in [How long it takes](../docs/performance.md).
+
 The biggest models this 8 GB card can run at all, used for [the summit pitch, pushing the limit](../examples/agentic-summit-pitch-limit/README.md). They lean on the machine's 109 GB of system RAM: none of them fit in VRAM.
 
 | Step | Time |
@@ -56,6 +58,9 @@ The biggest models this 8 GB card can run at all, used for [the summit pitch, pu
 | One Wan 2.2 5B motion clip, 121 frames at 1280 by 704 (5 seconds), 20 steps | 24 minutes |
 | Kokoro-82M scratch voiceover, 6 lines, on the CPU | under 1 minute |
 | Whisper `turbo` on 30 seconds of audio, on the CPU | 60 seconds |
+| Qwen3-TTS voice clone, 6 lines, on the GPU | under 1 minute |
+| One 5-second music audition, MusicGen stereo large in half precision, on the GPU | 8 seconds |
+| One 30-second music take, MusicGen stereo large, on the CPU (64 threads) | 18 to 20 minutes |
 | The whole 30-second spot, including the failed run and the retakes | about 8 and a half hours of machine time |
 
 Two setup notes from that run. Ollama 0.18.2 was too old for the official `gpt-oss:120b` download, so the model came from `hf.co/ggml-org/gpt-oss-120b-GGUF` with a corrected chat template. And `gpt-oss-120b` with FLUX.2 [dev] loaded at the same time would need more than 109 GB of RAM, so run `ollama stop <model>` before rendering.
@@ -80,6 +85,8 @@ A CPU-only laptop will be slower for the model steps (think minutes, not seconds
 | FLUX.2 [dev] 32B | Keyframes (pushing the limit) | FLUX non-commercial license: read it before any paid use of the model or its output |
 | Mistral Small 3.1 24B | FLUX.2 [dev] text encoder | Apache 2.0 |
 | Kokoro-82M | Scratch voiceover (pushing the limit) | Apache 2.0 |
+| Qwen3-TTS-12Hz-1.7B-Base | Voice clone of a consenting person (`scratch_vo.py --voice clone:`) | Apache 2.0 |
+| MusicGen (`facebook/musicgen-stereo-medium`, `-large`) | Music bed (`music_bed.py`) | CC-BY-NC 4.0: non-commercial use only. The AudioCraft code is MIT. |
 | Whisper | Captions | MIT |
 | Piper voice `en_US-ljspeech-high` | Scratch voiceover | Trained on the public-domain LJ Speech dataset; Piper itself is GPL |
 

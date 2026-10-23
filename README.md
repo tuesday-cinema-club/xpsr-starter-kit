@@ -136,7 +136,7 @@ A fictional car wash opens in the Temecula Valley and talks about itself like a 
 
 [Full cut with sound (MP4)](examples/agentic-summit-pitch-limit/cut.mp4) · [How it was made, and what broke](examples/agentic-summit-pitch-limit/README.md)
 
-The [summit pitch](examples/agentic-summit-pitch/README.md) rebuilt with `gpt-oss-120b` (117B parameters), FLUX.2 [dev] 32B and Wan 2.2 5B motion on the same 8 GB card, in about 8 and a half hours instead of minutes. The host holds up across four shots and the camera really moves. The biggest writing model also overflowed its context and wrote a prison-break film, which the schema check caught on the first gate. Stand-in audit: **5 of 7**. The screening room's projector moves between shots.
+The [summit pitch](examples/agentic-summit-pitch/README.md) rebuilt with `gpt-oss-120b` (117B parameters), FLUX.2 [dev] 32B and Wan 2.2 5B motion on the same 8 GB card, in about 8 and a half hours instead of minutes. The host holds up across four shots and the camera really moves. The biggest writing model also overflowed its context and wrote a prison-break film, which the schema check caught on the first gate. The sound was then redone in the instructor's own cloned voice (Qwen3-TTS) over a MusicGen bed; [the first cut](examples/agentic-summit-pitch-limit/before/cut.mp4) is kept for comparison. Stand-in audit: **5 of 7**. The screening room's projector moves between shots.
 
 ## How long it takes
 

@@ -6,6 +6,8 @@ The [summit pitch](../agentic-summit-pitch/README.md) rebuilt with the biggest m
 
 [Watch the full 30-second cut with sound (MP4)](cut.mp4). There is also [a version with a selectable caption track](cut_softsubs.mp4). The preview above loops without sound.
 
+The sound was redone after the first cut, at the instructor's request: the lines are now read in the instructor's own cloned voice over a generated music bed. The first cut is kept for comparison: [before (MP4)](before/cut.mp4), [after (MP4)](cut.mp4). See [Sound pass: before and after](#sound-pass-before-and-after).
+
 ## The two versions side by side
 
 | | [Version 1](../agentic-summit-pitch/README.md) | Pushing the limit (this folder) |
@@ -13,7 +15,8 @@ The [summit pitch](../agentic-summit-pitch/README.md) rebuilt with the biggest m
 | Writing | `llama3.2:3b` (3B parameters) | `gpt-oss-120b` (117B parameters, 63 GB), thinking on high |
 | Keyframes | FLUX.2 [klein] 4B, 37 seconds per frame | FLUX.2 [dev] 32B, 28 to 34 minutes per frame, at 1920 by 1056 |
 | Motion | None: stills with a digital move | Wan 2.2 5B: a real 5-second clip per shot, 24 minutes each |
-| Voice | Piper `en_US-bryce-medium` | Kokoro-82M `am_michael` |
+| Voice | Piper `en_US-bryce-medium` | Kokoro-82M `am_michael` in the first cut; now the instructor's own voice, cloned with Qwen3-TTS 1.7B |
+| Music | None | MusicGen stereo large (3.3B), ducked under the voice |
 | Captions | Whisper `base.en` | Whisper `turbo` (large-v3-turbo) |
 | Shots | 3 (9, 9 and 12 seconds) | 6 (5 seconds each, the motion model's limit) |
 | Machine time | Minutes | About 8 and a half hours, failures included |
@@ -79,7 +82,7 @@ FLUX.2 [dev] got two references per shot: the Blender depth pass for composition
 - **Human fix:** the kit's "Pull Out" phrase was vague ("The camera slowly pulls back."), so `comfyui_motion.py` now says the camera "dollies backward, away from the subject, who gets smaller in frame". Take 2 pulled out, but after 2.5 seconds the host turned away from the camera and walked up the aisle. The director kept frames 0 to 59, logged the trim in `provenance.csv`, and let the last frame hold under the end card.
 - **Likely cause of the white-out:** shot 6's action description ended "the end card fades in over the last three seconds", and that went straight into the motion prompt. The production README now warns against edit notes in action descriptions.
 
-### Post-production
+### Post-production, first cut
 
 - **Voiceover:** Kokoro-82M (`am_michael`, speed 1.1), run on the CPU, marked SCRATCH.
 - **Captions:** Whisper `turbo` heard every word correctly, unlike `base.en` in the other examples. Its cues still ran across shot changes ([`captions.whisper-raw.srt`](captions.whisper-raw.srt)), so a person re-cut them, one cue per spoken line ([`captions.srt`](captions.srt)).
@@ -87,9 +90,30 @@ FLUX.2 [dev] got two references per shot: the Blender depth pass for composition
 - **QC:** the first cut failed at minus 15.9 LUFS. The Kokoro voice is peaky, so the true-peak ceiling stopped the normalizer short of minus 14. `assemble_animatic.py` gained `--compress`, and the recut passed: 30.00 seconds, 1920 by 1080, 24 fps, minus 14.9 LUFS, minus 1.5 dBTP.
 - **Timeline:** [`timeline.otio`](timeline.otio) for Kdenlive. `generate_timeline.py` now measures each motion clip, so shot 6 sits at its real 2.5 seconds with a gap after it for a freeze frame.
 
+### Sound pass: before and after
+
+After the first cut, the instructor asked for their own voice and a music bed. The picture did not change.
+
+| | Before ([`before/cut.mp4`](before/cut.mp4)) | After ([`cut.mp4`](cut.mp4)) |
+| --- | --- | --- |
+| Voice | Kokoro-82M `am_michael`, a stock synthetic voice | The instructor's own voice, cloned with Qwen3-TTS 1.7B from a 37.9-second recording of the instructor (kept outside this repo) |
+| Music | None | MusicGen stereo large: a warm pulsing synthesizer and felt piano bed, 8 LU under the voice and ducked further while it speaks |
+| Lines | 4.0 to 5.0 seconds each, sped up 10 percent to fit | 2.2 to 3.9 seconds each at natural pace |
+| Loudness | minus 14.9 LUFS, minus 1.5 dBTP | minus 14.6 LUFS, minus 1.6 dBTP |
+| Records | [`before/audit.md`](before/audit.md), [`before/qc.json`](before/qc.json), [`before/captions.srt`](before/captions.srt), [`before/timeline.otio`](before/timeline.otio) | [`audit.md`](audit.md), [`qc.json`](qc.json), [`captions.srt`](captions.srt), [`timeline.otio`](timeline.otio) |
+
+![Two audio level graphs over the 30 seconds, with shot boundaries every 5 seconds. Before: six blocks of Kokoro speech with silence between them. After: the cloned voice in the same six places, with the music bed filling the gaps 8 to 10 LU below the voice, rising slightly during the end card and fading out at the end.](../../docs/images/17-summit-pitch-sound-before-after.png)
+
+- **Voice:** `scratch_vo.py` gained a `clone:` engine for Qwen3-TTS, the same model and reference recording as the voice clone the instructor made for another project. All six lines rendered on the GPU in under a minute. Whisper `turbo` then heard every word right except one: the clone read "$840-a-year" as "$840-year". `scratch_vo.py` gained `--say WRITTEN=SPOKEN`, which respells a phrase for the voice only, and "eight hundred and forty dollar a year" fixed it while the captions kept the written form.
+- **Music:** `music_bed.py` is new. Three prompts were auditioned as 5-second clips on the GPU, with MusicGen large in half precision, 8 seconds each. Two were rendered at full length on the CPU, because the large model does not fit the card for 30 seconds: 18 to 20 minutes per take, three takes. No artist is named in any prompt.
+- **The pick:** pulse take 1 (seed 701), for the steadiest level and no clipping. Pulse take 2 changes texture abruptly around 11 to 14 seconds, and the ambient take has isolated loud piano hits with 40 clipped samples. **This pick was made from measurements, not by ear**: the AI stand-in cannot listen. The other takes are in [`audio/music/`](audio/music/), and swapping one in is a single `assemble_animatic.py --music` command.
+- **Mix:** `assemble_animatic.py --music` pre-mixes the bed under the voice with a sidechain duck, a fade in and a 2-second fade out. The first mix failed QC at minus 0.9 dBTP: the AAC encoder adds a few tenths of a decibel of peak, and the music made the mix denser. With `--music` the final normalizer now aims for minus 2 dBTP (minus 1.5 otherwise), and the recut passed. Whisper still transcribes every word of the final mix.
+- **Captions:** the clone speaks faster than Kokoro, so the captions were re-timed to the measured speech, one cue per line ([`captions.srt`](captions.srt); raw output in [`captions.clone-whisper-raw.srt`](captions.clone-whisper-raw.srt)).
+- **Timeline:** `generate_timeline.py --music` puts the bed on its own track, A2.
+
 ### Gate 04: Audit
 
-[`audit.md`](audit.md): **stand-in verdict Revise, 5 of 7.** Intent, evidence, specificity, technical QC and provenance pass. Continuity fails, and not on the face: the screening room's projector is above the host in shot 3, hanging in the room in shot 4, and doubled in shot 6. And nobody has signed.
+[`audit.md`](audit.md): **stand-in verdict Revise, 5 of 7**, the same as before the sound pass. Intent, evidence, specificity, technical QC and provenance pass. Continuity fails, and not on the face: the screening room's projector is above the host in shot 3, hanging in the room in shot 4, and doubled in shot 6. Nobody has signed, and the release note now asks the director to listen to all three music takes and to disclose the cloned voice.
 
 ## Timings
 
@@ -105,12 +129,15 @@ All on one RTX 2070 SUPER (8 GB) with 109 GB of system RAM. None of the three bi
 | Voiceover, Kokoro-82M on the CPU | under 1 minute |
 | Captions, Whisper `turbo` on the CPU | 60 seconds |
 | Cut, QC and pre-audit | under 1 minute |
+| Sound pass: voice clone, Qwen3-TTS on the GPU | under 1 minute |
+| Sound pass: 3 music auditions, 5 seconds each, MusicGen large on the GPU | 8 seconds each |
+| Sound pass: 3 music takes, 30 seconds each, MusicGen large on the CPU | 18 to 20 minutes each, 57 minutes in all |
 
 `gpt-oss-120b` and FLUX.2 [dev] together need more RAM than this machine has, so the writing model was unloaded (`ollama stop`) before rendering. Setup notes are in the [hardware matrix](../../environment/hardware-matrix.md#pushing-the-limit-on-the-same-machine).
 
 ## Licenses
 
-FLUX.2 [dev] is released under a **non-commercial license**. The other new models are Apache 2.0: `gpt-oss-120b`, Wan 2.2 5B, Kokoro-82M, and Mistral Small 3.1, FLUX.2 [dev]'s text encoder. Read the FLUX license before using this cut, or anything made with that model, to sell tickets or services. Version 1's FLUX.2 [klein] 4B is Apache 2.0.
+FLUX.2 [dev] is released under a **non-commercial license**, and MusicGen's weights under **CC-BY-NC 4.0**, also non-commercial. The other new models are Apache 2.0: `gpt-oss-120b`, Wan 2.2 5B, Kokoro-82M, Qwen3-TTS, and Mistral Small 3.1, FLUX.2 [dev]'s text encoder. Read both licenses before using this cut, or anything made with those models, to sell tickets or services. A cloned voice also needs its owner's consent, and the audience should be told it is synthetic. Version 1's FLUX.2 [klein] 4B is Apache 2.0.
 
 ## Run it yourself
 
@@ -127,9 +154,19 @@ python3 pipelines/02-production/comfyui_motion.py --shots shots.json --bible bib
     --frames frames --out motion --comfyui-dir ~/ComfyUI
 python3 pipelines/03-post-production/scratch_vo.py ... --voice kokoro:am_michael --speed 1.1
 python3 pipelines/03-post-production/assemble_animatic.py ... --clips motion --compress
+# The sound pass:
+~/tools/voice/.venv-qwen/bin/python pipelines/03-post-production/scratch_vo.py --shots shots.json \
+    --voice clone:my_voice.wav --ref-text @my_voice.txt \
+    --say '$840-a-year=eight hundred and forty dollar a year' --out audio/vo_clone.wav
+~/tools/audiocraft/.venv/bin/python pipelines/03-post-production/music_bed.py --shots shots.json \
+    --model facebook/musicgen-stereo-large --device cpu --takes 2 --seed 700 --name music_pulse_take \
+    --prompt "warm cinematic documentary score, softly pulsing analog synthesizer arpeggio, felt piano, low cello drone, steady and quietly defiant, gently building, 90 bpm, instrumental" \
+    --out-dir audio/music
+python3 pipelines/03-post-production/assemble_animatic.py ... --clips motion --compress \
+    --audio audio/vo_clone.wav --music audio/music/music_pulse_take_1.wav
 ```
 
-Model downloads come to about 130 GB: `gpt-oss-120b` (63 GB), FLUX.2 [dev] with its text encoder (about 55 GB), and Wan 2.2 5B with its text encoder and VAE (about 18 GB).
+Model downloads come to about 145 GB: `gpt-oss-120b` (63 GB), FLUX.2 [dev] with its text encoder (about 55 GB), Wan 2.2 5B with its text encoder and VAE (about 18 GB), MusicGen stereo large (13 GB) and Qwen3-TTS 1.7B (4 GB).
 
 ## Files
 
@@ -143,7 +180,9 @@ Model downloads come to about 130 GB: `gpt-oss-120b` (63 GB), FLUX.2 [dev] with 
 | `previs/` | Gate 02 | Grey renders, depth passes, `previs.blend`, `previs.json`. |
 | `frames/` | Gate 03 | Approved keyframes, `frames.json`, `frames_state.json`, rejected first takes. |
 | `motion/` | Gate 03 | Approved motion clips, `motion.json`, `motion_state.json`, filmstrips of the rejected takes. |
-| `audio/` | Post | SCRATCH voiceover and its timing script. |
-| `captions.whisper-raw.srt`, `captions.srt` | Post | Raw Whisper output and human re-cut captions. |
+| `audio/` | Post | The cloned voice (`vo_clone.wav`) and the first cut's Kokoro voice (`vo_scratch.wav`), each with its timing script. Both are marked SCRATCH: neither is a performance. |
+| `audio/music/` | Post | Three MusicGen takes and their `.json` sidecars; `music_pulse_take_1.wav` is in the cut. |
+| `captions.clone-whisper-raw.srt`, `captions.whisper-raw.srt`, `captions.srt` | Post | Raw Whisper output for each voice, and the human re-cut captions for the cloned voice. |
 | `timeline.otio`, `cut.mp4`, `cut_softsubs.mp4`, `cut-preview.webp`, `poster.jpg` | Post | Timeline, two cuts, silent preview, still. |
-| `qc.json`, `audit.md`, `provenance.csv` | Gate 04 | QC, unsigned audit, ledger including rejected takes and the shot 6 trim. |
+| `qc.json`, `audit.md`, `provenance.csv` | Gate 04 | QC, unsigned audit, ledger including rejected takes, the shot 6 trim and the music pick. |
+| `before/` | Comparison | The first cut with the Kokoro voice and no music, with its captions, QC, audit and timeline. |
