@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0e11">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Live readings from the machine that runs the workshop's models: GPU, CPU, memory, Ollama, ComfyUI and Flow credits.">
+  <title>Machine Resources</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="resources.css">
+  <script type="module" src="resources.js"></script>
+</head>
+<body class="res">
+  <header class="top">
+    <div class="top-bar">
+      <a class="brand" href="/" aria-label="Back to XPSR Director">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span><span class="brand-name">Machine</span><br><span class="brand-sub">Live resources</span></span>
+      </a>
+      <span class="tc" id="clock" aria-hidden="true">--:--:--</span>
+      <span class="light" id="live">LIVE</span>
+      <a class="btn small ghost" href="/library">Library</a>
+      <a class="btn small" href="/">Director</a>
+    </div>
+  </header>
+  <main id="res" aria-live="off"><p class="muted">Reading the machine…</p></main>
+</body>
+</html>

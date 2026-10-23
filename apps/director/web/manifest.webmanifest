@@ -1,0 +1,16 @@
+{
+  "name": "XPSR Director",
+  "short_name": "Director",
+  "description": "Brief, block, frame, animate and audit a 30-second spot, with a human signature at every gate.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d0e11",
+  "theme_color": "#0d0e11",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

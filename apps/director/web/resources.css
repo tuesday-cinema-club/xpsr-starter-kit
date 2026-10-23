@@ -1,0 +1,48 @@
+body.res { padding-bottom: 32px; }
+.res-grid { display: grid; gap: 14px; }
+@media (min-width: 720px) { .res-grid.two { grid-template-columns: 1fr 1fr; } }
+.big-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.big-num { font: 700 44px/1 var(--mono); font-variant-numeric: tabular-nums; }
+.big-num small { font-size: 18px; color: var(--muted); }
+.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); border: 1px solid var(--line); }
+.stat-row > div { padding: 8px 10px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 0 -1px -1px 0; }
+.stat-row .k { display: block; font: 700 10px/1.3 var(--mono); color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.stat-row .v { display: block; font: 700 15px/1.3 var(--mono); font-variant-numeric: tabular-nums; }
+.bar { height: 22px; background: var(--well); border: 1px solid var(--line); display: flex; overflow: hidden; }
+.bar span { height: 100%; transition: width 0.6s var(--spring); }
+.bar .a { background: var(--amber); }
+.bar .g { background: var(--green); }
+.bar .s { background: #6b8cff; }
+.bar .x { background: var(--line-strong); }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; font: 400 12px/1.4 var(--mono); color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; margin-right: 5px; vertical-align: -1px; }
+canvas.spark { width: 100%; height: 86px; display: block; background: var(--well); border: 1px solid var(--line); }
+.cores { display: grid; grid-template-columns: repeat(16, 1fr); gap: 3px; }
+@media (max-width: 480px) { .cores { grid-template-columns: repeat(8, 1fr); } }
+.core { aspect-ratio: 1; display: grid; place-items: center; font: 700 9px/1 var(--mono); color: var(--bg); background: var(--line); }
+.svc { display: grid; gap: 8px; }
+.svc-row { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; padding: 8px 10px; background: var(--well); border: 1px solid var(--line); font: 400 13px/1.4 var(--mono); flex-wrap: wrap; }
+.svc-row b { color: var(--text); }
+.job-status { font: 700 10.5px/1 var(--mono); padding: 3px 5px; border: 1px solid; }
+.job-status.done { color: var(--green-text); }
+.job-status.failed { color: var(--red-text); }
+.job-status.running, .job-status.queued { color: var(--amber); }
+
+/* library */
+.filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.filters button { min-height: 44px; padding: 0 12px; background: var(--well); color: var(--text); border: 1px solid var(--line); font: 700 12px/1 var(--mono); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+.lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 12px; }
+.item { background: var(--card); border: 1px solid var(--line); display: grid; align-content: start; scroll-margin-top: 90px; }
+.item:target { border-color: var(--amber); box-shadow: 0 0 0 2px var(--amber); }
+.item img, .item video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #000; display: block; }
+.item-body { padding: 10px 12px 12px; display: grid; gap: 8px; }
+.item-title { font: 700 14px/1.3 var(--sans); }
+.item-meta { font: 400 12px/1.5 var(--mono); color: var(--muted); }
+.item-meta b { color: var(--text); }
+.item details { font-size: 13px; color: var(--muted); }
+.item summary { cursor: pointer; font: 700 11px/2 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text); }
+.ledger-day { display: grid; gap: 6px; }
+.ledger-row { display: grid; grid-template-columns: 96px 1fr; gap: 10px; align-items: center; padding: 8px; background: var(--well); border: 1px solid var(--line); text-decoration: none; color: inherit; }
+.ledger-row img, .ledger-row video, .ledger-row .nofile { width: 96px; aspect-ratio: 16 / 9; object-fit: cover; background: #000; display: grid; place-items: center; font: 400 10px/1.2 var(--mono); color: var(--faint); text-align: center; }
+.ledger-row .refunded { text-decoration: line-through; color: var(--faint); }

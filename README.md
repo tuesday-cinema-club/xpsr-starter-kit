@@ -13,6 +13,7 @@ You don't need to code, and a phone is enough to take part.
 | If you are | Go to |
 | --- | --- |
 | Attending the summit | [The participant guide](docs/participant-guide.md) |
+| Directing from a phone | [XPSR Director, the phone app](apps/director/README.md) |
 | Setting up a laptop | [Environment setup](environment/README.md) |
 | Running the 60-minute build | [Workshop build](workshop-build/README.md) |
 | Curious what the output looks like | [Watch the examples](#watch-the-examples) |
@@ -66,6 +67,19 @@ Nothing to install. Open this page, read the [two client briefs](workshop-build/
 
 Everything above, plus ComfyUI and one image model. See [the ComfyUI section of the setup guide](environment/README.md#laptop-with-gpu-8-gb-or-more-vram-about-40-gb-free).
 
+## The phone app
+
+[XPSR Director](apps/director/README.md) puts the four gates on a phone. The brief, the shot deck, first and last frames rendered on the workshop machine's GPU, motion from Google Flow inside the free daily credits, and the seven-check audit, each signed by a named person. One button packs it all into the files this kit reads.
+
+<p>
+  <img src="docs/images/director/06-first-last-action.png" width="260" alt="A shot in XPSR Director on a phone: a locked first frame, a locked last frame of the same room a moment later, and the action prompt with a 10-credit Veo 3.1 Lite option and a budget bar at 0 of 50 credits.">
+  <img src="docs/images/director/13-resources-desktop.png" width="520" alt="The live resources page: GPU 100 percent busy with graphics memory almost all ComfyUI, the CPU thread grid, system memory, engine status and recent jobs.">
+</p>
+
+```bash
+python3 apps/director/server.py    # then open http://127.0.0.1:8790
+```
+
 ## The ideas
 
 1. **Snake versus charmer.** Stop rerolling and start directing. Cloud prompting works like a slot machine. A local pipeline gives you repeatable results that you control.
@@ -96,6 +110,7 @@ Everything above, plus ComfyUI and one image model. See [the ComfyUI section of 
 | [`workshop-build/`](workshop-build/README.md) | The 60-minute build: client briefs, schedule, crews, templates, and the anti-slop rubric. |
 | [`templates/`](templates/README.md) | Project bibles for all three clients and an empty research log. |
 | [`examples/`](examples/README.md) | Three complete worked runs, mistakes included, with the finished videos, and a script to rerun one yourself. |
+| [`apps/`](apps/README.md) | XPSR Director: the four gates as a phone app, served from the GPU machine, with Google Flow motion inside a free daily credit budget, a library of everything made, and a live resources page. |
 | [`tools/`](tools/README.md) | The screenshot helper used for the docs. |
 
 ## Watch the examples
@@ -176,7 +191,9 @@ The kit replaces an $840-a-year Adobe plan with free tools that run on your mach
 | Audition | Ardour or Audacity |
 | Cloud chat subscriptions | Ollama with a local model |
 
-"Free," "open-source," "open-weight" and "local" mean different things. Check each model's license before you use it for paid work. The [hardware matrix](environment/hardware-matrix.md#model-licenses) lists the licenses for every model used here.
+"Free," "open-source," "open-weight" and "local" mean different things. Check each model's license before you use it for paid work.
+
+One optional step breaks the rule on purpose. [XPSR Director](apps/director/README.md) can send motion to Google Flow, whose free credits cover a few clips a day, through useapi.net, which is a paid service. Everything else in the app, frames included, stays on your machine. The [hardware matrix](environment/hardware-matrix.md#model-licenses) lists the licenses for every model used here.
 
 ## Requirements
 
