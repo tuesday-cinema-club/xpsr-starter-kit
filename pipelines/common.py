@@ -172,10 +172,12 @@ def _strip_for_ollama(schema: dict) -> dict:
 
 def ollama_generate(prompt: str, model: str = DEFAULT_MODEL, schema: dict = None,
                     system: str = None, seed: int = 42, temperature: float = 0.0,
-                    timeout: int = 600):
+                    timeout: int = 600, think=None):
     """Call the local Ollama daemon. With `schema`, Ollama constrains decoding
     to that JSON Schema and the parsed object is returned. Fixed seed and zero
-    temperature keep reruns repeatable."""
+    temperature keep reruns repeatable. `think` lets a reasoning model think
+    before answering (True, or "low"/"medium"/"high" for gpt-oss); by default
+    thinking is off when a schema is given."""
     payload = {
         "model": model,
         "prompt": prompt,
@@ -184,7 +186,16 @@ def ollama_generate(prompt: str, model: str = DEFAULT_MODEL, schema: dict = None
     }
     if system:
         payload["system"] = system
-    if schema is not None:
+    if schema is not None and think:
+        # A decoding grammar would stop the model from thinking first, so the
+        # schema goes in the prompt instead; callers validate the result.
+        payload["prompt"] += ("\n\nReply with only one JSON object that matches this JSON Schema, "
+                              "no other text:\n" + json.dumps(_strip_for_ollama(schema)))
+        payload["think"] = think
+        # Thinking can run to thousands of tokens. Ollama's default context
+        # (about 4K) then pushes the brief out of memory before the answer.
+        payload["options"]["num_ctx"] = 16384
+    elif schema is not None:
         payload["format"] = _strip_for_ollama(schema)
         # Thinking models (glm-4.7-flash, qwen3, ...) otherwise put the JSON in
         # the "thinking" field and leave "response" empty.
@@ -209,6 +220,8 @@ def ollama_generate(prompt: str, model: str = DEFAULT_MODEL, schema: dict = None
         text = body.get("thinking", "")
     if schema is None:
         return text
+    if think:
+        text = text[text.find("{"):text.rfind("}") + 1] or text   # drop any ```json fence
     try:
         return json.loads(text)
     except json.JSONDecodeError as exc:

@@ -1,0 +1,107 @@
+{
+  "scene_id": "SC01",
+  "scene_name": "Agentic Workflows Spot",
+  "shots": [
+    {
+      "shot_number": 1,
+      "framing": "Extreme Wide",
+      "lens_mm": 24,
+      "duration_sec": 4.5,
+      "camera_move": "Pan Right",
+      "location_id": "edit_studio",
+      "characters": [],
+      "action_description": "Camera pans right across the warm edit suite, revealing camera rigs, dual monitors, practical lamps, and film reels.",
+      "visual_prompt": "A spacious cinema edit suite bathed in golden practical light, with camera equipment, color grading screens, warm lamps, and stacked film reels.",
+      "voiceover_line": "Every tool runs locally—no cloud fees, no subscriptions.",
+      "source_ids": [
+        "SRC-001"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 2,
+      "framing": "Medium",
+      "lens_mm": 50,
+      "duration_sec": 4.5,
+      "camera_move": "Push In",
+      "location_id": "edit_studio",
+      "characters": [
+        "instructor"
+      ],
+      "action_description": "Instructor leans toward the monitor, smiling, gesturing with his hand as he explains the workflow.",
+      "visual_prompt": "A charismatic filmmaker with wavy brown hair, beard, black sweater, standing at a workstation, warm light rimming his face.",
+      "voiceover_line": "One agent per job, human approves each gate before next stage.",
+      "source_ids": [
+        "SRC-002"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 3,
+      "framing": "Wide",
+      "lens_mm": 35,
+      "duration_sec": 4.5,
+      "camera_move": "Pan Left",
+      "location_id": "edit_studio",
+      "characters": [],
+      "action_description": "Monitor displays icons of Ollama, Blender, ComfyUI, Whisper, Kdenlive, and OpenTimelineIO in a grid.",
+      "visual_prompt": "Close-up of a computer screen showing six software icons labeled Ollama, Blender, ComfyUI, Whisper, Kdenlive, OpenTimelineIO, each marked free.",
+      "voiceover_line": "The stack: Ollama, Blender, ComfyUI, Whisper, Kdenlive, OpenTimelineIO—free.",
+      "source_ids": [
+        "SRC-003"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 4,
+      "framing": "Extreme Wide",
+      "lens_mm": 24,
+      "duration_sec": 4.5,
+      "camera_move": "Tilt Up",
+      "location_id": "screening_room",
+      "characters": [],
+      "action_description": "Camera tilts up from the plush carpet to the projector beam slicing through soft haze, revealing a vintage clapperboard on a side table.",
+      "visual_prompt": "Intimate arthouse screening room with warm wood walls, a projector casting a golden beam, ambient haze, and a wooden clapperboard.",
+      "voiceover_line": "Our 7‑point audit needs a human signature before release.",
+      "source_ids": [
+        "SRC-004"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 5,
+      "framing": "Close Up",
+      "lens_mm": 85,
+      "duration_sec": 4.5,
+      "camera_move": "Static",
+      "location_id": "screening_room",
+      "characters": [
+        "instructor"
+      ],
+      "action_description": "Instructor looks directly into the camera, warm smile, gesturing invitingly toward the audience.",
+      "visual_prompt": "Instructor standing near the screen, soft rim light outlining his silhouette, eyes locked on the camera.",
+      "voiceover_line": "Join Tuesday Cinema Club summit 10/24/26—learn pipeline, build spot.",
+      "source_ids": [
+        "SRC-005"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 6,
+      "framing": "Extreme Close Up",
+      "lens_mm": 100,
+      "duration_sec": 4.5,
+      "camera_move": "Handheld",
+      "location_id": "edit_studio",
+      "characters": [],
+      "action_description": "Phone on a desk shows a bright app screen with a 'Clone Starter Kit' button and QR code.",
+      "visual_prompt": "Close-up of a smartphone displaying a download page for the local starter kit, with a large button and QR code, warm lighting reflecting off the screen.",
+      "voiceover_line": "No code needed—your phone works, replacing $840 Adobe plan free.",
+      "source_ids": [
+        "SRC-006",
+        "SRC-007"
+      ],
+      "claims_sourced": true
+    }
+  ]
+}

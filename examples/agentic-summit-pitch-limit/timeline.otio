@@ -1,0 +1,512 @@
+{
+  "OTIO_SCHEMA": "Timeline.1",
+  "name": "Rough cut",
+  "global_start_time": {
+    "OTIO_SCHEMA": "RationalTime.1",
+    "rate": 24.0,
+    "value": 0.0
+  },
+  "tracks": {
+    "OTIO_SCHEMA": "Stack.1",
+    "name": "tracks",
+    "children": [
+      {
+        "OTIO_SCHEMA": "Track.1",
+        "name": "V1 Motion",
+        "kind": "Video",
+        "children": [
+          {
+            "OTIO_SCHEMA": "Clip.1",
+            "name": "Shot 1: Medium 50mm",
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 0.0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 120.0
+              }
+            },
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "name": "shot_01_motion.mp4",
+              "target_url": "motion/shot_01_motion.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 0.0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 120.0
+                }
+              },
+              "available_image_bounds": null,
+              "metadata": {}
+            },
+            "effects": [],
+            "markers": [],
+            "enabled": true,
+            "metadata": {
+              "tcc": {
+                "camera_move": "Push In",
+                "action": "The instructor stands in front of his editing desk, two monitors glowing behind him, looks straight into the lens and smiles as he starts to speak.",
+                "voiceover_line": "Every tool in this pipeline runs on your own machine."
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.1",
+            "name": "Shot 2: Medium 50mm",
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 0.0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 120.0
+              }
+            },
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "name": "shot_02_motion.mp4",
+              "target_url": "motion/shot_02_motion.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 0.0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 120.0
+                }
+              },
+              "available_image_bounds": null,
+              "metadata": {}
+            },
+            "effects": [],
+            "markers": [],
+            "enabled": true,
+            "metadata": {
+              "tcc": {
+                "camera_move": "Pan Right",
+                "action": "Across the desk: one monitor shows a grey 3D blocking of a room, the other a node graph; a keyboard and a small control surface sit in front.",
+                "voiceover_line": "No cloud fees. No subscriptions. No coding required."
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.1",
+            "name": "Shot 3: Extreme Wide 24mm",
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 0.0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 120.0
+              }
+            },
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "name": "shot_03_motion.mp4",
+              "target_url": "motion/shot_03_motion.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 0.0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 120.0
+                }
+              },
+              "available_image_bounds": null,
+              "metadata": {}
+            },
+            "effects": [],
+            "markers": [],
+            "enabled": true,
+            "metadata": {
+              "tcc": {
+                "camera_move": "Push In",
+                "action": "The instructor stands in the aisle of the empty screening room, rows of seats behind him, the projector beam cutting through haze above.",
+                "voiceover_line": "One agent, one job, and a human approves every gate."
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.1",
+            "name": "Shot 4: Close Up 85mm",
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 0.0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 120.0
+              }
+            },
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "name": "shot_04_motion.mp4",
+              "target_url": "motion/shot_04_motion.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 0.0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 120.0
+                }
+              },
+              "available_image_bounds": null,
+              "metadata": {}
+            },
+            "effects": [],
+            "markers": [],
+            "enabled": true,
+            "metadata": {
+              "tcc": {
+                "camera_move": "Static",
+                "action": "Two hands in black sleeves hold a vintage wooden clapperboard in the projector beam; dust drifts through the light.",
+                "voiceover_line": "Before anything ships, a person signs the anti-slop audit."
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.1",
+            "name": "Shot 5: Medium 85mm",
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 0.0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 120.0
+              }
+            },
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "name": "shot_05_motion.mp4",
+              "target_url": "motion/shot_05_motion.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 0.0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 120.0
+                }
+              },
+              "available_image_bounds": null,
+              "metadata": {}
+            },
+            "effects": [],
+            "markers": [],
+            "enabled": true,
+            "metadata": {
+              "tcc": {
+                "camera_move": "Static",
+                "action": "Medium close-up: the instructor, lit by the projector's spill, looks into the lens and gives a small, knowing nod.",
+                "voiceover_line": "Free tools replace an $840-a-year Adobe plan."
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Clip.1",
+            "name": "Shot 6: Wide 35mm",
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 0.0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 60.0
+              }
+            },
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "name": "shot_06_motion.mp4",
+              "target_url": "motion/shot_06_motion.mp4",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 0.0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 60.0
+                }
+              },
+              "available_image_bounds": null,
+              "metadata": {}
+            },
+            "effects": [],
+            "markers": [],
+            "enabled": true,
+            "metadata": {
+              "tcc": {
+                "camera_move": "Pull Out",
+                "action": "The instructor raises the clapperboard toward the camera in the aisle as the projector beam flares behind him; the end card fades in over the last three seconds.",
+                "voiceover_line": "October 24th: join the Tuesday Cinema Club."
+              }
+            }
+          },
+          {
+            "OTIO_SCHEMA": "Gap.1",
+            "name": "",
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 0.0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 60.0
+              }
+            },
+            "effects": [],
+            "markers": [],
+            "enabled": true,
+            "metadata": {}
+          }
+        ],
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "metadata": {}
+      },
+      {
+        "OTIO_SCHEMA": "Track.1",
+        "name": "A1 Voiceover",
+        "kind": "Audio",
+        "children": [
+          {
+            "OTIO_SCHEMA": "Clip.1",
+            "name": "Voiceover",
+            "source_range": {
+              "OTIO_SCHEMA": "TimeRange.1",
+              "start_time": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 0.0
+              },
+              "duration": {
+                "OTIO_SCHEMA": "RationalTime.1",
+                "rate": 24.0,
+                "value": 720.0
+              }
+            },
+            "media_reference": {
+              "OTIO_SCHEMA": "ExternalReference.1",
+              "name": "vo_scratch.wav",
+              "target_url": "audio/vo_scratch.wav",
+              "available_range": {
+                "OTIO_SCHEMA": "TimeRange.1",
+                "start_time": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 0.0
+                },
+                "duration": {
+                  "OTIO_SCHEMA": "RationalTime.1",
+                  "rate": 24.0,
+                  "value": 720.0
+                }
+              },
+              "available_image_bounds": null,
+              "metadata": {}
+            },
+            "effects": [],
+            "markers": [
+              {
+                "OTIO_SCHEMA": "Marker.2",
+                "name": "Every tool in this pipeline runs on your own machine.",
+                "color": "GREEN",
+                "comment": "caption",
+                "marked_range": {
+                  "OTIO_SCHEMA": "TimeRange.1",
+                  "start_time": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 10.0
+                  },
+                  "duration": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 96.0
+                  }
+                },
+                "metadata": {}
+              },
+              {
+                "OTIO_SCHEMA": "Marker.2",
+                "name": "No cloud fees, no subscriptions, no coding required.",
+                "color": "GREEN",
+                "comment": "caption",
+                "marked_range": {
+                  "OTIO_SCHEMA": "TimeRange.1",
+                  "start_time": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 130.0
+                  },
+                  "duration": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 101.0
+                  }
+                },
+                "metadata": {}
+              },
+              {
+                "OTIO_SCHEMA": "Marker.2",
+                "name": "One agent, one job, and a human approves every gate.",
+                "color": "GREEN",
+                "comment": "caption",
+                "marked_range": {
+                  "OTIO_SCHEMA": "TimeRange.1",
+                  "start_time": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 250.0
+                  },
+                  "duration": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 101.0
+                  }
+                },
+                "metadata": {}
+              },
+              {
+                "OTIO_SCHEMA": "Marker.2",
+                "name": "Before anything ships, a person signs the anti-slop audit.",
+                "color": "GREEN",
+                "comment": "caption",
+                "marked_range": {
+                  "OTIO_SCHEMA": "TimeRange.1",
+                  "start_time": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 370.0
+                  },
+                  "duration": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 108.0
+                  }
+                },
+                "metadata": {}
+              },
+              {
+                "OTIO_SCHEMA": "Marker.2",
+                "name": "Free tools replace an $840-a-year Adobe plan.",
+                "color": "GREEN",
+                "comment": "caption",
+                "marked_range": {
+                  "OTIO_SCHEMA": "TimeRange.1",
+                  "start_time": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 490.0
+                  },
+                  "duration": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 120.0
+                  }
+                },
+                "metadata": {}
+              },
+              {
+                "OTIO_SCHEMA": "Marker.2",
+                "name": "October 24th, join the Tuesday Cinema Club.",
+                "color": "GREEN",
+                "comment": "caption",
+                "marked_range": {
+                  "OTIO_SCHEMA": "TimeRange.1",
+                  "start_time": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 610.0
+                  },
+                  "duration": {
+                    "OTIO_SCHEMA": "RationalTime.1",
+                    "rate": 24.0,
+                    "value": 96.0
+                  }
+                },
+                "metadata": {}
+              }
+            ],
+            "enabled": true,
+            "metadata": {}
+          }
+        ],
+        "source_range": null,
+        "effects": [],
+        "markers": [],
+        "enabled": true,
+        "metadata": {}
+      }
+    ],
+    "source_range": null,
+    "effects": [],
+    "markers": [],
+    "enabled": true,
+    "metadata": {}
+  },
+  "metadata": {
+    "generator": "tuesday-cinema-club/xpsr-starter-kit generate_timeline.py"
+  }
+}

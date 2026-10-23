@@ -1,0 +1,40 @@
+{
+  "title": "The Great Escape",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "description": "A dimly lit, cramped prison cell. The camera pans across the stone walls, focusing on a small, flickering candle on a wooden table. The prisoner, a young woman with determined eyes, looks up as the candle sputters out.",
+      "camera_angle": "Low angle, slowly pulling back to reveal the entire cell.",
+      "lighting": "Low-key lighting with a single candle providing a warm, amber glow. Shadows dominate the corners of the cell.",
+      "sound_effects": "Soft, distant clanking of metal doors, a faint wind whistling through a crack in the wall."
+    },
+    {
+      "scene_number": 2,
+      "description": "The prisoner discovers a hidden compartment behind a loose brick. She pulls out a rusted key and a crumpled map of the prison layout.",
+      "camera_angle": "Close-up on the hand as it slides the brick aside, then a top-down view of the map.",
+      "lighting": "A sudden burst of light from a hidden shaft illuminates the compartment, casting dramatic highlights on the key and map.",
+      "sound_effects": "A soft metallic click as the brick moves, followed by a faint rustle of paper."
+    },
+    {
+      "scene_number": 3,
+      "description": "Nighttime. The prisoner silently navigates the dark corridors, using the map to avoid guards. Shadows dance on the walls as torches flicker.",
+      "camera_angle": "Tracking shot following the prisoner from behind, intercut with over-the-shoulder shots of the map.",
+      "lighting": "Cool, blue-toned moonlight filtering through narrow windows, contrasted with the warm orange of torches.",
+      "sound_effects": "Echoing footsteps, distant murmurs of guards, the occasional creak of old wood."
+    },
+    {
+      "scene_number": 4,
+      "description": "The prisoner reaches the outer wall. She uses the key to unlock a hidden gate, revealing a moonlit courtyard beyond.",
+      "camera_angle": "Wide shot of the wall, then a close-up on the key turning in the lock.",
+      "lighting": "Silvery moonlight bathing the courtyard, creating a stark contrast with the darkness of the interior.",
+      "sound_effects": "The metallic clank of the lock, a soft sigh of wind as the gate opens."
+    },
+    {
+      "scene_number": 5,
+      "description": "The final escape. The prisoner sprints across the courtyard, leaping over a low wall and disappearing into the night forest.",
+      "camera_angle": "Slow-motion close-up of her face, then a wide aerial shot as she runs into the trees.",
+      "lighting": "Moonlight filtering through the trees, creating dappled patterns on the ground.",
+      "sound_effects": "Rapid heartbeat, rustling leaves, distant howls of night creatures."
+    }
+  ]
+}

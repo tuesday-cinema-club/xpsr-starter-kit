@@ -1,0 +1,63 @@
+{
+  "workflow": "flux2_dev_character_previs.json",
+  "checkpoint": "flux2_dev_fp8mixed.safetensors",
+  "checkpoint_sha256_short": "863a82e4ff",
+  "controlnet": null,
+  "frames": [
+    {
+      "shot_number": 1,
+      "file": "shot_01_keyframe.png",
+      "seed": 420892,
+      "prompt": "Two reference images are attached. One is a greyscale depth map from a 3D previs (near is white, far is black): follow its composition, camera angle, and the positions and sizes of people and objects, but never show the depth map itself. The other is a portrait photo of the person in this scene: keep his face, eyes, hair and beard exactly as in the photo, but not the photo's red background or its lighting. Scene: medium shot of a filmmaker in a black sweater standing in front of an editing desk with two glowing monitors, a cinema camera on a tripod to one side and film reels on a shelf, looking into the lens with a warm smile, amber practical lamp light, 35mm documentary and cinema photograph, rich warm practical light, shallow depth of field, fine film grain, natural skin texture, cinematic realism",
+      "guide": "shot_01_depth.png",
+      "character_ref": "instructor_reference.jpg",
+      "seconds": 1.0
+    },
+    {
+      "shot_number": 2,
+      "file": "shot_02_keyframe.png",
+      "seed": 420893,
+      "prompt": "The reference image is a greyscale depth map from a 3D previs (near is white, far is black). Generate a finished photograph whose composition, camera angle and the positions and sizes of objects follow this depth map. Do not show the depth map itself. Scene: medium shot across an empty editing desk at night, one monitor showing grey untextured 3D blocks of a room, the other showing a graph of connected boxes, a mechanical keyboard and a small control surface in front, warm lamp light, no readable text, 35mm documentary and cinema photograph, rich warm practical light, shallow depth of field, fine film grain, natural skin texture, cinematic realism",
+      "guide": "shot_02_depth.png",
+      "character_ref": null,
+      "seconds": 1691.8
+    },
+    {
+      "shot_number": 3,
+      "file": "shot_03_keyframe.png",
+      "seed": 420894,
+      "prompt": "Two reference images are attached. One is a greyscale depth map from a 3D previs (near is white, far is black): follow its composition, camera angle, and the positions and sizes of people and objects, but never show the depth map itself. The other is a portrait photo of the person in this scene: keep his face, eyes, hair and beard exactly as in the photo, but not the photo's red background or its lighting. Scene: extreme wide shot of a small arthouse screening room with rows of dark red seats and warm wood walls, a filmmaker in a black sweater standing in the aisle facing the camera, a projector beam from the booth window cutting through haze above him, 35mm documentary and cinema photograph, rich warm practical light, shallow depth of field, fine film grain, natural skin texture, cinematic realism",
+      "guide": "shot_03_depth.png",
+      "character_ref": "instructor_reference.jpg",
+      "seconds": 2057.3
+    },
+    {
+      "shot_number": 4,
+      "file": "shot_04_keyframe.png",
+      "seed": 420895,
+      "prompt": "The reference image is a greyscale depth map from a 3D previs (near is white, far is black). Generate a finished photograph whose composition, camera angle and the positions and sizes of objects follow this depth map. Do not show the depth map itself. Scene: close-up of two hands in black knit sleeves holding a blank vintage wooden clapperboard with black and white striped sticks, projector light and drifting dust behind, shallow depth of field, no writing on the slate, 35mm documentary and cinema photograph, rich warm practical light, shallow depth of field, fine film grain, natural skin texture, cinematic realism",
+      "guide": "shot_04_depth.png",
+      "character_ref": null,
+      "seconds": 1692.7
+    },
+    {
+      "shot_number": 5,
+      "file": "shot_05_keyframe.png",
+      "seed": 420896,
+      "prompt": "Two reference images are attached. One is a greyscale depth map from a 3D previs (near is white, far is black): follow its composition, camera angle, and the positions and sizes of people and objects, but never show the depth map itself. The other is a portrait photo of the person in this scene: keep his face, eyes, hair and beard exactly as in the photo, but not the photo's red background or its lighting. Scene: medium close-up of a filmmaker in a black sweater in a dark screening room, warm projector light falling across his face from the side, haze and out-of-focus seats behind him, looking into the lens, 35mm documentary and cinema photograph, rich warm practical light, shallow depth of field, fine film grain, natural skin texture, cinematic realism",
+      "guide": "shot_05_depth.png",
+      "character_ref": "instructor_reference.jpg",
+      "seconds": 2056.6
+    },
+    {
+      "shot_number": 6,
+      "file": "shot_06_keyframe.png",
+      "seed": 420897,
+      "prompt": "Two reference images are attached. One is a greyscale depth map from a 3D previs (near is white, far is black): follow its composition, camera angle, and the positions and sizes of people and objects, but never show the depth map itself. The other is a portrait photo of the person in this scene: keep his face, eyes, hair and beard exactly as in the photo, but not the photo's red background or its lighting. Scene: wide shot of a filmmaker in a black sweater standing in the aisle of a small screening room, raising a vintage wooden clapperboard toward the camera; the clapperboard face is plain bare wood with no writing, no chalk lines, no labels and no white panel, only the black and white striped clapper sticks on top, rows of seats behind, a projector beam flaring from the booth window through haze, 35mm documentary and cinema photograph, rich warm practical light, shallow depth of field, fine film grain, natural skin texture, cinematic realism",
+      "guide": "shot_06_depth.png",
+      "character_ref": "instructor_reference.jpg",
+      "seconds": 2057.3,
+      "take": 2
+    }
+  ]
+}

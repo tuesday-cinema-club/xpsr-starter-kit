@@ -236,8 +236,68 @@ def build_wash_tunnel(ox, mats):
             "detail": Vector((ox + 1.1, 1.95, 1.3))}
 
 
+def tripod_camera(name, base, mats):
+    x, y, z = base
+    for i in range(3):
+        a = math.radians(120 * i)
+        cylinder(f"{name}_leg_{i}", 0.02, 1.4, (x + 0.18 * math.cos(a), y + 0.18 * math.sin(a), z + 0.68),
+                 mats["dark"], rot=(0.13 * math.sin(a), -0.13 * math.cos(a), 0))
+    box(f"{name}_body", (0.18, 0.32, 0.2), (x, y, z + 1.5), mats["dark"])
+    cylinder(f"{name}_lens", 0.06, 0.2, (x, y - 0.25, z + 1.5), mats["dark"], rot=(math.radians(90), 0, 0))
+
+
+def build_edit_studio(ox, mats):
+    room_shell(ox, mats)
+    box("desk", (2.6, 0.8, 0.05), (ox, 3.3, 0.75), mats["prop"])
+    for dx in (-1.2, 1.2):
+        box(f"desk_leg_{dx}", (0.06, 0.7, 0.75), (ox + dx, 3.3, 0.375), mats["prop"])
+    for i, dx in enumerate((-0.55, 0.55)):
+        box(f"monitor_{i}", (0.95, 0.04, 0.55), (ox + dx, 3.55, 1.15), mats["window"])
+        box(f"monitor_stand_{i}", (0.08, 0.08, 0.3), (ox + dx, 3.6, 0.9), mats["dark"])
+    box("keyboard", (0.45, 0.15, 0.03), (ox - 0.1, 3.05, 0.79), mats["dark"])
+    box("control_surface", (0.4, 0.25, 0.05), (ox + 0.5, 3.05, 0.8), mats["dark"])
+    box("shelf", (1.8, 0.3, 1.8), (ox - 3.2, 4.7, 0.9), mats["prop"])
+    for i in range(3):
+        cylinder(f"film_reel_{i}", 0.2, 0.05, (ox - 3.7 + i * 0.5, 4.55, 1.95), mats["dark"],
+                 rot=(math.radians(90), 0, 0))
+    cylinder("lamp", 0.12, 0.25, (ox + 1.1, 3.4, 1.4), mats["window"])
+    tripod_camera("cinema_camera", (ox - 1.9, 2.0, 0), mats)
+    instructor_head = person("instructor", (ox + 1.35, 2.3, 0), mats["person"], height=1.8)
+    return {
+        "center": Vector((ox - 0.2, 3.3, 1.05)),       # the desk
+        "instructor": instructor_head,
+        "detail": Vector((ox - 0.3, 3.3, 1.0)),       # keyboard and monitors
+    }
+
+
+def build_screening_room(ox, mats):
+    """Looking from the screen end toward the booth: seats behind the host,
+    the projector beam coming over his head from the booth window."""
+    room_shell(ox, mats, depth=14.0)
+    for row in range(4):
+        for seat in range(8):
+            sx = ox - 3.9 + seat * 0.7 + (1.4 if seat >= 4 else 0)
+            box(f"seat_{row}_{seat}", (0.55, 0.55, 0.9), (sx, 2.6 + row * 1.0, 0.45 + row * 0.15), mats["dark"])
+    box("booth_window", (1.0, 0.05, 0.6), (ox + 1.0, 6.9, 2.5), mats["window"])
+    box("projector", (0.5, 0.5, 0.35), (ox + 1.0, 6.6, 2.5), mats["dark"])
+    instructor_head = person("instructor", (ox - 0.1, 1.4, 0), mats["person"], height=1.8)
+    box("slate", (0.32, 0.03, 0.26), (ox - 0.1, 1.15, 1.25), mats["sack"])
+    # The beam is light, not geometry, so it never shows up in the depth pass.
+    bpy.ops.object.light_add(type="SPOT", location=(ox + 1.0, 6.3, 2.5))
+    beam = bpy.context.active_object
+    beam.data.energy = 3000
+    beam.data.spot_size = math.radians(30)
+    beam.rotation_euler = (math.radians(100), 0, math.radians(180))
+    return {
+        "center": Vector((ox, 2.5, 1.3)),
+        "instructor": instructor_head,
+        "detail": Vector((ox - 0.1, 1.15, 1.25)),     # the slate
+    }
+
+
 SET_BUILDERS = {"roastery": build_roastery, "new_shop": build_new_shop,
-                "vineyard_road": build_vineyard_road, "wash_tunnel": build_wash_tunnel}
+                "vineyard_road": build_vineyard_road, "wash_tunnel": build_wash_tunnel,
+                "edit_studio": build_edit_studio, "screening_room": build_screening_room}
 
 
 # --------------------------------------------------------------------------
@@ -328,13 +388,18 @@ def configure_render(scene):
 
 
 def main():
+    global WIDTH, HEIGHT, SENSOR_H
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     p = argparse.ArgumentParser(description="Grey-box previs and depth passes from shots.json")
     p.add_argument("--shots", required=True)
     p.add_argument("--bible", required=True)
     p.add_argument("--out", required=True, help="Output folder for PNGs, previs.blend and previs.json")
     p.add_argument("--samples", type=int, default=32)
+    p.add_argument("--size", default="1344x768",
+                   help="Render size; match the image model's canvas, e.g. 1920x1056 (default 1344x768)")
     args = p.parse_args(argv)
+    WIDTH, HEIGHT = (int(v) for v in args.size.lower().split("x"))
+    SENSOR_H = SENSOR_W * HEIGHT / WIDTH
 
     with open(args.shots, encoding="utf-8") as f:
         shots = json.load(f)

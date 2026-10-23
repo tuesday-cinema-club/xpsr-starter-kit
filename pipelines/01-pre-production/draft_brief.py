@@ -100,6 +100,8 @@ def main():
     p.add_argument("--runtime", type=int, default=30, help="Runtime in seconds (default 30)")
     p.add_argument("--model", default=DEFAULT_MODEL, help=f"Ollama model (default {DEFAULT_MODEL})")
     p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--think", choices=["low", "medium", "high"],
+                   help="Let a reasoning model (gpt-oss, glm-4.7-flash) think first; slower, often better")
     p.add_argument("--out-dir", default="drafts", help="Where to write brief.json, brief.md and brief_state.json")
     args = p.parse_args()
 
@@ -132,7 +134,8 @@ built only from the facts above, 3 to 5 tone words, and 2 or 3 references descri
 in words (films, photographers or sounds). runtime_sec is {args.runtime}."""
 
     say("*", f"Drafting brief with {args.model} on the local Ollama daemon ...")
-    brief = ollama_generate(prompt, model=args.model, schema=schema, system=SYSTEM, seed=args.seed)
+    brief = ollama_generate(prompt, model=args.model, schema=schema, system=SYSTEM, seed=args.seed,
+                            think=args.think, timeout=3600 if args.think else 600)
 
     # The director's words are locked: overwrite whatever the model wrote.
     brief["target_audience"] = args.who

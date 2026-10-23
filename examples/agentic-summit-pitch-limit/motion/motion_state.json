@@ -1,0 +1,27 @@
+{
+  "project_id": "TCC_SUMMIT_PITCH_01",
+  "stage": "produce",
+  "status": "approved",
+  "draft_file": "examples/agentic-summit-pitch-limit/motion/motion.json",
+  "checks": {
+    "schema": "pass",
+    "bible_match": "not_applicable"
+  },
+  "decision": "Approve",
+  "decided_by": "Workshop director (demo stand-in)",
+  "decided_at": "2026-10-23T11:11:10Z",
+  "notes": "Shots 1-5 take 1 (shot 1: the vintage camera prop turns blue halfway; continuity note). Shot 6 take 1 rejected: pushed in instead of out, light blew out to white, slate fell out of frame. Take 2 (sharper Pull Out phrase, new seed) pulls out, but from frame 66 the host turns and walks away: trimmed to frames 0-59, last frame held under the end card.",
+  "history": [
+    {
+      "at": "2026-10-23T10:45:22Z",
+      "event": "draft_written",
+      "by": "agent"
+    },
+    {
+      "at": "2026-10-23T11:11:10Z",
+      "event": "Approve",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Shots 1-5 take 1 (shot 1: the vintage camera prop turns blue halfway; continuity note). Shot 6 take 1 rejected: pushed in instead of out, light blew out to white, slate fell out of frame. Take 2 (sharper Pull Out phrase, new seed) pulls out, but from frame 66 the host turns and walks away: trimmed to frames 0-59, last frame held under the end card."
+    }
+  ]
+}

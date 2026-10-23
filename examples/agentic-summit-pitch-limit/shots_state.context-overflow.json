@@ -1,0 +1,35 @@
+{
+  "project_id": "TCC_SUMMIT_PITCH_01",
+  "stage": "previs",
+  "status": "rejected",
+  "draft_file": "examples/agentic-summit-pitch-limit/shots.agent-draft-context-overflow.json",
+  "checks": {
+    "schema": "fail",
+    "bible_match": "fail",
+    "unverified_sources": 0,
+    "total_runtime_sec": 0,
+    "attempts": 3,
+    "errors": [
+      "(root): 'scene_id' is a required property",
+      "(root): 'scene_name' is a required property",
+      "(root): 'shots' is a required property"
+    ]
+  },
+  "decision": "Reject",
+  "decided_by": "Workshop director (demo stand-in)",
+  "decided_at": "2026-10-23T03:27:24Z",
+  "notes": "Not our film: a prison-break story with no shots, ids or lines from the brief. Cause: thinking overflowed Ollama's default 4K context and pushed the brief out. Rerun with a 16K context.",
+  "history": [
+    {
+      "at": "2026-10-23T03:26:55Z",
+      "event": "draft_written",
+      "by": "agent"
+    },
+    {
+      "at": "2026-10-23T03:27:24Z",
+      "event": "Reject",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Not our film: a prison-break story with no shots, ids or lines from the brief. Cause: thinking overflowed Ollama's default 4K context and pushed the brief out. Rerun with a 16K context."
+    }
+  ]
+}

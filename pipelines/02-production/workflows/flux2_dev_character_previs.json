@@ -1,0 +1,287 @@
+{
+  "12": {
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load diffusion model (FLUX.2 dev 32B, fp8)"
+    },
+    "inputs": {
+      "unet_name": "flux2_dev_fp8mixed.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "38": {
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load text encoder (Mistral Small 3.1 24B, fp8)"
+    },
+    "inputs": {
+      "clip_name": "mistral_3_small_flux2_fp8.safetensors",
+      "type": "flux2",
+      "device": "default"
+    }
+  },
+  "10": {
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE (FLUX.2)"
+    },
+    "inputs": {
+      "vae_name": "flux2-vae.safetensors"
+    }
+  },
+  "6": {
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Positive prompt (shot visual_prompt + bible style_prompt)",
+      "tcc_prompt_template": "Two reference images are attached. One is a greyscale depth map from a 3D previs (near is white, far is black): follow its composition, camera angle, and the positions and sizes of people and objects, but never show the depth map itself. The other is a portrait photo of the person in this scene: keep his face, eyes, hair and beard exactly as in the photo, but not the photo's red background or its lighting. Scene: {prompt}",
+      "tcc_prompt_template_no_character": "The reference image is a greyscale depth map from a 3D previs (near is white, far is black). Generate a finished photograph whose composition, camera angle and the positions and sizes of objects follow this depth map. Do not show the depth map itself. Scene: {prompt}"
+    },
+    "inputs": {
+      "text": "REPLACED_BY_CLIENT",
+      "clip": [
+        "38",
+        0
+      ]
+    }
+  },
+  "26": {
+    "class_type": "FluxGuidance",
+    "_meta": {
+      "title": "Guidance 4 (guidance-distilled model)"
+    },
+    "inputs": {
+      "conditioning": [
+        "6",
+        0
+      ],
+      "guidance": 4.0
+    }
+  },
+  "42": {
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Depth pass from Blender (reference: layout)",
+      "tcc_guide": "depth"
+    },
+    "inputs": {
+      "image": "REPLACED_BY_CLIENT"
+    }
+  },
+  "45": {
+    "class_type": "ImageScaleToTotalPixels",
+    "_meta": {
+      "title": "Depth to 1 megapixel"
+    },
+    "inputs": {
+      "image": [
+        "42",
+        0
+      ],
+      "upscale_method": "area",
+      "megapixels": 1.0,
+      "resolution_steps": 1
+    }
+  },
+  "44": {
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "Encode depth"
+    },
+    "inputs": {
+      "pixels": [
+        "45",
+        0
+      ],
+      "vae": [
+        "10",
+        0
+      ]
+    }
+  },
+  "43": {
+    "class_type": "ReferenceLatent",
+    "_meta": {
+      "title": "Reference: previs locks the layout"
+    },
+    "inputs": {
+      "conditioning": [
+        "26",
+        0
+      ],
+      "latent": [
+        "44",
+        0
+      ]
+    }
+  },
+  "46": {
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Character photo (reference: identity, consent on file)",
+      "tcc_guide": "character"
+    },
+    "inputs": {
+      "image": "REPLACED_BY_CLIENT"
+    }
+  },
+  "41": {
+    "class_type": "ImageScaleToTotalPixels",
+    "_meta": {
+      "title": "Photo to 1 megapixel"
+    },
+    "inputs": {
+      "image": [
+        "46",
+        0
+      ],
+      "upscale_method": "area",
+      "megapixels": 1.0,
+      "resolution_steps": 1
+    }
+  },
+  "40": {
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "Encode photo"
+    },
+    "inputs": {
+      "pixels": [
+        "41",
+        0
+      ],
+      "vae": [
+        "10",
+        0
+      ]
+    }
+  },
+  "39": {
+    "class_type": "ReferenceLatent",
+    "_meta": {
+      "title": "Reference: the photo locks the face"
+    },
+    "inputs": {
+      "conditioning": [
+        "43",
+        0
+      ],
+      "latent": [
+        "40",
+        0
+      ]
+    }
+  },
+  "22": {
+    "class_type": "BasicGuider",
+    "_meta": {
+      "title": "Guider"
+    },
+    "inputs": {
+      "model": [
+        "12",
+        0
+      ],
+      "conditioning": [
+        "39",
+        0
+      ]
+    }
+  },
+  "47": {
+    "class_type": "EmptyFlux2LatentImage",
+    "_meta": {
+      "title": "Canvas 1920x1056"
+    },
+    "inputs": {
+      "width": 1920,
+      "height": 1056,
+      "batch_size": 1
+    }
+  },
+  "48": {
+    "class_type": "Flux2Scheduler",
+    "_meta": {
+      "title": "Scheduler (28 steps)"
+    },
+    "inputs": {
+      "steps": 28,
+      "width": 1920,
+      "height": 1056
+    }
+  },
+  "16": {
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "Sampler"
+    },
+    "inputs": {
+      "sampler_name": "euler"
+    }
+  },
+  "25": {
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "Noise (fixed seed for repeatability)"
+    },
+    "inputs": {
+      "noise_seed": 420891
+    }
+  },
+  "13": {
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "Sample"
+    },
+    "inputs": {
+      "noise": [
+        "25",
+        0
+      ],
+      "guider": [
+        "22",
+        0
+      ],
+      "sampler": [
+        "16",
+        0
+      ],
+      "sigmas": [
+        "48",
+        0
+      ],
+      "latent_image": [
+        "47",
+        0
+      ]
+    }
+  },
+  "8": {
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "Decode"
+    },
+    "inputs": {
+      "samples": [
+        "13",
+        0
+      ],
+      "vae": [
+        "10",
+        0
+      ]
+    }
+  },
+  "9": {
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save keyframe"
+    },
+    "inputs": {
+      "filename_prefix": "tcc_keyframe",
+      "images": [
+        "8",
+        0
+      ]
+    }
+  }
+}

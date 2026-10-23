@@ -1,0 +1,58 @@
+{
+  "project_id": "TCC_SUMMIT_PITCH_01",
+  "stage": "previs",
+  "status": "approved",
+  "draft_file": "examples/agentic-summit-pitch-limit/shots.json",
+  "checks": {
+    "schema": "pass",
+    "bible_match": "pass",
+    "unverified_sources": 0,
+    "total_runtime_sec": 30,
+    "attempts": 1,
+    "errors": []
+  },
+  "decision": "Approve",
+  "decided_by": "Workshop director (demo stand-in)",
+  "decided_at": "2026-10-23T04:13:38Z",
+  "notes": "Shot 6 line shortened after the scratch VO ran 5.3 s, past the end of the spot; the end card carries the starter kit address instead.",
+  "history": [
+    {
+      "at": "2026-10-23T03:58:10Z",
+      "event": "draft_written",
+      "by": "agent"
+    },
+    {
+      "at": "2026-10-23T03:59:19Z",
+      "event": "Revise",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Lines read like notes; rewrite as speech that fits 5 s. The host is on screen in 2 of 6 shots; the brief wants him talking to camera. Shot 3 (six labelled logos) and shot 6 (phone with button and QR code) need generated text: cut them, real text goes on the end card. Shot 3 framing says Wide, prompt says close-up. Call to action missing. 27 s; make it 30."
+    },
+    {
+      "at": "2026-10-23T03:59:19Z",
+      "event": "human_edit_rechecked",
+      "by": "checker"
+    },
+    {
+      "at": "2026-10-23T04:01:11Z",
+      "event": "human_edit_rechecked",
+      "by": "checker"
+    },
+    {
+      "at": "2026-10-23T04:02:20Z",
+      "event": "Approve",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Approved after rewrite: host on screen in 4 of 6 shots, no generated text, 6 x 5 s. Shot 2 reframed as a Medium after previs showed the Close Up filled the frame with one blank monitor."
+    },
+    {
+      "at": "2026-10-23T04:13:38Z",
+      "event": "human_edit_rechecked",
+      "by": "checker"
+    },
+    {
+      "at": "2026-10-23T04:13:38Z",
+      "event": "Approve",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Shot 6 line shortened after the scratch VO ran 5.3 s, past the end of the spot; the end card carries the starter kit address instead."
+    }
+  ]
+}

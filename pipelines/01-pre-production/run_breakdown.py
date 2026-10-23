@@ -50,7 +50,8 @@ def load_source_ids(path):
         return {r["source_id"]: r["claim"] for r in csv.DictReader(f)}
 
 
-def deterministic_checks(shots: dict, schema: dict, bible: dict, sources: dict, runtime: float):
+def deterministic_checks(shots: dict, schema: dict, bible: dict, sources: dict, runtime: float,
+                         max_shot: float = None):
     errors = validate(shots, schema)
     if errors:
         return errors, {"schema": "fail", "bible_match": "fail", "unverified_sources": 0, "total_runtime_sec": 0}
@@ -72,6 +73,9 @@ def deterministic_checks(shots: dict, schema: dict, bible: dict, sources: dict, 
         if s["voiceover_line"].strip() and not s["claims_sourced"]:
             unverified += 1
             bible_errors.append(f"shot {n}: voiceover line is marked claims_sourced=false; cite a source_id or rewrite it")
+
+        if max_shot and s["duration_sec"] > max_shot:
+            bible_errors.append(f"shot {n}: {s['duration_sec']}s is longer than the {max_shot:g}s limit per shot")
 
     total = round(sum(s["duration_sec"] for s in shots["shots"]), 2)
     if total > runtime or total < runtime * 0.8:
@@ -97,6 +101,10 @@ def main():
     p.add_argument("--shots", type=int, default=3, help="Number of shots (default 3)")
     p.add_argument("--model", default=DEFAULT_MODEL, help=f"Ollama model (default {DEFAULT_MODEL})")
     p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--max-shot-sec", type=float,
+                   help="Longest shot allowed, e.g. 5 when every shot will be animated by a 5-second motion model")
+    p.add_argument("--think", choices=["low", "medium", "high"],
+                   help="Let a reasoning model (gpt-oss, glm-4.7-flash) think first; slower, often better")
     p.add_argument("--retries", type=int, default=3, help="Model attempts before giving up (default 3)")
     p.add_argument("--check-only", action="store_true",
                    help="Do not call the model: re-run the checks on an existing --out file (use after a human edit)")
@@ -121,9 +129,11 @@ def main():
         "lighting_key": bible["visual_rules"]["lighting_key"],
         "exclusions": bible["exclusions"],
     }
+    limit = (f"\nNo shot may be longer than {args.max_shot_sec:g} seconds (the motion model's limit); "
+             "a spoken line must fit inside its shot." if args.max_shot_sec else "")
     facts = "\n".join(f"- {k}: {v}" for k, v in sources.items()) or "- (none: make no factual claims)"
     base_prompt = f"""Break this brief into exactly {args.shots} shots for a {runtime:.0f}-second spot.
-Durations must add up to between {runtime * 0.8:.0f} and {runtime:.0f} seconds.
+Durations must add up to between {runtime * 0.8:.0f} and {runtime:.0f} seconds.{limit}
 Number shots from 1. Use a scene_id like "SC01".
 
 BRIEF:
@@ -138,7 +148,7 @@ RESEARCH LOG (the only facts you may claim; cite their ids in source_ids):
 
     if args.check_only:
         shots = load_json(args.out)
-        errors, checks = deterministic_checks(shots, schema, bible, sources, runtime)
+        errors, checks = deterministic_checks(shots, schema, bible, sources, runtime, args.max_shot_sec)
         checks["attempts"] = 1
         checks["errors"] = errors
         # Keep the gate history: a re-check reopens the gate, it does not erase it.
@@ -163,8 +173,9 @@ RESEARCH LOG (the only facts you may claim; cite their ids in source_ids):
     for attempt in range(1, args.retries + 1):
         say("*", f"Attempt {attempt}: asking {args.model} for {args.shots} shots ...")
         prompt = base_prompt + (f"\nYOUR LAST DRAFT WAS REJECTED BY THE CHECKER:\n{feedback}\nFix every item." if feedback else "")
-        shots = ollama_generate(prompt, model=args.model, schema=schema, system=SYSTEM, seed=args.seed + attempt - 1)
-        errors, checks = deterministic_checks(shots, schema, bible, sources, runtime)
+        shots = ollama_generate(prompt, model=args.model, schema=schema, system=SYSTEM, seed=args.seed + attempt - 1,
+                                think=args.think, timeout=3600 if args.think else 600)
+        errors, checks = deterministic_checks(shots, schema, bible, sources, runtime, args.max_shot_sec)
         if not errors:
             break
         say("!", f"Checker found {len(errors)} problem(s); sending them back to the agent.")

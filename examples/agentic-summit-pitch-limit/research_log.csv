@@ -1,0 +1,8 @@
+source_id,claim,source,verified_by,verified_on
+SRC-001,"Every tool in the workshop pipeline runs locally on your own machine, with no cloud fees or subscriptions.",environment/hardware-matrix.md (tested on one machine with an 8 GB GPU),Workshop director (demo stand-in),2026-10-22
+SRC-002,"Each agent does one job, and a human approves every gate before the next stage starts.",docs/participant-guide.md (Part 1 in one page),Workshop director (demo stand-in),2026-10-22
+SRC-003,"The stack is Ollama, Blender, ComfyUI, Whisper, Kdenlive and OpenTimelineIO, all free.",environment/hardware-matrix.md,Workshop director (demo stand-in),2026-10-22
+SRC-004,"The 7-point anti-slop audit needs a human signature before anything is released.",workshop-build/review/anti_slop_rubric.md,Workshop director (demo stand-in),2026-10-22
+SRC-005,"The summit is on 10/24/26: Part 1 teaches the pipeline and Part 2 builds a spot together after lunch.",docs/participant-guide.md (Welcome),Workshop director (demo stand-in),2026-10-22
+SRC-006,"You don't need to code, and a phone is enough to take part.",docs/participant-guide.md (Welcome),Workshop director (demo stand-in),2026-10-22
+SRC-007,"The kit replaces an $840-a-year Adobe plan with free tools.",docs/participant-guide.md (The $0 principle),Workshop director (demo stand-in),2026-10-22

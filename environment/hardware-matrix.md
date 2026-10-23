@@ -23,6 +23,7 @@ The demo in `examples/ember-and-oak-demo/` was produced on one machine on 2026-1
 | Whisper | openai-whisper with `base.en` |
 | ffmpeg | 6.1.1 |
 | Bigger models (comparison) | `glm-4.7-flash` in Ollama; FLUX.2 [klein] 4B in ComfyUI |
+| Pushing the limit | `gpt-oss-120b` in Ollama; FLUX.2 [dev] 32B and Wan 2.2 5B in ComfyUI; Kokoro-82M; Whisper `turbo` |
 
 ## Timings from that run
 
@@ -43,6 +44,22 @@ The demo in `examples/ember-and-oak-demo/` was produced on one machine on 2026-1
 | Shot breakdown with `glm-4.7-flash` | 90 to 108 seconds |
 | One FLUX.2 [klein] 4B keyframe, 1344 by 768, 4 steps, with a depth reference | 37 to 48 seconds |
 
+### Pushing the limit on the same machine
+
+The biggest models this 8 GB card can run at all, used for [the summit pitch, pushing the limit](../examples/agentic-summit-pitch-limit/README.md). They lean on the machine's 109 GB of system RAM: none of them fit in VRAM.
+
+| Step | Time |
+| --- | --- |
+| Brief draft with `gpt-oss-120b` (117B parameters, 63 GB), thinking on high | 4 minutes 35 seconds |
+| Shot breakdown, 6 shots, thinking on high | 30 minutes (2 attempts) |
+| One FLUX.2 [dev] 32B keyframe, 1920 by 1056, 28 steps, photo and depth references | 28 to 34 minutes (60 to 73 seconds per step) |
+| One Wan 2.2 5B motion clip, 121 frames at 1280 by 704 (5 seconds), 20 steps | 24 minutes |
+| Kokoro-82M scratch voiceover, 6 lines, on the CPU | under 1 minute |
+| Whisper `turbo` on 30 seconds of audio, on the CPU | 60 seconds |
+| The whole 30-second spot, including the failed run and the retakes | about 8 and a half hours of machine time |
+
+Two setup notes from that run. Ollama 0.18.2 was too old for the official `gpt-oss:120b` download, so the model came from `hf.co/ggml-org/gpt-oss-120b-GGUF` with a corrected chat template. And `gpt-oss-120b` with FLUX.2 [dev] loaded at the same time would need more than 109 GB of RAM, so run `ollama stop <model>` before rendering.
+
 A CPU-only laptop will be slower for the model steps (think minutes, not seconds) and cannot run the Frames step in workshop time. That is why the Frames crew needs a GPU laptop and everyone else does not.
 
 ## Model licenses
@@ -59,6 +76,10 @@ A CPU-only laptop will be slower for the model steps (think minutes, not seconds
 | GLM-4.7-Flash | Writing (bigger model) | MIT, per the model's Ollama listing |
 | FLUX.2 [klein] 4B (distilled) and Qwen3 4B text encoder | Keyframes (bigger model) | Apache 2.0 (the 9B klein variant uses a different, non-commercial license) |
 | Wan 2.2 5B | Motion (optional) | Apache 2.0 |
+| gpt-oss-120b | Writing (pushing the limit) | Apache 2.0 |
+| FLUX.2 [dev] 32B | Keyframes (pushing the limit) | FLUX non-commercial license: read it before any paid use of the model or its output |
+| Mistral Small 3.1 24B | FLUX.2 [dev] text encoder | Apache 2.0 |
+| Kokoro-82M | Scratch voiceover (pushing the limit) | Apache 2.0 |
 | Whisper | Captions | MIT |
 | Piper voice `en_US-ljspeech-high` | Scratch voiceover | Trained on the public-domain LJ Speech dataset; Piper itself is GPL |
 

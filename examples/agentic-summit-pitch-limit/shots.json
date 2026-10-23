@@ -1,0 +1,111 @@
+{
+  "scene_id": "SC01",
+  "scene_name": "Host to camera",
+  "shots": [
+    {
+      "shot_number": 1,
+      "framing": "Medium",
+      "lens_mm": 50,
+      "duration_sec": 5,
+      "camera_move": "Push In",
+      "location_id": "edit_studio",
+      "characters": [
+        "instructor"
+      ],
+      "action_description": "The instructor stands in front of his editing desk, two monitors glowing behind him, looks straight into the lens and smiles as he starts to speak.",
+      "visual_prompt": "medium shot of a filmmaker in a black sweater standing in front of an editing desk with two glowing monitors, a cinema camera on a tripod to one side and film reels on a shelf, looking into the lens with a warm smile, amber practical lamp light",
+      "voiceover_line": "Every tool in this pipeline runs on your own machine.",
+      "source_ids": [
+        "SRC-001"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 2,
+      "framing": "Medium",
+      "lens_mm": 50,
+      "duration_sec": 5,
+      "camera_move": "Pan Right",
+      "location_id": "edit_studio",
+      "characters": [],
+      "action_description": "Across the desk: one monitor shows a grey 3D blocking of a room, the other a node graph; a keyboard and a small control surface sit in front.",
+      "visual_prompt": "medium shot across an empty editing desk at night, one monitor showing grey untextured 3D blocks of a room, the other showing a graph of connected boxes, a mechanical keyboard and a small control surface in front, warm lamp light, no readable text",
+      "voiceover_line": "No cloud fees. No subscriptions. No coding required.",
+      "source_ids": [
+        "SRC-001",
+        "SRC-006"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 3,
+      "framing": "Extreme Wide",
+      "lens_mm": 24,
+      "duration_sec": 5,
+      "camera_move": "Push In",
+      "location_id": "screening_room",
+      "characters": [
+        "instructor"
+      ],
+      "action_description": "The instructor stands in the aisle of the empty screening room, rows of seats behind him, the projector beam cutting through haze above.",
+      "visual_prompt": "extreme wide shot of a small arthouse screening room with rows of dark red seats and warm wood walls, a filmmaker in a black sweater standing in the aisle facing the camera, a projector beam from the booth window cutting through haze above him",
+      "voiceover_line": "One agent, one job, and a human approves every gate.",
+      "source_ids": [
+        "SRC-002"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 4,
+      "framing": "Close Up",
+      "lens_mm": 85,
+      "duration_sec": 5,
+      "camera_move": "Static",
+      "location_id": "screening_room",
+      "characters": [],
+      "action_description": "Two hands in black sleeves hold a vintage wooden clapperboard in the projector beam; dust drifts through the light.",
+      "visual_prompt": "close-up of two hands in black knit sleeves holding a blank vintage wooden clapperboard with black and white striped sticks, inside a small arthouse cinema: rows of red velvet seats and warm wood-panelled walls softly out of focus behind, the projector beam from the booth window cutting through haze above, dust drifting in the light, warm amber tones, shallow depth of field, no writing on the slate",
+      "voiceover_line": "Before anything ships, a person signs the anti-slop audit.",
+      "source_ids": [
+        "SRC-004"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 5,
+      "framing": "Medium",
+      "lens_mm": 85,
+      "duration_sec": 5,
+      "camera_move": "Static",
+      "location_id": "screening_room",
+      "characters": [
+        "instructor"
+      ],
+      "action_description": "Medium close-up: the instructor, lit by the projector's spill, looks into the lens and gives a small, knowing nod.",
+      "visual_prompt": "medium close-up of a filmmaker in a black sweater in a dark screening room, warm projector light falling across his face from the side, haze and out-of-focus seats behind him, looking into the lens",
+      "voiceover_line": "Free tools replace an $840-a-year Adobe plan.",
+      "source_ids": [
+        "SRC-007"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 6,
+      "framing": "Wide",
+      "lens_mm": 35,
+      "duration_sec": 5,
+      "camera_move": "Pull Out",
+      "location_id": "screening_room",
+      "characters": [
+        "instructor"
+      ],
+      "action_description": "The instructor raises the clapperboard toward the camera in the aisle as the projector beam flares behind him; the end card fades in over the last three seconds.",
+      "visual_prompt": "wide shot of a filmmaker in a black sweater standing in the aisle of a small screening room, raising a vintage wooden clapperboard toward the camera; the clapperboard face is plain bare wood with no writing, no chalk lines, no labels and no white panel, only the black and white striped clapper sticks on top, rows of seats behind, a projector beam flaring from the booth window through haze",
+      "voiceover_line": "October 24th: join the Tuesday Cinema Club.",
+      "source_ids": [
+        "SRC-005"
+      ],
+      "claims_sourced": true
+    }
+  ]
+}

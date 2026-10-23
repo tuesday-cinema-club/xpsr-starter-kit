@@ -119,6 +119,11 @@ def find_roles(workflow: dict) -> dict:
     - steps:    KSampler.steps or Flux2Scheduler.steps
     - guide:    a LoadImage node; its _meta "tcc_guide" says which Blender pass to load
                 ("depth", the default, or "grey")
+                The positive prompt's _meta may also hold "tcc_prompt_template_no_character",
+                used for shots where the character slot is dropped
+    - character: optional LoadImage with _meta "tcc_guide": "character", filled with a
+                photo of the shot's character (--character-ref); dropped for shots
+                with nobody on screen
     """
     def titled(prefix):
         return next((k for k in nodes_of(workflow, "CLIPTextEncode")
@@ -142,14 +147,45 @@ def find_roles(workflow: dict) -> dict:
     else:
         seed = (nodes_of(workflow, "RandomNoise")[0], "noise_seed")
         steps = (nodes_of(workflow, "Flux2Scheduler")[0], "steps")
-    guides = nodes_of(workflow, "LoadImage")
-    guide = guides[0] if guides else None
+    loads = nodes_of(workflow, "LoadImage")
+    kind = {k: workflow[k].get("_meta", {}).get("tcc_guide", "depth") for k in loads}
+    guide = next((k for k in loads if kind[k] != "character"), None)
+    character = next((k for k in loads if kind[k] == "character"), None)
     return {
         "model": model, "positive": positive, "negative": negative, "seed": seed, "steps": steps,
-        "guide": guide,
+        "guide": guide, "character": character,
         "guide_kind": workflow[guide].get("_meta", {}).get("tcc_guide", "depth") if guide else None,
         "prompt_template": workflow[positive].get("_meta", {}).get("tcc_prompt_template", "{prompt}"),
+        # Used instead when the character slot is dropped (nobody on screen).
+        "prompt_template_solo": workflow[positive].get("_meta", {}).get(
+            "tcc_prompt_template_no_character",
+            workflow[positive].get("_meta", {}).get("tcc_prompt_template", "{prompt}")),
     }
+
+
+def drop_reference(workflow: dict, load_id: str) -> None:
+    """Remove a reference image branch (LoadImage -> ... -> ReferenceLatent) and
+    reconnect whatever used the ReferenceLatent to its incoming conditioning."""
+    def users(node_id):
+        return [k for k, v in workflow.items()
+                if any(isinstance(x, list) and x[:1] == [node_id] for x in v["inputs"].values())]
+    branch, frontier, refs = {load_id}, [load_id], []
+    while frontier:
+        for k in users(frontier.pop()):
+            if workflow[k]["class_type"] == "ReferenceLatent":
+                refs.append(k)
+            elif k not in branch:
+                branch.add(k)
+                frontier.append(k)
+    for ref in refs:
+        upstream = workflow[ref]["inputs"]["conditioning"]
+        for k in users(ref):
+            for name, x in workflow[k]["inputs"].items():
+                if isinstance(x, list) and x[:1] == [ref]:
+                    workflow[k]["inputs"][name] = upstream
+        del workflow[ref]
+    for k in branch:
+        del workflow[k]
 
 
 def main():
@@ -160,6 +196,8 @@ def main():
     p.add_argument("--out", required=True, help="Where to save keyframes")
     p.add_argument("--workflow", default=DEFAULT_WORKFLOW, help="ComfyUI API-format workflow JSON")
     p.add_argument("--server", default="127.0.0.1:8188")
+    p.add_argument("--timeout", type=int, default=1800,
+                   help="Seconds to wait for one frame (default 1800; FLUX.2 dev on 8 GB needs about 2400)")
     p.add_argument("--seed", type=int, default=420891, help="Base seed; shot N uses seed + N")
     p.add_argument("--steps", type=int)
     p.add_argument("--depth-strength", type=float, help="ControlNet strength 0-1 (default from workflow)")
@@ -171,12 +209,24 @@ def main():
     p.add_argument("--lock-characters", action="store_true",
                    help="Append each on-screen character's visual_lock from the bible to the prompt (better continuity)")
     p.add_argument("--suffix", default="", help="Added to output names, e.g. '_take3' to keep alternate takes")
+    p.add_argument("--character-ref", action="append", default=[], metavar="ID=PHOTO",
+                   help="Photo of a bible character for workflows with a character slot, "
+                        "e.g. instructor=refs/instructor.jpg (consent on file first)")
     args = p.parse_args()
 
     shots = load_json(args.shots)
     bible = load_json(args.bible)
     template = load_json(args.workflow)
     rules = bible["visual_rules"]
+    char_refs = dict(item.split("=", 1) for item in args.character_ref)
+    for cid, photo in char_refs.items():
+        who = next((c for c in bible["characters"] if c["id"] == cid), None)
+        if not who:
+            sys.exit(f"--character-ref: '{cid}' is not a character in the bible")
+        if not who.get("consent_on_file"):
+            sys.exit(f"--character-ref: the bible has no consent on file for '{cid}'")
+        if not os.path.exists(photo):
+            sys.exit(f"--character-ref: missing photo {photo}")
     prov = args.provenance or os.path.join(os.path.dirname(args.shots) or ".", "provenance.csv")
     os.makedirs(args.out, exist_ok=True)
 
@@ -208,7 +258,9 @@ def main():
             locks = {c["id"]: c for c in bible["characters"]}
             described = [f"{locks[c]['name']}: {locks[c]['visual_lock']}" for c in shot["characters"] if c in locks]
             base_prompt += ". Characters, exactly as described: " + "; ".join(described)
-        prompt = roles["prompt_template"].replace("{prompt}", base_prompt)
+        cid = next((c for c in shot["characters"] if c in char_refs), None) if roles["character"] else None
+        template_text = roles["prompt_template"] if cid or not roles["character"] else roles["prompt_template_solo"]
+        prompt = template_text.replace("{prompt}", base_prompt)
         wf[roles["positive"]]["inputs"]["text"] = prompt
         if roles["negative"]:
             wf[roles["negative"]]["inputs"]["text"] = rules.get("negative_prompt", "")
@@ -219,6 +271,14 @@ def main():
             node_id, key = roles["steps"]
             wf[node_id]["inputs"][key] = args.steps
         wf[nodes_of(wf, "SaveImage")[0]]["inputs"]["filename_prefix"] = f"{bible['project_id']}_shot{n:02d}"
+
+        char_src = None
+        if roles["character"]:
+            if cid:
+                char_src = char_refs[cid]
+                wf[roles["character"]]["inputs"]["image"] = comfy.upload_image(char_src)
+            else:
+                drop_reference(wf, roles["character"])
 
         guide_src = None
         if roles["guide"]:
@@ -238,7 +298,7 @@ def main():
 
         say("*", f"Shot {n}: queueing ({shot['framing']}, {shot['lens_mm']}mm, seed {seed}) ...")
         t0 = time.time()
-        outputs = comfy.wait(comfy.queue(wf))
+        outputs = comfy.wait(comfy.queue(wf), timeout=args.timeout)
         image = next(img for out in outputs.values() for img in out.get("images", []))
         dest = os.path.join(args.out, f"shot_{n:02d}_keyframe{args.suffix}.png")
         comfy.download(image, dest)
@@ -248,9 +308,11 @@ def main():
         tool = f"ComfyUI/{model_name}" + (f" + {cn_name}" if cn_name and guide_src else "")
         append_provenance(prov, asset_id=f"shot_{n:02d}_keyframe{args.suffix}", stage="keyframe", tool_or_model=tool,
                           checkpoint_hash=ckpt_hash, seed=seed,
-                          prompt_or_input=prompt + (f" | {guide_kind}: {os.path.basename(guide_src)}" if guide_src else ""))
+                          prompt_or_input=prompt + (f" | {guide_kind}: {os.path.basename(guide_src)}" if guide_src else "")
+                          + (f" | character: {os.path.basename(char_src)}" if char_src else ""))
         records.append({"shot_number": n, "file": os.path.basename(dest), "seed": seed, "prompt": prompt,
                         "guide": os.path.basename(guide_src) if guide_src else None,
+                        "character_ref": os.path.basename(char_src) if char_src else None,
                         "seconds": round(took, 1)})
 
     write_json(os.path.join(args.out, f"frames{args.suffix}.json"),

@@ -1,0 +1,27 @@
+{
+  "project_id": "TCC_SUMMIT_PITCH_01",
+  "stage": "produce",
+  "status": "approved",
+  "draft_file": "examples/agentic-summit-pitch-limit/frames/frames.json",
+  "checks": {
+    "schema": "pass",
+    "bible_match": "not_applicable"
+  },
+  "decision": "Approve",
+  "decided_by": "Workshop director (demo stand-in)",
+  "decided_at": "2026-10-23T08:20:33Z",
+  "notes": "Shots 1, 2, 3, 5 take 1. Shot 4 take 2: take 1 put the slate in a grey film studio, not the screening room; prompt now names the seats, wood walls and booth beam. Shot 6 take 2: take 1 had pseudo-text on the slate; prompt now asks for a bare wood face. Notes: shot 5 is framed tighter than Medium; shot 6 has two booth beams instead of one.",
+  "history": [
+    {
+      "at": "2026-10-23T07:16:58Z",
+      "event": "draft_written",
+      "by": "agent"
+    },
+    {
+      "at": "2026-10-23T08:20:33Z",
+      "event": "Approve",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Shots 1, 2, 3, 5 take 1. Shot 4 take 2: take 1 put the slate in a grey film studio, not the screening room; prompt now names the seats, wood walls and booth beam. Shot 6 take 2: take 1 had pseudo-text on the slate; prompt now asks for a bare wood face. Notes: shot 5 is framed tighter than Medium; shot 6 has two booth beams instead of one."
+    }
+  ]
+}

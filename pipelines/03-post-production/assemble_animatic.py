@@ -17,6 +17,11 @@ normalized for social media loudness, and writes two deliverables:
 An optional --end-card adds typed lettering for the last seconds. Real text
 belongs here, set by a person, not generated inside an image.
 
+With --clips, shots that have an approved motion clip (shot_NN_motion.mp4
+from comfyui_motion.py) use it instead of the still. The motion already holds
+the camera move, so no digital move is added; a clip shorter than its shot
+holds its last frame.
+
 Example:
     python3 pipelines/03-post-production/assemble_animatic.py \\
         --shots my-project/shots.json --frames my-project/frames \\
@@ -75,10 +80,14 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--shots", required=True)
     p.add_argument("--frames", required=True)
+    p.add_argument("--clips", help="Folder with approved shot_NN_motion.mp4 clips (used instead of stills)")
     p.add_argument("--audio", help="Voiceover (or full mix) audio")
     p.add_argument("--captions", help="captions.srt to burn in and attach")
     p.add_argument("--fps", type=float, default=24.0)
     p.add_argument("--lufs", type=float, default=-14.0, help="Integrated loudness target (default -14 LUFS)")
+    p.add_argument("--compress", action="store_true",
+                   help="Gently compress the voice before normalizing; use when QC says the loudness is too low "
+                        "because peaks hit the -1.5 dBTP ceiling")
     p.add_argument("--end-card", help="Text for the end card; use ' / ' for a line break")
     p.add_argument("--end-card-sec", type=float, default=3.0)
     p.add_argument("--out", default="cut.mp4")
@@ -97,6 +106,16 @@ def main():
         for s in shots:
             n = s["shot_number"]
             frames = round(s["duration_sec"] * args.fps)
+            part = os.path.join(tmp, f"part_{n:02d}.mp4")
+            clip = os.path.join(args.clips, f"shot_{n:02d}_motion.mp4") if args.clips else None
+            if clip and os.path.exists(clip):
+                vf = (f"scale={W}:{H}:force_original_aspect_ratio=increase:flags=lanczos,crop={W}:{H},"
+                      f"fps={args.fps},tpad=stop_mode=clone:stop_duration={s['duration_sec']},format=yuv420p")
+                ff(["-i", clip, "-vf", vf, "-frames:v", str(frames), "-an",
+                    "-c:v", "libx264", "-preset", "medium", "-crf", "16", part])
+                parts.append(part)
+                say("ok", f"Shot {n}: {s['duration_sec']}s, motion clip {os.path.basename(clip)}")
+                continue
             src = os.path.join(args.frames, f"shot_{n:02d}_keyframe.png")
             if not os.path.exists(src):
                 sys.exit(f"Missing keyframe {src}")
@@ -105,7 +124,6 @@ def main():
             vf = (f"scale={W * 2}:-2,crop={W * 2}:{H * 2},"
                   f"zoompan=z='{z}':x='{x}':y='{y}':d={frames}:s={W}x{H}:fps={args.fps},"
                   f"format=yuv420p")
-            part = os.path.join(tmp, f"part_{n:02d}.mp4")
             ff(["-loop", "1", "-i", src, "-vf", vf, "-frames:v", str(frames), "-r", str(args.fps),
                 "-c:v", "libx264", "-preset", "medium", "-crf", "18", part])
             parts.append(part)
@@ -137,7 +155,8 @@ def main():
         audio_args, audio_map = [], []
         if args.audio:
             audio_args = ["-i", args.audio]
-            audio_map = ["-map", "1:a", "-af", f"loudnorm=I={args.lufs}:TP=-1.5:LRA=11,aresample=48000",
+            comp = "acompressor=threshold=-24dB:ratio=3:attack=5:release=120:makeup=4dB," if args.compress else ""
+            audio_map = ["-map", "1:a", "-af", f"{comp}loudnorm=I={args.lufs}:TP=-1.5:LRA=11,aresample=48000",
                          "-c:a", "aac", "-b:a", "192k"]
 
         soft = os.path.splitext(args.out)[0] + "_softsubs.mp4"
@@ -161,7 +180,7 @@ def main():
 
     append_provenance(prov, asset_id=os.path.basename(args.out), stage="edit",
                       tool_or_model="ffmpeg animatic (assemble_animatic.py)",
-                      prompt_or_input="approved keyframes + " + (os.path.basename(args.audio) if args.audio else "no audio")
+                      prompt_or_input=("approved motion clips + " if args.clips else "approved keyframes + ") + (os.path.basename(args.audio) if args.audio else "no audio")
                       + (" + " + os.path.basename(args.captions) if args.captions else ""))
     say(">", "Gate 04: screen the cut, then run qc_check.py and pre_audit.py.")
 

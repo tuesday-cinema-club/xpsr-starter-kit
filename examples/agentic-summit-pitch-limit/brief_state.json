@@ -1,0 +1,35 @@
+{
+  "project_id": "Agentic Workflows Promo",
+  "stage": "brief",
+  "status": "approved",
+  "draft_file": "examples/agentic-summit-pitch-limit/brief.json",
+  "checks": {
+    "schema": "pass",
+    "bible_match": "not_applicable",
+    "attempts": 1,
+    "errors": []
+  },
+  "decision": "Approve",
+  "decided_by": "Workshop director (demo stand-in)",
+  "decided_at": "2026-10-23T02:51:22Z",
+  "notes": "Approved after rewrite: key message from SRC-001 and SRC-002; references replaced.",
+  "history": [
+    {
+      "at": "2026-10-23T02:51:03Z",
+      "event": "draft_written",
+      "by": "agent"
+    },
+    {
+      "at": "2026-10-23T02:51:22Z",
+      "event": "Revise",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Key message is a feature list (and says $840-year); make it one sentence a person would say. Grand Budapest pastel palette contradicts the bible's obsidian/amber palette. Client should name the summit."
+    },
+    {
+      "at": "2026-10-23T02:51:22Z",
+      "event": "Approve",
+      "by": "Workshop director (demo stand-in)",
+      "note": "Approved after rewrite: key message from SRC-001 and SRC-002; references replaced."
+    }
+  ]
+}

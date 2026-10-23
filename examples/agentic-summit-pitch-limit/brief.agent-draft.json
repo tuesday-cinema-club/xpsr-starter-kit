@@ -1,0 +1,25 @@
+{
+  "project_title": "Agentic Workflows Promo",
+  "client": "Tuesday Cinema Club",
+  "target_audience": "Indie filmmakers, animators, and directors tired of cloud slot machines and generic AI slop",
+  "core_feeling": "Empowered that real, repeatable cinema can be directed locally without subscription fees",
+  "call_to_action": "Join the Tuesday Cinema Club and clone the local starter kit",
+  "key_message": "All the tools - Ollama, Blender, ComfyUI, Whisper, Kdenlive, and OpenTimelineIO - run locally for free, replace an $840-year Adobe plan, require no coding, and each agent does one job with a human approving every gate.",
+  "runtime_sec": 30,
+  "tone": [
+    "warm",
+    "direct",
+    "craft-first",
+    "defiant"
+  ],
+  "exclusions": [
+    "No cloud service vendor shilling",
+    "No artificial AI hype jargon or hallucinated promises",
+    "No unverified claims without human approval"
+  ],
+  "references": [
+    "Opening cut mirrors the rapid montage style of 'Run Lola Run'",
+    "Color grading nods to the pastel palette of Wes Anderson's 'The Grand Budapest Hotel'",
+    "Soundscape references the ambient tones of Brian Eno's 'Music for Airports'"
+  ]
+}

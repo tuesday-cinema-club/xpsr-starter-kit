@@ -23,6 +23,13 @@ To time the edit before the human take exists, `scratch_vo.py` reads each shot's
     --voice ~/.local/share/piper-voices/en_US-ljspeech-high.onnx --out my-project/audio/vo_scratch.wav
 ```
 
+For a more natural scratch voice, use Kokoro-82M (Apache 2.0), which needs `pip install kokoro soundfile` and pulls in PyTorch. `--speed` changes the speaking rate for either engine:
+
+```bash
+python3 pipelines/03-post-production/scratch_vo.py --shots my-project/shots.json \
+    --voice kokoro:am_michael --speed 1.1 --out my-project/audio/vo_scratch.wav
+```
+
 ## 2. Captions with Whisper
 
 ```bash
@@ -30,7 +37,7 @@ python3 pipelines/03-post-production/transcribe.py --audio my-project/audio/vo.w
     --out my-project/captions.srt --provenance my-project/provenance.csv
 ```
 
-Uses openai-whisper (`base.en` by default) or whisper.cpp (`--engine whisper.cpp --model-path ggml-base.en.bin`). Audio never leaves the machine. With openai-whisper, captions are broken at 42 characters and 2 lines (`--max-line-width`, `--max-line-count`), using word timestamps, so no caption becomes a wall of text. A person should still re-cut any caption that runs across a shot change.
+Uses openai-whisper (`base.en` by default) or whisper.cpp (`--engine whisper.cpp --model-path ggml-base.en.bin`). Audio never leaves the machine. With openai-whisper, captions are broken at 42 characters and 2 lines (`--max-line-width`, `--max-line-count`), using word timestamps, so no caption becomes a wall of text. A person should still re-cut any caption that runs across a shot change. With a GPU or a fast CPU, `--model turbo` (large-v3-turbo, about 1.6 GB) is far more accurate than `base.en`.
 
 ![Terminal output: scratch_vo.py places three lines at 0.40, 8.40 and 17.40 seconds; then transcribe.py produces three caption cues, including the mistakes "our first shot" and "now short walk".](../../docs/images/09-vo-captions.png)
 
@@ -44,7 +51,7 @@ python3 pipelines/03-post-production/generate_timeline.py --shots my-project/sho
     --captions my-project/captions.srt --fps 24 --out my-project/timeline.otio
 ```
 
-Writes an OpenTimelineIO file: keyframes on video track V1 at the shot lengths, the voiceover on A1, and one marker per caption. Open it in Kdenlive with **File, Open** (Kdenlive 23.04 or newer) to recut, grade and mix by hand. Media paths are relative to the `.otio` file, so keep the project folder together.
+Writes an OpenTimelineIO file: keyframes on video track V1 at the shot lengths, the voiceover on A1, and one marker per caption. Open it in Kdenlive with **File, Open** (Kdenlive 23.04 or newer) to recut, grade and mix by hand. Media paths are relative to the `.otio` file, so keep the project folder together. Add `--clips my-project/motion` to lay approved motion clips on V1 instead of stills.
 
 ## 4. Animatic cut with ffmpeg
 
@@ -56,12 +63,14 @@ python3 pipelines/03-post-production/assemble_animatic.py --shots my-project/sho
     --fps 24 --end-card "Ember & Oak / Second shop now open" --out my-project/cut.mp4
 ```
 
-Each still becomes a clip with a gentle digital move from its `camera_move` (Push In, Pull Out, Pan, Tilt, Handheld; Static stays still). Audio is normalized to minus 14 LUFS with a true peak at or below minus 1.5 dBTP. Two files come out:
+Each still becomes a clip with a gentle digital move from its `camera_move` (Push In, Pull Out, Pan, Tilt, Handheld; Static stays still). Audio is normalized to minus 14 LUFS with a true peak at or below minus 1.5 dBTP. If QC then reports the loudness as too low, the voice is peaky and the true-peak ceiling stopped the normalizer short: add `--compress` to compress the voice gently first. The Kokoro voice in the summit pitch measured minus 15.9 LUFS without it and minus 14.9 with it. Two files come out:
 
 - `cut.mp4` has captions burned in: white text on a mostly opaque dark box, readable over any frame.
 - `cut_softsubs.mp4` has a selectable English subtitle track for players that support closed captions.
 
 The end card is typed by a person, so it is real, legible lettering instead of generated pseudo-text.
+
+With `--clips my-project/motion`, any shot with an approved `shot_NN_motion.mp4` uses the motion clip, scaled to 1920 by 1080, instead of a still with a digital move. A clip shorter than its shot holds its last frame.
 
 ![Four stills from the finished cut: at 0:03 the roaster with the caption "Every batch is roasted small in the back room of our first shop."; at 0:10 a hand at an open bag of beans with "Every bag carries the day it was roasted."; at 0:20 two people at the shop counter with "Same roaster, now a short walk closer. Stop in this week."; at 0:28 the end card reading "Ember & Oak, Second shop now open".](../../docs/images/10-final-cut-stills.jpg)
 

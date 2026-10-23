@@ -129,6 +129,14 @@ The same approved shot list rerun with `glm-4.7-flash` (about 30B parameters) an
 
 A fictional car wash opens in the Temecula Valley and talks about itself like a tasting room: three "vintages", a wash sommelier, foam swirled in a glass. The joke is on the car wash, never on the valley. Stand-in audit: **5 of 7**. The sommelier grew a fedora between shots.
 
+### Summit pitch, pushing the limit
+
+![Animated preview of the summit pitch made with the biggest local models, no sound: the instructor smiling at an edit desk, monitors showing grey-box previs, the instructor in the aisle of a wood-panelled screening room under a projector beam, hands holding a bare wooden clapperboard, a side-lit close-up, then the camera pulling back under the typed end card "Agentic Workflows, Tuesday Cinema Club + XPSR Creator Summit, 10/24/26".](examples/agentic-summit-pitch-limit/cut-preview.webp)
+
+[Full cut with sound (MP4)](examples/agentic-summit-pitch-limit/cut.mp4) · [How it was made, and what broke](examples/agentic-summit-pitch-limit/README.md)
+
+The [summit pitch](examples/agentic-summit-pitch/README.md) rebuilt with `gpt-oss-120b` (117B parameters), FLUX.2 [dev] 32B and Wan 2.2 5B motion on the same 8 GB card, in about 8 and a half hours instead of minutes. The host holds up across four shots and the camera really moves. The biggest writing model also overflowed its context and wrote a prison-break film, which the schema check caught on the first gate. Stand-in audit: **5 of 7**. The screening room's projector moves between shots.
+
 ## The $0 principle
 
 The kit replaces an $840-a-year Adobe plan with free tools that run on your machine:

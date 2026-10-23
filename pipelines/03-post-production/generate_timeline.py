@@ -21,6 +21,7 @@ Example:
 import argparse
 import os
 import re
+import subprocess
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
@@ -59,6 +60,22 @@ def clip(name: str, ref: dict, duration_frames: float, rate: float, metadata=Non
     }
 
 
+def gap(duration_frames: float, rate: float) -> dict:
+    return {"OTIO_SCHEMA": "Gap.1", "name": "", "source_range": trange(0, duration_frames, rate),
+            "effects": [], "markers": [], "enabled": True, "metadata": {}}
+
+
+def clip_frames(path: str):
+    """Frame count of a video file via ffprobe, or None if ffprobe is missing or fails."""
+    try:
+        out = subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-select_streams", "v:0",
+                              "-show_entries", "stream=nb_read_frames", "-of", "csv=p=0", path],
+                             capture_output=True, text=True, check=True).stdout
+        return int(out.strip())
+    except (OSError, subprocess.CalledProcessError, ValueError):
+        return None
+
+
 def track(name: str, kind: str, children: list) -> dict:
     return {"OTIO_SCHEMA": "Track.1", "name": name, "kind": kind, "children": children,
             "source_range": None, "effects": [], "markers": [], "enabled": True, "metadata": {}}
@@ -84,6 +101,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--shots", required=True)
     p.add_argument("--frames", required=True, help="Folder with shot_NN_keyframe.png")
+    p.add_argument("--clips", help="Folder with approved shot_NN_motion.mp4 clips (used instead of stills)")
     p.add_argument("--audio", help="Voiceover audio for the audio track")
     p.add_argument("--captions", help="captions.srt: one marker per cue")
     p.add_argument("--fps", type=float, default=24.0)
@@ -99,15 +117,27 @@ def main():
         n = s["shot_number"]
         frames = round(s["duration_sec"] * rate)
         img = os.path.join(args.frames, f"shot_{n:02d}_keyframe.png")
-        if not os.path.exists(img):
+        motion = os.path.join(args.clips, f"shot_{n:02d}_motion.mp4") if args.clips else None
+        if motion and os.path.exists(motion):
+            img = motion
+        elif not os.path.exists(img):
             sys.exit(f"Missing keyframe {img}")
-        video.append(clip(f"Shot {n}: {s['framing']} {s['lens_mm']}mm", media_ref(img, frames, rate, base_dir),
-                          frames, rate, metadata={"tcc": {"camera_move": s["camera_move"],
-                                                          "action": s["action_description"],
-                                                          "voiceover_line": s["voiceover_line"]}}))
+        used = frames
+        if img == motion:
+            have = clip_frames(motion)
+            if have is not None and have < frames:
+                used = have
+                say("!", f"Shot {n}: motion clip is {have / rate:.1f}s of {frames / rate:g}s; left a gap after it. "
+                         "In Kdenlive, extend the clip with a freeze frame to hold its last frame.")
+        video.append(clip(f"Shot {n}: {s['framing']} {s['lens_mm']}mm", media_ref(img, used, rate, base_dir),
+                          used, rate, metadata={"tcc": {"camera_move": s["camera_move"],
+                                                        "action": s["action_description"],
+                                                        "voiceover_line": s["voiceover_line"]}}))
+        if used < frames:
+            video.append(gap(frames - used, rate))
         total += frames
 
-    tracks = [track("V1 Keyframes", "Video", video)]
+    tracks = [track("V1 Motion" if args.clips else "V1 Keyframes", "Video", video)]
     if args.audio:
         markers = []
         if args.captions:
@@ -128,7 +158,7 @@ def main():
         "metadata": {"generator": "tuesday-cinema-club/xpsr-starter-kit generate_timeline.py"},
     }
     write_json(args.out, timeline)
-    say("ok", f"{args.out}: {len(video)} clips, {total / rate:.1f}s at {rate:g} fps")
+    say("ok", f"{args.out}: {len(shots)} shots, {total / rate:.1f}s at {rate:g} fps")
 
     try:
         import opentimelineio as otio

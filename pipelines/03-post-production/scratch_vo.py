@@ -19,6 +19,12 @@ Example (run with the venv's Python so Piper is importable):
         --voice ~/.local/share/piper-voices/en_US-ljspeech-high.onnx \\
         --out my-project/audio/vo_scratch.wav
 
+For a more natural scratch voice, pass --voice kokoro:<voice> to use Kokoro-82M
+(Apache 2.0) instead, after `pip install kokoro soundfile` (pulls in PyTorch):
+
+    python3 pipelines/03-post-production/scratch_vo.py --shots my-project/shots.json \
+        --voice kokoro:am_michael --out my-project/audio/vo_scratch.wav
+
 To use a recorded human take instead, skip this script and pass your file
 to transcribe.py and assemble_animatic.py.
 """
@@ -36,8 +42,27 @@ from common import append_provenance, load_json, say  # noqa: E402
 LEAD_IN = 0.4   # seconds of picture before each line starts
 
 
-def synth(text: str, voice: str, dest: str) -> None:
-    proc = subprocess.run([sys.executable, "-m", "piper", "-m", voice, "-f", dest],
+_KOKORO = {}
+
+
+def synth_kokoro(text: str, voice: str, dest: str, speed: float = 1.0) -> None:
+    try:
+        import numpy as np
+        import soundfile as sf
+        from kokoro import KPipeline
+    except ImportError:
+        sys.exit(f"Kokoro is not installed in this Python:\n  {sys.executable} -m pip install kokoro soundfile")
+    if "pipe" not in _KOKORO:
+        _KOKORO["pipe"] = KPipeline(lang_code=voice[0], repo_id="hexgrad/Kokoro-82M")
+    audio = np.concatenate([chunk for _, _, chunk in _KOKORO["pipe"](text, voice=voice, speed=speed)])
+    sf.write(dest, audio, 24000)
+
+
+def synth(text: str, voice: str, dest: str, speed: float = 1.0) -> None:
+    if voice.startswith("kokoro:"):
+        return synth_kokoro(text, voice.split(":", 1)[1], dest, speed)
+    proc = subprocess.run([sys.executable, "-m", "piper", "-m", voice, "-f", dest,
+                           "--length-scale", str(1.0 / speed)],
                           input=text.encode("utf-8"), capture_output=True)
     if proc.returncode != 0 or not os.path.exists(dest):
         sys.exit("Piper failed. Is piper-tts installed in this Python?\n"
@@ -53,8 +78,9 @@ def duration(path: str) -> float:
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--shots", required=True)
-    p.add_argument("--voice", required=True, help="Piper .onnx voice model")
+    p.add_argument("--voice", required=True, help="Piper .onnx voice model, or kokoro:<voice> such as kokoro:am_michael")
     p.add_argument("--out", required=True, help="Output .wav")
+    p.add_argument("--speed", type=float, default=1.0, help="Speaking rate, e.g. 1.1 for 10%% faster (default 1.0)")
     p.add_argument("--provenance", help="provenance.csv (default: next to --shots)")
     args = p.parse_args()
 
@@ -71,7 +97,7 @@ def main():
             line = s["voiceover_line"].strip()
             if line:
                 wav = os.path.join(tmp, f"line_{s['shot_number']:02d}.wav")
-                synth(line, args.voice, wav)
+                synth(line, args.voice, wav, args.speed)
                 length = duration(wav)
                 start = t + LEAD_IN
                 if start + length > t + s["duration_sec"]:
@@ -95,9 +121,12 @@ def main():
     with open(script_path, "w", encoding="utf-8") as f:
         f.write("SCRATCH VOICEOVER (synthetic stand-in: replace with a recorded human take)\n\n")
         f.write("\n".join(script_lines) + "\n")
-    voice_name = os.path.splitext(os.path.basename(args.voice))[0]
+    if args.voice.startswith("kokoro:"):
+        engine = f"kokoro-82m/{args.voice.split(':', 1)[1]}"
+    else:
+        engine = f"piper-tts/{os.path.splitext(os.path.basename(args.voice))[0]}"
     append_provenance(prov, asset_id=os.path.basename(args.out), stage="dialogue",
-                      tool_or_model=f"piper-tts/{voice_name} (SCRATCH stand-in for human VO)",
+                      tool_or_model=f"{engine} (SCRATCH stand-in for human VO)",
                       prompt_or_input=" / ".join(s["voiceover_line"] for s in shots if s["voiceover_line"]))
     say("ok", f"{args.out} written ({total:.1f}s), script in {script_path}")
     say(">", "Replace with the recorded human take before release (anti-slop check 7).")

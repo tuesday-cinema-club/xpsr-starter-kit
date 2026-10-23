@@ -1,0 +1,25 @@
+{
+  "project_title": "Agentic Workflows: Zero Cost, Infinite Potential",
+  "client": "Tuesday Cinema Club + XPSR Creator Summit",
+  "target_audience": "Indie filmmakers, animators, and directors tired of cloud slot machines and generic AI slop",
+  "core_feeling": "Empowered that real, repeatable cinema can be directed locally without subscription fees",
+  "call_to_action": "Join the Tuesday Cinema Club and clone the local starter kit",
+  "key_message": "Direct your own film on your own machine: one agent per job, a human at every gate, and no subscription.",
+  "runtime_sec": 30,
+  "tone": [
+    "warm",
+    "direct",
+    "craft-first",
+    "defiant"
+  ],
+  "exclusions": [
+    "No cloud service vendor shilling",
+    "No artificial AI hype jargon or hallucinated promises",
+    "No unverified claims without human approval"
+  ],
+  "references": [
+    "Agnès Varda speaking straight to camera as her own host in The Beaches of Agnès (2008)",
+    "Gordon Willis's low-key amber practical light in The Godfather (1972)",
+    "The calm, unhurried pacing of Brian Eno's Music for Airports (1978)"
+  ]
+}

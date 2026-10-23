@@ -1,0 +1,64 @@
+{
+  "workflow": "wan22_ti2v_5b_keyframe_to_motion.json",
+  "model": "wan2.2_ti2v_5B_fp16.safetensors",
+  "model_sha256_short": "456f901338",
+  "fps": 24.0,
+  "clips": [
+    {
+      "shot_number": 1,
+      "file": "shot_01_motion.mp4",
+      "first_frame": "shot_01_keyframe.png",
+      "seed": 520892,
+      "frames": 121,
+      "prompt": "The instructor stands in front of his editing desk, two monitors glowing behind him, looks straight into the lens and smiles as he starts to speak. The camera slowly pushes in toward the subject. Cinematic warm practical sidelight, rich contrast, soft golden rim light, atmospheric haze.",
+      "seconds": 1453.1
+    },
+    {
+      "shot_number": 2,
+      "file": "shot_02_motion.mp4",
+      "first_frame": "shot_02_keyframe.png",
+      "seed": 520893,
+      "frames": 121,
+      "prompt": "Across the desk: one monitor shows a grey 3D blocking of a room, the other a node graph; a keyboard and a small control surface sit in front. The camera slowly pans right. Cinematic warm practical sidelight, rich contrast, soft golden rim light, atmospheric haze.",
+      "seconds": 1443.8
+    },
+    {
+      "shot_number": 3,
+      "file": "shot_03_motion.mp4",
+      "first_frame": "shot_03_keyframe.png",
+      "seed": 520894,
+      "frames": 121,
+      "prompt": "The instructor stands in the aisle of the empty screening room, rows of seats behind him, the projector beam cutting through haze above. The camera slowly pushes in toward the subject. Cinematic warm practical sidelight, rich contrast, soft golden rim light, atmospheric haze.",
+      "seconds": 1442.9
+    },
+    {
+      "shot_number": 4,
+      "file": "shot_04_motion.mp4",
+      "first_frame": "shot_04_keyframe.png",
+      "seed": 520895,
+      "frames": 121,
+      "prompt": "Two hands in black sleeves hold a vintage wooden clapperboard in the projector beam; dust drifts through the light. The camera is locked off on a tripod and does not move. Cinematic warm practical sidelight, rich contrast, soft golden rim light, atmospheric haze.",
+      "seconds": 1443.4
+    },
+    {
+      "shot_number": 5,
+      "file": "shot_05_motion.mp4",
+      "first_frame": "shot_05_keyframe.png",
+      "seed": 520896,
+      "frames": 121,
+      "prompt": "Medium close-up: the instructor, lit by the projector's spill, looks into the lens and gives a small, knowing nod. The camera is locked off on a tripod and does not move. Cinematic warm practical sidelight, rich contrast, soft golden rim light, atmospheric haze.",
+      "seconds": 1444.7
+    },
+    {
+      "shot_number": 6,
+      "file": "shot_06_motion.mp4",
+      "first_frame": "shot_06_keyframe.png",
+      "seed": 521006,
+      "frames": 60,
+      "prompt": "The instructor raises the clapperboard toward the camera in the aisle as the projector beam flares behind him; the end card fades in over the last three seconds. The camera slowly dollies backward, away from the subject, who gets smaller in frame as more of the room is revealed. Cinematic warm practical sidelight, rich contrast, soft golden rim light, atmospheric haze.",
+      "seconds": 1444.9,
+      "take": 2,
+      "trimmed_by_director": "kept frames 0-59 of 121; from frame 66 the host turns and walks away. The last frame holds under the end card."
+    }
+  ]
+}
