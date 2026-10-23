@@ -19,9 +19,10 @@ It is a small Python server (standard library only) and a web app with no build 
 | --- | --- | --- | --- |
 | Drafting the brief, shots, action prompts; reading shots against exclusions | Ollama (`llama3.2:3b` by default, any pulled model) | This machine's GPU | Free |
 | First and last frames | FLUX.2 [klein] 4B through ComfyUI | This machine's GPU | Free, unlimited: about 30 to 40 seconds a frame on an 8 GB RTX 2070 SUPER |
-| First and last frames, instead | Google Flow images (Nano Banana) through useapi.net | Google | 0 Flow credits; one captcha solve each |
+| First and last frames, instead | Google Flow images (Nano Banana), **by hand** in your own Flow tab | Google | Free: no credits, no subscription |
+| First and last frames, instead | Google Flow images through useapi.net (optional) | Google | 0 Flow credits; useapi.net is paid |
 | First and last frames, instead | A phone photo | The phone | Free |
-| Motion: first frame, last frame and action in, a clip out | Google Flow video (Veo 3.1, Omni 1.1 Flash) through useapi.net | Google | Flow credits, inside a daily budget |
+| Motion: first frame, last frame and action in, a clip out | Google Flow video (Veo 3.1, Omni 1.1 Flash), by hand or through useapi.net | Google | Flow credits, inside a daily budget |
 
 The local model only drafts. Every suggestion lands in a box with a **Use** button, and nothing is in the brief until a person presses it.
 
@@ -83,7 +84,7 @@ Shots use the kit's vocabulary (`schemas/shot_breakdown.schema.json`). A voiceov
 
 This is the kit's two-pass rule made visible:
 
-1. **First frame.** Render takes, tap one to pick it, lock it. The source can be the local GPU, Flow images or a phone photo, set per shot or for the whole project.
+1. **First frame.** Render takes, tap one to pick it, lock it. The source can be the local GPU, Flow by hand, Flow through useapi.net or a phone photo, set per shot or for the whole project.
 2. **Last frame, optional.** Say only what has changed. It is drawn with the locked first frame as its reference, so the room, the people and the light carry over. Skip it and the video model decides where the shot ends.
 3. **Action.** Describe only what moves between the two frames. The local model can write a draft. Then render on Flow, or **hold the still** and spend nothing.
 
@@ -101,9 +102,33 @@ Each check gets Pass or Fail and one line of evidence. A machine note shows what
 
 ![The pack sheet: Draft pack, a warning that the audit is not at 7 of 7, tabs for brief.md, brief.json, research_log.csv and the rest, a preview of brief.md, a checkbox to include 4 picked frames and clips, and Copy as text and Download .zip buttons.](../../docs/images/director/10-pack.png)
 
-## Google Flow through useapi.net
+## Google Flow, by hand (free)
 
-Motion is the one step that does not run here. It goes to Google Flow on your own Google account, through [useapi.net](https://useapi.net/docs/api-google-flow-v1), a third-party service with a documented REST API. The app is a client of that API, written from its documentation. It does not talk to Google's private endpoints itself and it does not solve captchas: useapi.net does that, on its side.
+Flow's Nano Banana images cost no credits, and a free Google account gets about 50 Flow credits a day for clips. You can use both without any bridge or subscription: the app prepares the work, you press generate in your own Flow tab, and the file comes back to be catalogued.
+
+![Last frame with Flow by hand selected: the change to make, then four numbered steps: copy the prompt, save the first frame and attach it in Flow as the reference, open Flow and generate with Nano Banana, and bring the image back.](../../docs/images/director/15-flow-by-hand-frame.png)
+
+**Frames.** Choose **Flow by hand** as the source, for one shot or the whole project.
+
+1. **Copy the prompt.** For a last frame the app writes the full instruction: keep the place, people and light of the attached first frame, change only what you described.
+2. **Save the reference.** For a last frame that is the locked first frame; for a first frame, the phone blocking photo if there is one. Attach it in Flow.
+3. **Open Flow.** Pick Nano Banana, paste, generate, and download the take you like.
+4. **Bring the image back.** It joins the shot's takes and is catalogued in the library as a Flow frame made by hand. Its provenance row records the model and the exact prompt.
+
+![The motion panel's Make it in Flow by hand steps: save the first and last frames, copy the action, open Flow and use frames to video with Veo 3.1 Lite at 8 seconds, then bring the clip back, which logs 10 credits.](../../docs/images/director/16-flow-by-hand-clip.png)
+
+**Clips.** Under the action prompt, open **Make it in Flow by hand**. Choose the model above first, because that sets the credit cost the ledger records.
+
+1. **Save the frames.** Save the first frame, and the last frame if there is one.
+2. **Copy the action.**
+3. **Open Flow.** In frames to video, use the same model and length, paste, generate, and download.
+4. **Bring the clip back.** Pick the MP4 Flow downloaded. The app catalogues it and records its credits against today's budget, so the library's **Where the credits went** still shows which clip each credit bought.
+
+Flow is the one that charges, when you press generate, so the app can only warn you, not stop you. The budget bar shows what is left before you go to Flow.
+
+## Google Flow through useapi.net (optional, paid)
+
+To render from inside the app instead, without leaving it, connect [useapi.net](https://useapi.net/docs/api-google-flow-v1). It is a paid third-party service that runs Flow on your own Google account and solves the captcha Flow puts on every generation. The app is a client of useapi.net's documented REST API. It does not talk to Google's private endpoints itself and it does not solve captchas.
 
 ![The accounts sheet: local writing model llama3.2:3b; Google Flow through useapi.net, not connected, with a button to connect a Google account at useapi.net, a field for the API token, the plan set to free and 50 credits per day.](../../docs/images/director/11-accounts.png)
 
@@ -116,7 +141,7 @@ Motion is the one step that does not run here. It goes to Google Flow on your ow
 
 The token is written to `~/.config/xpsr-director/env` on the machine (mode 600). It is never sent to the browser and never stored in the repo. **Forget token** removes it.
 
-### What is free, and the budget guard
+### Credit costs and the budget guard
 
 From useapi.net's price table (October 2026; their figures are averages from busy accounts, not guarantees):
 
@@ -131,7 +156,7 @@ From useapi.net's price table (October 2026; their figures are averages from bus
 
 - **Free accounts get about 50 credits a day:** 5 Veo Lite clips or 2 Veo Fast clips. Omni needs a paid plan. On Plus (200 credits a month), 4-second Omni 360p tests cost 4 credits each.
 - **Every image and clip needs one captcha solve.** useapi.net gives the first account 300 free solves, then asks for your own solving service at about $0.80 to $3.00 per 1,000. Frames made on the local GPU use none.
-- **The server keeps a credit ledger per local day and refuses any clip that would go over the daily budget,** or over the live balance the account last reported. A failed job puts its credits back in the local ledger, and the live balance stays the source of truth.
+- **The server keeps a credit ledger per local day.** Through useapi.net it refuses any clip that would go over the daily budget, or over the live balance the account last reported, and a failed job puts its credits back. Clips made by hand are recorded when they come back.
 - **The budget and plan live in the env file:** `FLOW_PLAN=free|plus|pro|ultra` and `FLOW_DAILY_CREDITS=50`. Change them from the accounts sheet.
 
 ![The motion panel with Omni 1.1 Flash 360p chosen, clip length 4 seconds at 4 credits, and the budget bar showing this clip 4 credits, then 46 left.](../../docs/images/director/07-omni-360p.png)

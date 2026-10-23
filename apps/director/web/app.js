@@ -420,6 +420,76 @@ function llmModel() {
   return server.status?.local?.default_model || "llama3.2:3b";
 }
 
+// ------------------------------------------------------------------ Flow by hand
+// The app prepares everything, the person makes the frame or clip in their
+// own Flow tab, and the file comes back here to be catalogued.
+
+const FLOW_URL = () => server.status?.flow?.flow_url || "https://labs.google/fx/tools/flow";
+
+function handPrompt(shot, slot) {
+  const t = shot[slot];
+  if (slot === "motion") return (t.prompt || `${shot.camera_move}. ${shot.action_description}`).trim();
+  const p = (t.prompt || (slot === "first" ? shot.visual_prompt : "")).trim();
+  if (slot === "last") return `Use the attached image as the first frame of this shot. Make the last frame of the same shot: the same place, people, wardrobe, light and lens, a moment later. Only this changes: ${p}`;
+  if (t.useRef && shot.ref) return `The attached image is a rough phone photo that blocks out this shot. Make a finished photograph that keeps its camera angle, layout and the positions of people and objects, but none of its phone-camera look. Scene: ${p}`;
+  return p;
+}
+
+function handSteps(shot, slot) {
+  const ref = slot === "last" ? shot.first.pick : (shot.first.useRef && shot.ref ? shot.ref : null);
+  return `<ol class="hand-steps">
+    <li><button class="btn small" data-act="copy-hand" data-id="${shot.id}" data-slot="${slot}">Copy the prompt</button></li>
+    ${ref ? `<li><a class="btn small ghost" href="${mediaUrl(ref)}?download=1">Save the ${slot === "last" ? "first frame" : "blocking photo"}</a> and attach it in Flow as the reference image.</li>` : ""}
+    <li><a class="btn small ghost" href="${FLOW_URL()}" target="_blank" rel="noopener noreferrer">Open Flow ↗</a> Pick an image model (Nano Banana), paste, generate, and download the take you like.</li>
+    <li><label class="btn primary file-btn">Bring the image back<input type="file" accept="image/*" data-file="hand" data-id="${shot.id}" data-slot="${slot}"></label></li>
+  </ol>`;
+}
+
+function handClipSteps(shot, sel, dur, cost, fits) {
+  const label = sel ? `${sel.label}, ${dur} seconds` : "Veo 3.1 Lite, 8 seconds";
+  return `<ol class="hand-steps">
+    <li><a class="btn small ghost" href="${mediaUrl(shot.first.pick)}?download=1">Save the first frame</a>${shot.last.locked ? ` <a class="btn small ghost" href="${mediaUrl(shot.last.pick)}?download=1">Save the last frame</a>` : ""}</li>
+    <li><button class="btn small" data-act="copy-hand" data-id="${shot.id}" data-slot="motion">Copy the action</button></li>
+    <li><a class="btn small ghost" href="${FLOW_URL()}" target="_blank" rel="noopener noreferrer">Open Flow ↗</a> Use frames to video${shot.last.locked ? " with both frames" : " with the first frame"}, choose <b>${h(label)}</b>, paste, generate, download.</li>
+    <li><label class="btn primary file-btn">Bring the clip back · logs ${cost} credits<input type="file" accept="video/mp4,video/*" data-file="hand-clip" data-id="${shot.id}"></label></li>
+  </ol>
+  <p class="field-hint">Flow takes the credits when you press generate. The app records ${cost} against today's budget when the clip comes back${fits ? "" : `: <span style="color:var(--red-text)">that is more than the ${flowLeft()} left today</span>`}. Picked a different model in Flow? Change it above first, so the ledger matches.</p>`;
+}
+
+async function bringBack(shot, slot, file, label) {
+  label?.classList.add("busy");
+  try {
+    let blob = file;
+    const headers = { "X-Source": "flow-hand", "X-Label": jobLabel(shot, slot === "motion" ? "motion (made in Flow)" : `${slot} frame (made in Flow)`).label,
+      "X-Project": jobLabel(shot, "").project, "X-Prompt": handPrompt(shot, slot), "X-Frame": slot };
+    if (slot === "motion") {
+      if (file.type && file.type !== "video/mp4") throw new Error("Bring back the MP4 that Flow downloads (this file is " + file.type + ").");
+      blob = file.type ? file : new Blob([file], { type: "video/mp4" });
+      const model = flowModels().find((x) => x.id === shot.motion.model) || flowModels()[0];
+      const dur = clipDuration(shot, model);
+      Object.assign(headers, { "X-Model": model?.id || "veo-3.1-lite", "X-Credits": model ? model.costs[dur] : 0, "X-Duration": dur });
+    } else {
+      blob = await toJpeg(file, 2048);
+      headers["X-Model"] = S.flow_frames;
+    }
+    const { media } = await api.upload(blob, headers);
+    const t = shot[slot];
+    t.takes.push(media.name);
+    t.pick = media.name;
+    if (slot === "motion") t.still = false;
+    logTake(shot, slot, media);
+    save();
+    buzz([10, 30, 10]);
+    toast(slot === "motion" ? `Clip catalogued; ${media.credits || 0} credits logged for today.` : "Frame catalogued as a Flow take.", "good");
+    await loadStatus();
+    renderGate(3);
+  } catch (e) {
+    toast(e.message, "bad");
+  } finally {
+    label?.classList.remove("busy");
+  }
+}
+
 // The shortest clip that covers the shot, or the longest the model makes.
 function clipDuration(shot, model) {
   if (!model) return 8;
@@ -442,8 +512,8 @@ function takesGrid(shot, slot) {
 
 function sourceButtons(shot, slot) {
   const t = shot[slot];
-  const opts = [["local", "Local GPU", "free"], ["flow", "Flow image", "0 credits"], ["upload", "Photo", "human"]];
-  return `<div class="choice" role="group" aria-label="Where the frame comes from" style="grid-template-columns:repeat(3,1fr)">
+  const opts = [["local", "Local GPU", "free · automatic"], ["hand", "Flow by hand", "free · you click"], ["flow", "Flow via useapi", "0 credits · paid bridge"], ["upload", "Photo", "human"]];
+  return `<div class="choice" role="group" aria-label="Where the frame comes from" style="grid-template-columns:repeat(2,1fr)">
     ${opts.map(([v, l, c]) => `<button data-act="source" data-id="${shot.id}" data-slot="${slot}" data-v="${v}" aria-pressed="${t.source === v}" ${t.locked ? "disabled" : ""}><small>${c}</small>${l}</button>`).join("")}</div>`;
 }
 
@@ -458,6 +528,14 @@ function frameControls(shot, slot) {
   if (!isLast && !t.prompt && shot.visual_prompt) t.prompt = shot.visual_prompt;
   const flowOk = server.status?.flow?.configured;
   let go;
+  if (t.source === "hand") {
+    return `${sourceButtons(shot, slot)}
+      ${field(isLast ? "What has changed by the last frame" : "Frame prompt", `shots.${i}.${slot}.prompt`, { area: true, rows: 3,
+        placeholder: isLast ? "e.g. the cup is now full and steaming, the roaster has stepped back" : shot.visual_prompt })}
+      ${handSteps(shot, slot)}
+      ${t.pick ? `<div class="row"><button class="btn go" data-act="lock" data-id="${shot.id}" data-slot="${slot}">Lock take ${t.takes.indexOf(t.pick) + 1}</button>${isLast ? `<button class="btn ghost" data-act="skip-last" data-id="${shot.id}">No last frame</button>` : ""}</div>` : isLast ? `<div class="row"><button class="btn ghost" data-act="skip-last" data-id="${shot.id}">No last frame</button></div>` : ""}
+      ${takesGrid(shot, slot)}`;
+  }
   if (t.source === "upload") {
     go = `<label class="btn primary file-btn">📷 Take or choose photo<input type="file" accept="image/*" capture="environment" data-file="frame" data-id="${shot.id}" data-slot="${slot}"></label>`;
   } else if (t.source === "flow" && !flowOk) {
@@ -520,11 +598,13 @@ function motionControls(shot) {
       <select data-bind="shots.${i}.motion.duration" data-num="1" data-rerender="3">${sel.durations.map((d) => `<option value="${d}" ${d === dur ? "selected" : ""}>${d} seconds · ${sel.costs[d]} credits</option>`).join("")}</select></label>` : ""}
     ${meter(cost)}
     <div class="row">
-      ${flowOk ? `<button class="btn primary" data-act="motion" data-id="${shot.id}" ${ready && fits && server.authed ? "" : "disabled"}>Render motion · ${cost} credits</button>`
-        : `<button class="btn" data-act="accounts">Connect Google Flow</button>`}
+      ${flowOk ? `<button class="btn primary" data-act="motion" data-id="${shot.id}" ${ready && fits && server.authed ? "" : "disabled"}>Render through useapi · ${cost} credits</button>` : ""}
       ${m.pick ? `<button class="btn go" data-act="lock" data-id="${shot.id}" data-slot="motion">Lock take ${m.takes.indexOf(m.pick) + 1}</button>` : ""}
       <button class="btn ghost" data-act="still" data-id="${shot.id}" ${shot.first.locked ? "" : "disabled"}>Hold the still</button></div>
     ${dur > shot.duration_sec ? `<p class="field-hint">Flow renders ${dur}s; trim to the shot's ${shot.duration_sec}s in the edit.</p>` : ""}
+    <details class="hand" ${flowOk ? "" : "open"}><summary>Make it in Flow by hand · no bridge, no subscription</summary>
+      ${handClipSteps(shot, sel, dur, cost, fits)}</details>
+    ${flowOk ? "" : `<p class="field-hint">Or <button class="linkish" data-act="accounts">connect useapi.net</button> to render from here (paid bridge).</p>`}
     ${takesGrid(shot, "motion")}`;
 }
 
@@ -580,8 +660,9 @@ function renderGate3() {
       <div class="field"><span class="field-label">Frames come from <em>every unlocked first and last frame</em></span>
         <div class="choice" role="group" aria-label="Default frame source" style="grid-template-columns:1fr 1fr">
           <button data-act="frame-source" data-v="local" aria-pressed="${S.frame_source === "local"}"><small>Unlimited · this GPU</small>Local FLUX.2 klein</button>
-          <button data-act="frame-source" data-v="flow" aria-pressed="${S.frame_source === "flow"}"><small>0 credits · 1 captcha each</small>Flow Nano Banana</button></div>
-        <span class="field-hint">Nano Banana draws the last frame with the locked first frame as its reference, so the place and people carry over. Each shot can still pick its own source.</span></div>
+          <button data-act="frame-source" data-v="hand" aria-pressed="${S.frame_source === "hand"}"><small>Free · you click in Flow</small>Flow by hand</button>
+          <button data-act="frame-source" data-v="flow" aria-pressed="${S.frame_source === "flow"}" style="grid-column:1 / -1"><small>0 credits · paid useapi.net bridge</small>Flow via useapi</button></div>
+        <span class="field-hint">Flow by hand: the app hands you the prompt and reference, you make the frame in your own Flow tab with Nano Banana, and bring the download back. Last frames use the locked first frame as their reference either way. Each shot can still pick its own source.</span></div>
       <label class="field"><span class="field-label">Flow image model <em>when a frame source is Flow image</em></span>
         <select data-bind="flow_frames">${(f?.image_models || ["nano-banana-2-lite"]).map((m) => `<option ${S.flow_frames === m ? "selected" : ""}>${m}</option>`).join("")}</select></label>`)}
     ${S.shots.map(workCard).join("")}
@@ -1091,7 +1172,7 @@ async function openAccounts() {
       <div class="card"><div class="card-head"><span class="card-title"><b>Local writing model</b> · Ollama</span></div>
         <select data-bind="llm_model" aria-label="Local writing model">${models.map((m) => `<option ${m === llmModel() ? "selected" : ""}>${h(m)}</option>`).join("")}</select>
         <p class="field-hint">llama3.2:3b answers in seconds on this card; glm-4.7-flash writes better and takes about a minute.</p></div>
-      <div class="card"><div class="card-head"><span class="card-title"><b>Google Flow</b> · through useapi.net</span><span class="badge ${f?.configured ? "free" : "cost"}">${f?.configured ? "Token saved" : "Not connected"}</span></div>
+      <div class="card"><div class="card-head"><span class="card-title"><b>Google Flow</b> · through useapi.net, optional</span><span class="badge ${f?.configured ? "free" : "cost"}">${f?.configured ? "Token saved" : "Not connected"}</span></div>
         <p class="lede">useapi.net runs Google Flow on your own Google account. Sign the Google account in on their setup page, then paste the useapi.net API token here. The token is saved on the director's machine, never in this browser or the repo.</p>
         <a class="btn" href="${h(f?.setup_url || "https://useapi.net/docs/start-here/setup-google-flow")}" target="_blank" rel="noopener noreferrer">Connect a Google account at useapi.net ↗</a>
         <form class="stack" data-form="flow">
@@ -1106,6 +1187,7 @@ async function openAccounts() {
       </div>
       <div class="card"><div class="card-head"><span class="card-title"><b>What is free</b></span></div>
         <ul class="small" style="margin:0;padding-left:18px;display:grid;gap:6px">
+          <li><b>No subscription needed:</b> pick Flow by hand as a frame source, or open Make it in Flow by hand under a shot's action. You generate in your own Flow tab and bring the file back; the app catalogues it and logs a clip's credits. useapi.net below is only for rendering from inside the app.</li>
           <li>A free Google account gets about 50 Flow credits a day: 5 Veo 3.1 Lite or 2 Veo 3.1 Fast clips, 8 seconds each. Omni and upscaling need a paid plan. useapi.net calls these figures averages, not guarantees.</li>
           <li>Flow images (Nano Banana) cost no credits, but each image or clip needs one captcha solve. useapi.net gives the first account 300; after that you plug in a paid solving service.</li>
           <li>useapi.net itself is a paid subscription. The Flow credits are free; the bridge is not.</li>
@@ -1148,6 +1230,11 @@ document.addEventListener("change", async (e) => {
     else { el.value = signed ? 100 : 0; el.parentElement.querySelector(".slider-fill").style.width = `${el.value}%`; }
     return;
   }
+  if (el.dataset.file === "hand" || el.dataset.file === "hand-clip") {
+    const file = el.files?.[0];
+    if (file) await bringBack(shotById(el.dataset.id), el.dataset.file === "hand-clip" ? "motion" : el.dataset.slot, file, el.closest("label"));
+    return;
+  }
   if (el.dataset.file) {
     const file = el.files?.[0];
     if (!file) return;
@@ -1157,7 +1244,7 @@ document.addEventListener("change", async (e) => {
     try {
       const jpeg = file.type.startsWith("video") ? await videoFrame(file) : await toJpeg(file);
       const what = el.dataset.file === "ref" ? "blocking photo" : `${el.dataset.slot} frame (photo)`;
-      const { media } = await api.upload(jpeg, jobLabel(shot, what).label, jobLabel(shot, what).project);
+      const { media } = await api.upload(jpeg, { "X-Label": jobLabel(shot, what).label, "X-Project": jobLabel(shot, what).project, "X-Frame": el.dataset.slot || "" });
       if (el.dataset.file === "ref") {
         touchGate(el);
         shot.ref = media.name;
@@ -1284,6 +1371,12 @@ document.addEventListener("click", async (e) => {
     case "source":
       shot[el.dataset.slot].source = el.dataset.v; save(); renderGate(3); break;
     case "frame": startFrame(shot, el.dataset.slot); break;
+    case "copy-hand": {
+      const text = handPrompt(shot, el.dataset.slot);
+      try { await navigator.clipboard.writeText(text); toast("Copied. Paste it into Flow.", "good"); }
+      catch { window.prompt("Copy this into Flow:", text); }
+      break;
+    }
     case "pick": {
       const t = shot[el.dataset.slot];
       t.pick = el.dataset.m; buzz(8); save(); renderGate(3); break;

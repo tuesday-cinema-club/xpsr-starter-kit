@@ -469,3 +469,10 @@ footer.foot a { color: var(--muted); }
 @media (max-width: 420px) {
   .grid-2 { grid-template-columns: 1fr; }
 }
+
+.hand { border: 1px dashed var(--line-strong); padding: 10px 12px; background: var(--well); }
+.hand summary { cursor: pointer; font: 700 12px/1.6 var(--mono); text-transform: uppercase; letter-spacing: 0.04em; color: var(--amber); min-height: 32px; }
+.hand-steps { margin: 8px 0 0; padding-left: 22px; display: grid; gap: 10px; font-size: 14px; color: var(--muted); }
+.hand-steps li::marker { font: 700 13px var(--mono); color: var(--amber); }
+.hand-steps .btn { margin-right: 6px; vertical-align: middle; }
+.linkish { background: none; border: 0; padding: 0; color: var(--amber); text-decoration: underline; font: inherit; cursor: pointer; }

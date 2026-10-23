@@ -69,7 +69,7 @@ Everything above, plus ComfyUI and one image model. See [the ComfyUI section of 
 
 ## The phone app
 
-[XPSR Director](apps/director/README.md) puts the four gates on a phone. The brief, the shot deck, first and last frames rendered on the workshop machine's GPU, motion from Google Flow inside the free daily credits, and the seven-check audit, each signed by a named person. One button packs it all into the files this kit reads.
+[XPSR Director](apps/director/README.md) puts the four gates on a phone. The brief, the shot deck, first and last frames rendered on the workshop machine's GPU or made in Google Flow, motion from Flow inside the free daily credits, and the seven-check audit, each signed by a named person. One button packs it all into the files this kit reads.
 
 <p>
   <img src="docs/images/director/06-first-last-action.png" width="260" alt="A shot in XPSR Director on a phone: a locked first frame, a locked last frame of the same room a moment later, and the action prompt with a 10-credit Veo 3.1 Lite option and a budget bar at 0 of 50 credits.">
@@ -191,9 +191,9 @@ The kit replaces an $840-a-year Adobe plan with free tools that run on your mach
 | Audition | Ardour or Audacity |
 | Cloud chat subscriptions | Ollama with a local model |
 
-"Free," "open-source," "open-weight" and "local" mean different things. Check each model's license before you use it for paid work.
+"Free," "open-source," "open-weight" and "local" mean different things. Check each model's license before you use it for paid work. The [hardware matrix](environment/hardware-matrix.md#model-licenses) lists the licenses for every model used here.
 
-One optional step breaks the rule on purpose. [XPSR Director](apps/director/README.md) can send motion to Google Flow, whose free credits cover a few clips a day, through useapi.net, which is a paid service. Everything else in the app, frames included, stays on your machine. The [hardware matrix](environment/hardware-matrix.md#model-licenses) lists the licenses for every model used here.
+One optional step leaves your machine on purpose. [XPSR Director](apps/director/README.md) can use Google Flow for frames (free Nano Banana images) and motion (about 50 free credits a day, a few clips). You make them by hand in your own Flow tab and bring them back, at no cost, or render from the app through useapi.net, which is a paid service.
 
 ## Requirements
 

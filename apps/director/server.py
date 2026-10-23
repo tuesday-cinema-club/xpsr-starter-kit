@@ -57,9 +57,11 @@ DATA = os.path.expanduser(os.environ.get("XPSR_DATA", "~/.local/share/xpsr-direc
 MEDIA = os.path.join(DATA, "media")
 USEAPI = os.environ.get("USEAPI_BASE", "https://api.useapi.net/v1/google-flow")
 USEAPI_SETUP = "https://useapi.net/docs/start-here/setup-google-flow"
+FLOW_APP = "https://labs.google/fx/tools/flow"
 
 MAX_JSON = 1 << 20
 MAX_UPLOAD = 20 << 20
+MAX_VIDEO = 300 << 20
 SESSION_SALT = b"xpsr-director-session-v1"
 
 # Flow credit cost per generation, from useapi.net's price table (October 2026).
@@ -236,10 +238,10 @@ class Store:
     def spent_today(self) -> int:
         return sum(e["credits"] for e in self.data["ledger"].get(today(), []) if not e.get("refunded"))
 
-    def charge(self, job_id: str, model: str, credits: int) -> None:
+    def charge(self, job_id, model: str, credits: int, **extra) -> None:
         with self.lock:
             self.data["ledger"].setdefault(today(), []).append(
-                {"job": job_id, "model": model, "credits": credits, "time": now_iso()})
+                {"job": job_id, "model": model, "credits": credits, "time": now_iso(), **extra})
             self.save()
 
     def refund(self, job_id: str) -> None:
@@ -530,7 +532,7 @@ def flow_status() -> dict:
     return {"configured": bool(flow_token()), "plan": plan, "daily_budget": budget, "spent_today": spent,
             "left_today": max(0, budget - spent), "balance": STORE.data.get("flow_balance"),
             "models": models, "image_models": FLOW_IMAGE_MODELS, "email": conf("FLOW_EMAIL"),
-            "setup_url": USEAPI_SETUP}
+            "setup_url": USEAPI_SETUP, "flow_url": FLOW_APP}
 
 
 # ---------------------------------------------------------------- library
@@ -543,6 +545,9 @@ def library() -> dict:
     for day, entries in sorted(STORE.data["ledger"].items(), reverse=True):
         rows = []
         for e in entries:
+            if e.get("media"):  # made by hand in Flow: no job, the file is the record
+                rows.append({**e, "status": "done", "media": [e["media"]], "hand": True})
+                continue
             j = jobs.get(e["job"], {})
             rows.append({**e, "status": j.get("status"), "media": j.get("media", []), "error": j.get("error"),
                          "prompt": j.get("params", {}).get("prompt"), "label": j.get("params", {}).get("label"),
@@ -981,16 +986,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/local/chat":
             return self.send_json(200, local_chat(self.read_json()))
         if path == "/api/upload":
-            ctype = self.headers.get("Content-Type", "")
-            ext = {"image/png": "png", "image/jpeg": "jpg"}.get(ctype.split(";")[0])
-            if not ext:
-                raise ApiError(415, "Upload a PNG or JPEG. (The app converts phone photos before sending.)")
-            data = self.read_body(MAX_UPLOAD)
-            item = STORE.add_media(data, ext, kind="image", source="upload",
-                                   tool_or_model="Phone camera (human)", seed="",
-                                   prompt="Photographed on a phone", label=urllib.parse.unquote(self.headers.get("X-Label", ""))[:200],
-                                   project=urllib.parse.unquote(self.headers.get("X-Project", ""))[:200])
-            return self.send_json(200, {"media": item})
+            return self.send_json(200, {"media": self.upload()})
         if path == "/api/local/keyframe":
             body = self.read_json()
             prompt = str(body.get("prompt", "")).strip()
@@ -1032,6 +1028,35 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/flow/video":
             return self.send_json(200, {"job": self.flow_video(self.read_json())})
         raise ApiError(404, "Not found")
+
+    def upload(self) -> dict:
+        """A phone photo, or a frame or clip made by hand in the user's own Flow tab.
+
+        Flow-by-hand files carry X-Source: flow-hand, the model and prompt used,
+        and for clips the credits Flow charged, which go into today's ledger so
+        the budget and the library stay true."""
+        ctype = self.headers.get("Content-Type", "").split(";")[0]
+        ext = {"image/png": "png", "image/jpeg": "jpg", "video/mp4": "mp4"}.get(ctype)
+        if not ext:
+            raise ApiError(415, "Upload a PNG, JPEG or MP4. (The app converts phone photos before sending.)")
+        hdr = lambda k: urllib.parse.unquote(self.headers.get(k, ""))[:4000]
+        data = self.read_body(MAX_VIDEO if ext == "mp4" else MAX_UPLOAD)
+        meta = {"label": hdr("X-Label")[:200], "project": hdr("X-Project")[:200], "frame": hdr("X-Frame") or None}
+        kind = "video" if ext == "mp4" else "image"
+        if self.headers.get("X-Source") == "flow-hand":
+            model = re.sub(r"[^a-z0-9.\-]", "", hdr("X-Model").lower())[:40] or "unknown"
+            credits = int(hdr("X-Credits")) if hdr("X-Credits").isdigit() else 0
+            item = STORE.add_media(data, ext, kind=kind, source="flow", hand=True, seed="",
+                                   tool_or_model=f"google-flow/{model} (made by hand in Flow)",
+                                   prompt=hdr("X-Prompt"), credits=credits or None,
+                                   duration=int(hdr("X-Duration")) if hdr("X-Duration").isdigit() else None, **meta)
+            if credits:
+                STORE.charge(None, model, credits, media=item["name"], label=meta["label"], prompt=hdr("X-Prompt"))
+            return item
+        if kind == "video":
+            raise ApiError(415, "Clips come from Flow; mark them as made by hand in Flow.")
+        return STORE.add_media(data, ext, kind="image", source="upload", tool_or_model="Phone camera (human)",
+                               seed="", prompt="Photographed on a phone", **meta)
 
     def flow_video(self, body: dict) -> dict:
         model = body.get("model", "veo-3.1-fast")

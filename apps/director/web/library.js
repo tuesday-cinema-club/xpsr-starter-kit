@@ -53,7 +53,7 @@ function item(m) {
     ${m.kind === "video" ? `<video src="${mediaUrl(m.name)}" controls playsinline preload="metadata"></video>` : `<img src="${mediaUrl(m.name)}" alt="${h(m.label || "frame")}" loading="lazy">`}
     <div class="item-body">
       <div class="item-title">${h(m.label || m.prompt || m.name)}</div>
-      <div class="badges"><span class="badge ${m.credits ? "cost" : "free"}">${m.kind === "video" ? `${m.duration || ""}${m.duration ? "s clip" : "Clip"}` : m.frame === "last" ? "Last frame" : m.frame === "first" ? "First frame" : "Image"}</span><span class="badge">${sourceLabel(m)}</span></div>
+      <div class="badges"><span class="badge ${m.credits ? "cost" : "free"}">${m.kind === "video" ? `${m.duration || ""}${m.duration ? "s clip" : "Clip"}` : m.frame === "last" ? "Last frame" : m.frame === "first" ? "First frame" : "Image"}</span><span class="badge">${sourceLabel(m)}${m.hand ? " · by hand" : ""}</span></div>
       <div class="item-meta">${h(m.tool_or_model)}<br>${credits} · seed <span class="num">${h(m.seed ?? "")}</span><br>${when(m.created)} · ${(m.bytes / 1e6).toFixed(1)} MB</div>
       ${m.prompt ? `<details><summary>Prompt</summary>${h(m.prompt)}${m.reference ? `<br><br>Reference: <a href="#m-${h(m.reference)}">${h(m.reference)}</a>` : ""}${m.start ? `<br><br>From <a href="#m-${h(m.start)}">first frame</a>${m.end ? ` to <a href="#m-${h(m.end)}">last frame</a>` : ""}` : ""}</details>` : ""}
       <div class="row"><a class="btn small ghost" href="${mediaUrl(m.name)}?download=1">Download</a></div>
@@ -71,7 +71,7 @@ function ledger() {
       const thumb = m ? `<video src="${mediaUrl(m.name)}#t=0.5" muted playsinline preload="metadata"></video>` : `<span class="nofile">${e.status === "failed" ? "failed" : e.status || "?"}</span>`;
       return `<a class="ledger-row" href="${m ? `#m-${h(m.name)}` : "#"}">${thumb}
         <span class="item-meta"><b class="${e.refunded ? "refunded" : ""}">${e.credits} credits</b> · ${h(e.model)} · ${new Date(e.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}<br>
-        ${h(e.label || e.prompt || "")}${e.refunded ? "<br>Failed; put back in the budget." : ""}</span></a>`;
+        ${h(e.label || e.prompt || "")}${e.hand ? "<br>Made by hand in Flow." : ""}${e.refunded ? "<br>Failed; put back in the budget." : ""}</span></a>`;
     }).join("")}</div>`).join("");
 }
 

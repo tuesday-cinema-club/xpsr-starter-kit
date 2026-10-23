@@ -28,9 +28,11 @@ async function call(method, path, body, headers = {}) {
 export const api = {
   get: (path) => call("GET", path),
   post: (path, obj) => call("POST", path, JSON.stringify(obj ?? {}), { "Content-Type": "application/json" }),
-  upload: (blob, label, project) => call("POST", "/api/upload", blob,
-    // Headers must be Latin-1, so the labels travel percent-encoded.
-    { "Content-Type": blob.type, "X-Label": encodeURIComponent(label || ""), "X-Project": encodeURIComponent(project || "") }),
+  // Headers must be Latin-1, so labels and prompts travel percent-encoded.
+  upload: (blob, headers = {}) => call("POST", "/api/upload", blob, {
+    "Content-Type": blob.type,
+    ...Object.fromEntries(Object.entries(headers).map(([k, v]) => [k, encodeURIComponent(String(v ?? ""))])),
+  }),
 };
 
 export const mediaUrl = (name) => `/api/media/${name}`;
