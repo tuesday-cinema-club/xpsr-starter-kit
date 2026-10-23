@@ -7,6 +7,7 @@ Three complete runs, every file kept, mistakes included. Each README says what b
 | [`ember-and-oak-demo/`](ember-and-oak-demo/README.md) | `llama3.2:3b`, SDXL + depth ControlNet (the workshop stack) | Revise, 5 of 7 | The full workshop build on laptop-sized models: briefs, shot lists, previs, rejected takes, captions, timeline, two cuts, QC and the audit. |
 | [`ember-and-oak-overpowered/`](ember-and-oak-overpowered/README.md) | `glm-4.7-flash`, FLUX.2 [klein] 4B | Revise, 6 of 7 | The same job with bigger models: timings, side-by-side frames, and what extra compute does and does not fix. |
 | [`grand-cru-car-wash/`](grand-cru-car-wash/README.md) | `glm-4.7-flash`, FLUX.2 [klein] 4B | Revise, 5 of 7 | A new, ironic brief: a car wash that talks like a Temecula Valley tasting room. |
+| [`agentic-summit-pitch/`](agentic-summit-pitch/README.md) | `llama3.2:3b`, FLUX.2 [klein] 4B + Piper TTS | Ready, 6 of 7 | The summit promo spot: pitch featuring the instructor with reference photo keyframing and local Piper audio. |
 | `run_demo.sh` | Workshop stack | | Reruns the Ember & Oak build into a new folder and stops at every gate for you to decide. |
 
 ## Watch them

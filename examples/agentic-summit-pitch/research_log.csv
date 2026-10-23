@@ -1,5 +1,5 @@
-id,fact,verified_by,status
-SRC-001,Every pipeline tool in this workshop runs 100% locally on indie hardware without cloud fees or subscriptions.,Lead Instructor,VERIFIED
-SRC-002,The architecture enforces One agent one job with human directors approving every gate before motion begins.,Summit Director,VERIFIED
-SRC-003,The full production stack utilizes Ollama Blender 3D previs ComfyUI Piper TTS Whisper and OpenTimelineIO.,Technical Crew,VERIFIED
-SRC-004,The 7-point anti-slop audit requires human signature provenance and technical QC before release.,Anti-Slop Auditor,VERIFIED
+source_id,claim,source,verified_by,verified_on
+SRC-001,"Every pipeline tool in this workshop runs 100% locally on indie hardware without cloud fees or subscriptions.","Summit curriculum and environment setup guide",Lead Instructor,2026-10-22
+SRC-002,"The architecture enforces One agent one job with human directors approving every gate before motion begins.","Summit pipeline architecture doc",Summit Director,2026-10-22
+SRC-003,"The full production stack utilizes Ollama Blender 3D previs ComfyUI Piper TTS Whisper and OpenTimelineIO.","Tested local environment matrix",Technical Crew,2026-10-22
+SRC-004,"The 7-point anti-slop audit requires human signature provenance and technical QC before release.","Workshop review rubric",Anti-Slop Auditor,2026-10-22
