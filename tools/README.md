@@ -5,6 +5,7 @@ Helpers for maintaining this repository. You do not need them to run the worksho
 | File | What it does |
 | --- | --- |
 | `term_screenshot.py` | Renders captured terminal output as a PNG with headless Chrome or Chromium. Used for the images in `docs/images/`. |
+| `make_charts.py` | Draws the timing and hardware charts in `docs/images/charts/`, light and dark, from the measured numbers it holds. Needs matplotlib. |
 
 ## Make a terminal screenshot
 
@@ -20,3 +21,12 @@ python3 tools/term_screenshot.py --log /tmp/check.log \
 Status words such as `[pass]` and `READY` are colored in the image, but each one is still a word, so the meaning never depends on color.
 
 When you add a screenshot to a README, write alt text that includes the important text shown in the image.
+
+## Redraw the charts
+
+```bash
+pip install matplotlib            # or: uv pip install matplotlib
+python3 tools/make_charts.py
+```
+
+Each chart is written twice, `-light.svg` and `-dark.svg`, and the READMEs show the one that matches the reader's theme with a `<picture>` element. The script prints the scaling estimates too. If you change a number, update the tables and alt text in `docs/performance.md` and the main README to match.

@@ -16,6 +16,7 @@ You don't need to code, and a phone is enough to take part.
 | Setting up a laptop | [Environment setup](environment/README.md) |
 | Running the 60-minute build | [Workshop build](workshop-build/README.md) |
 | Curious what the output looks like | [Watch the examples](#watch-the-examples) |
+| Wondering how long it takes, or what faster hardware changes | [How long it takes](#how-long-it-takes) |
 | Using a screen reader | [Accessibility notes](ACCESSIBILITY.md) |
 
 ## Summit materials
@@ -136,6 +137,31 @@ A fictional car wash opens in the Temecula Valley and talks about itself like a 
 [Full cut with sound (MP4)](examples/agentic-summit-pitch-limit/cut.mp4) · [How it was made, and what broke](examples/agentic-summit-pitch-limit/README.md)
 
 The [summit pitch](examples/agentic-summit-pitch/README.md) rebuilt with `gpt-oss-120b` (117B parameters), FLUX.2 [dev] 32B and Wan 2.2 5B motion on the same 8 GB card, in about 8 and a half hours instead of minutes. The host holds up across four shots and the camera really moves. The biggest writing model also overflowed its context and wrote a prison-break film, which the schema check caught on the first gate. Stand-in audit: **5 of 7**. The screening room's projector moves between shots.
+
+## How long it takes
+
+Everything in this kit was made on one ordinary desktop with a 2019 graphics card: an RTX 2070 SUPER with 8 GB. With the workshop models a finished 30-second spot takes minutes. With the biggest models that card can run at all, it took a working day.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/charts/e2e-examples-dark.svg">
+  <img alt="Bar chart, log scale, of machine time per finished 30-second spot on the RTX 2070 SUPER: Ember and Oak with workshop models 7 minutes, Ember and Oak with bigger models 6 minutes, Grand Cru Car Wash 8 minutes, summit pitch version 1 4 minutes, summit pitch pushing the limit 8 hours 18 minutes." src="docs/images/charts/e2e-examples-light.svg">
+</picture>
+
+The big run is slow because its models do not fit in 8 GB and work partly from system memory. On bigger hardware the same first pass would shrink from 6 hours to under 2 hours on one RTX 4090 or 5090, and to well under half an hour on a datacenter H100:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/charts/scaling-dark.svg">
+  <img alt="Stacked bar chart estimating the pushing-the-limit first pass, six shots and no retakes, on bigger hardware: this machine 6 hours 17 minutes measured; RTX 4090 24 GB about 49 minutes to 1 hour 55 minutes; RTX 5090 32 GB about 40 minutes to 1 hour 33 minutes; H100 80 GB about 12 to 26 minutes. Keyframes and motion shrink the most." src="docs/images/charts/scaling-light.svg">
+</picture>
+
+| Hardware | First pass, 6 shots with motion | |
+| --- | --- | --- |
+| RTX 2070 SUPER, 8 GB (this kit's machine) | 6 h 17 min | Measured |
+| RTX 4090, 24 GB | about 49 min to 1 h 55 min | Estimate |
+| RTX 5090, 32 GB | about 40 min to 1 h 33 min | Estimate |
+| H100, 80 GB | about 12 to 26 min | Estimate |
+
+Faster hardware buys more takes per gate and full-quality settings. It does not buy judgment: a quarter of the 8-hour run was work a gate sent back, and every one of those problems would have arrived sooner, not less often. [How long it takes](docs/performance.md) has the stage-by-stage numbers, the memory chart, and how the estimates are made.
 
 ## The $0 principle
 
