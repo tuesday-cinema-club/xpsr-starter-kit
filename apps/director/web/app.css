@@ -476,3 +476,7 @@ footer.foot a { color: var(--muted); }
 .hand-steps li::marker { font: 700 13px var(--mono); color: var(--amber); }
 .hand-steps .btn { margin-right: 6px; vertical-align: middle; }
 .linkish { background: none; border: 0; padding: 0; color: var(--amber); text-decoration: underline; font: inherit; cursor: pointer; }
+
+.choice.engines { grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 640px) { .choice.engines { grid-template-columns: repeat(3, 1fr); } }
+.choice button:disabled { opacity: 0.45; cursor: not-allowed; }

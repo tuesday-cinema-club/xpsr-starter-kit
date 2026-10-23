@@ -3,11 +3,25 @@
 // Google Flow and media.
 
 import { ROLES, PRESETS, FRAMINGS, MOVES, LENSES, DEFAULT_SHOTS, CHECKS } from "./data.js";
-import { api, ApiError, mediaUrl, toJpeg, videoFrame } from "./api.js";
+import { api, ApiError, mediaUrl, toJpeg, videoFrame, CLIENT_ID } from "./api.js";
 import { textFiles } from "./pack.js";
 import { makeZip } from "./zip.js";
+import { readZip } from "./unzip.js";
 
-const KEY = "xpsr-director-v1";
+// A team URL (/t/<slug>) shares one project between phones through the
+// server; the root URL keeps a personal project on this phone only.
+const TEAM = (location.pathname.match(/^\/t\/([a-z0-9-]{1,40})\/?$/) || [])[1] || null;
+const KEY = TEAM ? `xpsr-director-team-${TEAM}` : "xpsr-director-v1";
+if (TEAM) {  // private teams are unlisted: remember the ones this phone has opened
+  try {
+    const mine = new Set(JSON.parse(localStorage.getItem("xpsr-my-teams") || "[]"));
+    mine.add(TEAM);
+    localStorage.setItem("xpsr-my-teams", JSON.stringify([...mine]));
+  } catch { /* storage blocked */ }
+}
+// Kept per person even inside a team: your role, your name, your drafts.
+const LOCAL_KEYS = ["role", "director", "suggest", "llm_model"];
+
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 const h = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -48,21 +62,53 @@ function fresh(preset = "ember") {
     audit: { auditor: "", cut: "cut.mp4", date: "", notes: "", signature: "", signed_at: null, checks: {}, intent_llm: "" },
     llm_model: "",
     flow_frames: "nano-banana-2-lite",
+    cuts: [],
+    render: { burn: true, vo: true },
+    vo_media: null,
     frame_source: "local",
     suggest: null,
   };
 }
 
+// Fill in anything a saved, synced or imported project is missing, so an
+// older or hand-edited state never breaks the page.
+function normalize(s) {
+  const base = fresh(s.brief?.preset || "ember");
+  const out = { ...base, ...s };
+  out.brief = { ...base.brief, ...(s.brief || {}) };
+  for (const k of ["client", "project_title", "target_audience", "core_feeling", "call_to_action", "key_message", "references", "idea"]) {
+    if (typeof out.brief[k] !== "string") out.brief[k] = out.brief[k] == null ? "" : String(out.brief[k]);
+  }
+  for (const k of ["tone", "exclusions", "facts"]) if (!Array.isArray(out.brief[k])) out.brief[k] = [];
+  out.audit = { ...base.audit, ...(s.audit || {}), checks: { ...(s.audit?.checks || {}) } };
+  for (const k of ["auditor", "cut", "notes", "signature", "intent_llm"]) if (typeof out.audit[k] !== "string") out.audit[k] = "";
+  out.gates = { g1: null, g2: null, g3: null, ...(s.gates || {}) };
+  out.shots = (Array.isArray(s.shots) ? s.shots : base.shots).map((sh, i) => {
+    const d = newShot(i, { label: sh?.label || `Shot ${i + 1}` }, out.brief.preset);
+    const m = { ...d, ...sh };
+    for (const slot of ["first", "last", "motion"]) m[slot] = { ...d[slot], ...(sh?.[slot] || {}), takes: [...(sh?.[slot]?.takes || [])] };
+    for (const k of ["action_description", "visual_prompt", "voiceover_line", "label"]) if (typeof m[k] !== "string") m[k] = "";
+    for (const k of ["characters", "source_ids"]) if (!Array.isArray(m[k])) m[k] = [];
+    return m;
+  });
+  for (const k of ["provenance", "cuts"]) if (!Array.isArray(out[k])) out[k] = [];
+  if (!out.jobs || typeof out.jobs !== "object") out.jobs = {};
+  if (!out.render) out.render = { burn: true, vo: true };
+  if (typeof out.director !== "string") out.director = "";
+  return out;
+}
+
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem(KEY));
-    if (saved?.v === 1) return { ...fresh(saved.brief?.preset || "ember"), ...saved };
+    if (saved?.v === 1) return normalize(saved);
   } catch { /* storage blocked or corrupt: start fresh */ }
   return fresh();
 }
 
 let S = load();
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* private mode */ } };
+const cache = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* private mode */ } };
+const save = () => { cache(); if (TEAM) schedulePush(); };
 
 function getPath(path) {
   return path.split(".").reduce((o, k) => (o == null ? o : o[k]), S);
@@ -74,6 +120,7 @@ function setPath(path, value) {
   obj[last] = value;
 }
 const shotById = (id) => S.shots.find((s) => s.id === id);
+const upload = (blob, headers = {}) => api.upload(blob, TEAM ? { ...headers, "X-Team": TEAM } : headers);
 const shotNo = (shot) => pad(S.shots.indexOf(shot) + 1);
 
 const server = { reachable: false, authed: false, status: null, skipped: false };
@@ -129,7 +176,10 @@ function auditMetrics() {
   machine.continuity = `${withRef} of ${S.shots.length} shots have a last frame drawn from their own first frame.`;
   const motion = S.shots.filter((s) => s.motion.locked).length;
   const still = S.shots.filter((s) => s.motion.still).length;
-  machine.techqc = `${motion} motion take${motion === 1 ? "" : "s"} and ${still} held still${still === 1 ? "" : "s"}. Run pipelines/03-post-production/qc_check.py on the finished cut.`;
+  const qc = (S.cuts || [])[0]?.qc;
+  machine.techqc = `${motion} motion take${motion === 1 ? "" : "s"} and ${still} held still${still === 1 ? "" : "s"}. ` + (qc
+    ? `Latest cut, qc_check.py: ${qc.passed ? "pass" : "fail"} (${qc.checks.filter((c) => c.result !== "pass").map((c) => `${c.check} ${c.measured}`).join("; ") || "every check passed"}).`
+    : "Render the cut to run the kit's qc_check.py on it.");
   const picked = pickedAssets();
   const logged = picked.filter((a) => S.provenance.some((r) => r.asset_id === a.asset_id && r.status === "APPROVED"));
   machine.provenance = `${logged.length} of ${picked.length} picked assets have an APPROVED row; ${S.provenance.length} rows including rejected takes.`;
@@ -186,6 +236,166 @@ function decideTakes(shot, slot, approve) {
   });
 }
 
+// ------------------------------------------------------------------ team sync
+// Each phone sends path/value changes; every 2.5 s it asks for anything newer
+// and merges it in, keeping edits made while the request was out. The last
+// write to a field wins, which suits people working on different cards.
+
+const team = { version: -1, synced: null, members: [], name: "", visibility: "private", timer: null, pushing: false, again: false, missing: false };
+const clone = (x) => JSON.parse(JSON.stringify(x));
+const sharedOf = (s) => Object.fromEntries(Object.entries(s).filter(([k]) => !LOCAL_KEYS.includes(k)));
+const localOf = (s) => Object.fromEntries(Object.entries(s).filter(([k]) => LOCAL_KEYS.includes(k)));
+
+function diffOps(a, b, path = "", out = []) {
+  if (a === b) return out;
+  const obj = (x) => x !== null && typeof x === "object";
+  if (obj(a) && obj(b) && Array.isArray(a) === Array.isArray(b) && (!Array.isArray(a) || a.length === b.length)) {
+    for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) {
+      const p = path ? `${path}.${k}` : k;
+      if (!(k in b)) out.push({ p, del: true });
+      else diffOps(a[k], b[k], p, out);
+    }
+  } else if (JSON.stringify(a) !== JSON.stringify(b)) {
+    out.push({ p: path, v: b === undefined ? null : clone(b) });
+  }
+  return out;
+}
+
+function applyOps(target, ops) {
+  for (const op of ops) {
+    const keys = op.p.split(".");
+    const last = keys.pop();
+    let node = target;
+    for (const k of keys) {
+      if (node[k] === null || typeof node[k] !== "object") node[k] = {};
+      node = node[k];
+    }
+    if (op.del) delete node[last];
+    else node[last] = clone(op.v);
+  }
+}
+
+function schedulePush() {
+  clearTimeout(team.timer);
+  team.timer = setTimeout(push, 350);
+}
+
+async function push() {
+  team.timer = null;
+  if (!TEAM || !team.synced || !server.authed) return;
+  if (team.pushing) { team.again = true; return; }
+  const cur = sharedOf(S);
+  const ops = diffOps(team.synced, cur);
+  if (!ops.length) return;
+  team.pushing = true;
+  try {
+    await api.post(`/api/teams/${TEAM}/ops`, { ops });
+    team.synced = clone(cur);
+  } catch { /* stays unsynced; the next save or pull retries */ } finally {
+    team.pushing = false;
+    if (team.again) { team.again = false; schedulePush(); }
+  }
+}
+
+const deferred = new Set();
+async function pull() {
+  if (!TEAM || !server.authed) return;
+  if (team.timer) { clearTimeout(team.timer); await push(); }
+  const q = new URLSearchParams({ since: team.version, who: CLIENT_ID, name: S.director || "", role: S.role });
+  let r;
+  try { r = await api.get(`/api/teams/${TEAM}?${q}`); } catch (e) {
+    if (e.status === 404 && !team.missing) { team.missing = true; banner(); }
+    return;
+  }
+  team.members = r.members;
+  team.name = r.name;
+  team.visibility = r.visibility;
+  if ("state" in r) {
+    if (r.state === null) {
+      // A brand-new team: this phone's project seeds it.
+      await api.post(`/api/teams/${TEAM}/ops`, { ops: [{ p: "", v: sharedOf(S) }] }).catch(() => {});
+      team.version = -1;
+      return;
+    }
+    const pending = team.synced ? diffOps(team.synced, sharedOf(S)) : [];
+    const remote = team.synced ? diffOps(team.synced, r.state) : null;
+    team.synced = clone(r.state);
+    team.version = r.version;
+    if (remote === null) S = { ...clone(r.state), ...localOf(S) };
+    else applyOps(S, remote);
+    if (pending.length) { applyOps(S, pending); schedulePush(); }
+    S = normalize(S);
+    cache();
+    if (applyImports()) schedulePush();
+    if (remote === null || remote.length) remoteChanged(remote || []);
+    if (Object.keys(S.jobs || {}).length) poll();
+  }
+  renderTeamChip();
+}
+
+// Re-render what changed, then put the cursor back where it was. If a
+// teammate changed the very field being typed in, that one waits until the
+// typing stops, so nobody's sentence is overwritten mid-word.
+function remoteChanged(remote = []) {
+  const active = document.activeElement;
+  const bind = active?.dataset?.bind;
+  const focusGate = active?.closest?.(".gate");
+  if (bind && remote.some((op) => op.p === bind || bind.startsWith(`${op.p}.`))) {
+    deferred.add(Number(focusGate?.id.slice(5)));
+  }
+  // Half-typed drafts in add-a-row boxes (exclusions, facts, provenance) are not
+  // in the state, so carry them across the re-render by hand.
+  const drafts = $$("form[data-form] [name]").map((el) => [`[data-form="${el.form.dataset.form}"] [name="${el.name}"]`, el.value]);
+  const key = bind ? `[data-bind="${CSS.escape(bind)}"]`
+    : active?.form?.dataset?.form && active.name ? `[data-form="${active.form.dataset.form}"] [name="${active.name}"]` : null;
+  const sel = key && "selectionStart" in active ? [active.selectionStart, active.selectionEnd] : null;
+  const typed = key ? active.value : null;
+  const y = window.scrollY;
+  [renderGate1, renderGate2, renderGate3, renderGate4].forEach((r) => r());
+  refresh();
+  for (const [k, v] of drafts) { const el = document.querySelector(k); if (el && v) el.value = v; }
+  if (key) {
+    const again = document.querySelector(key);
+    if (again) {
+      if (typed !== null && again.value !== typed) again.value = typed;  // keep what is being typed
+      again.focus({ preventScroll: true });
+      if (sel) { try { again.setSelectionRange(sel[0], sel[1]); } catch { /* not a text field */ } }
+    }
+  }
+  window.scrollTo(0, y);
+}
+
+document.addEventListener("focusout", () => setTimeout(() => {
+  if (!deferred.size || document.activeElement?.closest?.(".gate")) return;
+  deferred.forEach((n) => renderGate(n));
+  deferred.clear();
+}, 120));
+
+function renderTeamChip() {
+  const el = $("#team-chip");
+  if (!el) return;
+  const others = team.members.filter((m) => m.id !== CLIENT_ID).length;
+  el.textContent = `${team.name || TEAM} · ${team.members.length || 1} here`;
+  el.setAttribute("aria-label", `Team ${team.name || TEAM}, ${others} other ${others === 1 ? "person" : "people"} here. Open team details`);
+}
+
+function openTeam() {
+  const url = `${location.origin}/t/${TEAM}`;
+  openSheet(`<div class="sheet-head"><div><span class="tag slate-kicker">Team</span><h2 id="sheet-title">${h(team.name || TEAM)}</h2></div><button class="btn small" data-act="close">Close</button></div>
+    <div class="sheet-body">
+      <p class="lede">Everyone with this link and the access code works on the same project. Your role and your name stay on your phone; everything else is shared.</p>
+      <div class="field"><span class="field-label">Who can find it</span>
+        <div class="choice" role="group" aria-label="Team visibility" style="grid-template-columns:1fr 1fr">
+          <button data-act="visibility" data-v="private" aria-pressed="${team.visibility !== "community"}"><small>Only people with the link</small>Private</button>
+          <button data-act="visibility" data-v="community" aria-pressed="${team.visibility === "community"}"><small>Listed on the teams page</small>Community</button></div>
+        <span class="field-hint">Files stay with the team either way; share single frames and clips from the library. The workshop admin can see everything.</span></div>
+      <div class="row"><input type="text" readonly value="${h(url)}" class="grow mono-input" aria-label="Team link"><button class="btn small" data-act="copy-link">Copy link</button></div>
+      <label class="field"><span class="field-label">Your name <em>shown to the team and used when you sign</em></span><input type="text" data-bind="director" value="${h(S.director)}" placeholder="Your name"></label>
+      <div class="svc">${team.members.map((m) => `<div class="machine"><b>${h(m.name || "Someone")}</b>${m.id === CLIENT_ID ? " (you)" : ""} · ${h(ROLES.find((r) => r.id === m.role)?.label || m.role || "")}</div>`).join("") || '<p class="muted small">Just you so far.</p>'}</div>
+      <div class="row"><a class="btn ghost" href="/teams">All teams</a><a class="btn ghost" href="/queue">Queue</a></div>
+    </div>`);
+}
+
 // ------------------------------------------------------------------ toasts
 
 let toastTimer;
@@ -217,6 +427,7 @@ function shell() {
       <button class="btn small primary" data-act="pack">Pack</button>
     </div>
     <nav class="roles" aria-label="Crew role">
+      ${TEAM ? `<button class="role team-chip" id="team-chip" data-act="team">${h(TEAM)}</button>` : `<a class="role team-chip" href="/teams">Personal · teams</a>`}
       ${ROLES.map((r) => `<button class="role" data-act="role" data-id="${r.id}" aria-pressed="${S.role === r.id}">${h(r.label)}${r.phone ? '<span class="phone" aria-label="phone OK">📱</span>' : ""}</button>`).join("")}
     </nav>
   </header>
@@ -228,7 +439,7 @@ function shell() {
     <section class="gate" id="gate-4" aria-labelledby="g4-title"></section>
   </main>
   <footer class="foot">Runs on this machine: Ollama and ComfyUI for writing and frames, Google Flow only for motion.
-    <a href="/library">Library</a> · <a href="/resources">Machine resources</a> · <button class="btn small ghost" data-act="reset">Start over</button></footer>
+    <a href="/library${TEAM ? `?team=${TEAM}` : ""}">Library</a> · <a href="/admin">Admin</a> · <a href="/queue">Queue</a> · <a href="/teams">Teams</a> · <a href="/resources">Machine resources</a> · <button class="btn small ghost" data-act="reset">Start over</button></footer>
   <nav class="rail" aria-label="Gates"><div class="rail-inner" id="rail"></div></nav>
   <div class="sheet-back" id="sheet" hidden></div>
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>`;
@@ -237,6 +448,10 @@ function shell() {
 
 function banner() {
   const el = $("#banner");
+  if (TEAM && team.missing) {
+    el.innerHTML = `<p class="notice bad" style="margin-bottom:14px">There is no team called ${h(TEAM)} on this server. <a href="/teams">Make it on the teams page</a>, then open its link.</p>`;
+    return;
+  }
   if (!server.reachable) {
     el.innerHTML = `<p class="notice warn" style="margin-bottom:14px">Offline: the director server is not reachable. Brief, shots and audit save on this phone; frames and motion wait for the connection.</p>`;
   } else if (!server.authed) {
@@ -328,6 +543,8 @@ function renderGate1() {
       <p class="lede">${h(p.ask)}</p>
       <div class="grid-2">${field("Project title", "brief.project_title")}${field("Client", "brief.client")}</div>
       ${b.facts.length ? `<div class="facts" aria-label="Facts you may claim">${b.facts.map(([id, t]) => `<div class="fact"><b>${h(id)}</b><span>${h(t)}</span></div>`).join("")}</div>` : ""}
+      <div class="capture"><div class="capture-copy"><b>Pick up where you left off</b><span>Import a pack this app exported (.zip): the brief, shots, takes, sign-offs, audit and cut come back${TEAM ? " for the whole team" : ""}.</span></div>
+        <label class="btn file-btn ${server.authed ? "" : "disabled"}">Import a pack<input type="file" accept=".zip,application/zip" data-file="pack" ${server.authed ? "" : "disabled"}></label></div>
       ${b.preset === "custom" ? `<form class="row" data-form="fact"><input class="grow" name="fact" placeholder="A fact you can prove, one sentence" aria-label="New fact"><button class="btn small" type="submit">Add fact</button></form>` : ""}`)}
     ${card(["director", "writer"], "<b>01B</b> · The director's three answers", `
       ${field("1. Who is it for?", "brief.target_audience", { area: true, rows: 2, placeholder: "A specific person, not a demographic" })}
@@ -437,12 +654,12 @@ function handPrompt(shot, slot) {
 
 function handSteps(shot, slot) {
   const ref = slot === "last" ? shot.first.pick : (shot.first.useRef && shot.ref ? shot.ref : null);
-  return `<ol class="hand-steps">
+  return `<details class="hand"><summary>Make it in Flow by hand · 4 steps</summary><ol class="hand-steps">
     <li><button class="btn small" data-act="copy-hand" data-id="${shot.id}" data-slot="${slot}">Copy the prompt</button></li>
     ${ref ? `<li><a class="btn small ghost" href="${mediaUrl(ref)}?download=1">Save the ${slot === "last" ? "first frame" : "blocking photo"}</a> and attach it in Flow as the reference image.</li>` : ""}
     <li><a class="btn small ghost" href="${FLOW_URL()}" target="_blank" rel="noopener noreferrer">Open Flow ↗</a> Pick an image model (Nano Banana), paste, generate, and download the take you like.</li>
     <li><label class="btn primary file-btn">Bring the image back<input type="file" accept="image/*" data-file="hand" data-id="${shot.id}" data-slot="${slot}"></label></li>
-  </ol>`;
+  </ol></details>`;
 }
 
 function handClipSteps(shot, sel, dur, cost, fits) {
@@ -472,7 +689,7 @@ async function bringBack(shot, slot, file, label) {
       blob = await toJpeg(file, 2048);
       headers["X-Model"] = S.flow_frames;
     }
-    const { media } = await api.upload(blob, headers);
+    const { media } = await upload(blob, headers);
     const t = shot[slot];
     t.takes.push(media.name);
     t.pick = media.name;
@@ -512,7 +729,9 @@ function takesGrid(shot, slot) {
 
 function sourceButtons(shot, slot) {
   const t = shot[slot];
-  const opts = [["local", "Local GPU", "free · automatic"], ["hand", "Flow by hand", "free · you click"], ["flow", "Flow via useapi", "0 credits · paid bridge"], ["upload", "Photo", "human"]];
+  const g = server.status?.gemini;
+  const opts = [["local", "Local GPU", "free · automatic"], ["gemini", "Gemini API", g ? `~$${(g.models.find((m) => m.id === g.model)?.usd || 0.034).toFixed(3)} · your key` : "your key"],
+    ["hand", "Flow by hand", "free · you click"], ["flow", "Flow via useapi", "0 credits · paid bridge"], ["upload", "Photo", "human"]];
   return `<div class="choice" role="group" aria-label="Where the frame comes from" style="grid-template-columns:repeat(2,1fr)">
     ${opts.map(([v, l, c]) => `<button data-act="source" data-id="${shot.id}" data-slot="${slot}" data-v="${v}" aria-pressed="${t.source === v}" ${t.locked ? "disabled" : ""}><small>${c}</small>${l}</button>`).join("")}</div>`;
 }
@@ -540,8 +759,12 @@ function frameControls(shot, slot) {
     go = `<label class="btn primary file-btn">📷 Take or choose photo<input type="file" accept="image/*" capture="environment" data-file="frame" data-id="${shot.id}" data-slot="${slot}"></label>`;
   } else if (t.source === "flow" && !flowOk) {
     go = `<button class="btn" data-act="accounts">Connect Google Flow first</button>`;
+  } else if (t.source === "gemini" && !server.status?.gemini?.configured) {
+    go = `<button class="btn" data-act="accounts">Add a Gemini API key first</button>`;
   } else {
-    go = `<button class="btn primary" data-act="frame" data-id="${shot.id}" data-slot="${slot}" ${server.authed ? "" : "disabled"}>${t.source === "local" ? "Render on local GPU" : "Render on Flow · 0 credits"}</button>`;
+    const label = { local: "Render on local GPU", flow: "Render on Flow · 0 credits",
+      gemini: `Render with Gemini · about $${(server.status?.gemini?.models.find((m) => m.id === server.status.gemini.model)?.usd || 0.034).toFixed(3)}` }[t.source];
+    go = `<button class="btn primary" data-act="frame" data-id="${shot.id}" data-slot="${slot}" ${server.authed ? "" : "disabled"}>${label}</button>`;
   }
   return `${sourceButtons(shot, slot)}
     ${t.source !== "upload" ? field(isLast ? "What has changed by the last frame" : "Frame prompt", `shots.${i}.${slot}.prompt`, { area: true, rows: 3,
@@ -567,6 +790,22 @@ function meter(cost) {
       ${f.balance ? `<span>account balance <b class="num">${f.balance.credits}</b></span>` : ""}</div></div>`;
 }
 
+const ENGINES = [
+  ["camera", "Camera move", "instant · CPU · free", "Moves over the still; dissolves to the last frame"],
+  ["ltx", "LTX-Video", "1 to 2 min · GPU · free", "Uses the first and last frames"],
+  ["wan-draft", "Wan 2.2 draft", "a few min · GPU · free", "First frame only, small preview"],
+  ["wan-full", "Wan 2.2 full", "about 24 min · GPU · free", "First frame only, the examples' quality"],
+  ["hand", "Flow by hand", "you click · Flow credits", "Made in your own Flow tab"],
+  ["useapi", "Flow via useapi", "paid bridge · Flow credits", "Rendered from here through useapi.net"],
+];
+
+function motionEngine(shot) {
+  const have = server.status?.local?.motion || {};
+  const e = shot.motion.engine;
+  if (e && (have[e] !== false || ["hand", "useapi"].includes(e))) return e;
+  return have.ltx ? "ltx" : "camera";
+}
+
 function motionControls(shot) {
   const m = shot.motion;
   const i = S.shots.indexOf(shot);
@@ -579,32 +818,52 @@ function motionControls(shot) {
     return `<div class="picked"><video src="${mediaUrl(m.pick)}" controls playsinline preload="metadata" aria-label="Locked motion take for shot ${i + 1}"></video>
       <button class="btn small ghost" data-act="unlock" data-id="${shot.id}" data-slot="motion">Unlock motion</button></div>`;
   }
+  const engine = motionEngine(shot);
+  const have = server.status?.local?.motion || {};
+  const flowEngine = engine === "hand" || engine === "useapi";
   const models = flowModels();
   const sel = models.find((x) => x.id === m.model) || models[0];
   const dur = clipDuration(shot, sel);
   const cost = sel ? sel.costs[dur] : 0;
   const flowOk = server.status?.flow?.configured;
   const fits = cost <= flowLeft();
+  const pick = m.pick ? `<button class="btn go" data-act="lock" data-id="${shot.id}" data-slot="motion">Lock take ${m.takes.indexOf(m.pick) + 1}</button>` : "";
+  const still = `<button class="btn ghost" data-act="still" data-id="${shot.id}" ${shot.first.locked ? "" : "disabled"}>Hold the still</button>`;
+  let body;
+  if (engine === "camera") {
+    body = `<label class="field"><span class="field-label">Camera move</span>
+        <select data-bind="shots.${i}.motion.move" data-rerender="3">${MOVES.map((mv) => `<option ${mv === (m.move || shot.camera_move) ? "selected" : ""}>${mv}</option>`).join("")}</select></label>
+      <p class="field-hint">${shot.last.locked ? "Moves over the first frame and dissolves into the last frame through the middle third." : "Moves over the first frame."} No model: it only moves the camera, so nothing in the frame changes shape.</p>
+      <div class="row"><button class="btn primary" data-act="local-motion" data-id="${shot.id}" ${ready && server.authed ? "" : "disabled"}>Make the camera move · instant</button>${pick}${still}</div>`;
+  } else if (!flowEngine) {
+    body = `${field("Action <em>only what moves between the two frames</em>", `shots.${i}.motion.prompt`, { area: true, rows: 3, placeholder: `${shot.camera_move}. ${shot.action_description}` })}
+      <div class="row"><button class="btn small" data-act="draft-action" data-id="${shot.id}" ${server.authed && ready ? "" : "disabled"}>Write it with ${h(llmModel())}</button></div>
+      ${engine.startsWith("wan") && shot.last.locked ? `<p class="field-hint">Wan 2.2 5B animates from the first frame only; the last frame is not used. LTX-Video uses both.</p>` : ""}
+      <div class="row"><button class="btn primary" data-act="local-motion" data-id="${shot.id}" ${ready && server.authed ? "" : "disabled"}>Render on the local GPU · free</button>${pick}${still}</div>
+      <p class="field-hint">Joins the GPU queue; see <a href="/queue">the queue</a> for its place in line, or <a href="http://${location.hostname}:8188" target="_blank" rel="noopener">watch it in ComfyUI ↗</a>.</p>`;
+  } else {
+    body = `${field("Action <em>only what moves between the two frames</em>", `shots.${i}.motion.prompt`, { area: true, rows: 3, placeholder: `${shot.camera_move}. ${shot.action_description}` })}
+      <div class="row"><button class="btn small" data-act="draft-action" data-id="${shot.id}" ${server.authed && ready ? "" : "disabled"}>Write it with ${h(llmModel())}</button></div>
+      ${models.length ? `<label class="field"><span class="field-label">Flow video model</span>
+        <select data-bind="shots.${i}.motion.model" data-rerender="3">${models.map((x) => `<option value="${x.id}" ${x.id === sel?.id ? "selected" : ""} ${x.allowed ? "" : "disabled"}>${h(x.label)} · ${x.durations.length > 1 ? `from ${x.costs[x.durations[0]]} credits · ${x.durations[0]} to ${x.durations[x.durations.length - 1]}s` : `${x.costs[x.durations[0]]} credits · ${x.durations[0]}s`}${x.allowed ? "" : " (paid plan)"}</option>`).join("")}</select></label>` : ""}
+      ${sel && sel.durations.length > 1 ? `<label class="field"><span class="field-label">Clip length</span>
+        <select data-bind="shots.${i}.motion.duration" data-num="1" data-rerender="3">${sel.durations.map((d) => `<option value="${d}" ${d === dur ? "selected" : ""}>${d} seconds · ${sel.costs[d]} credits</option>`).join("")}</select></label>` : ""}
+      ${meter(cost)}
+      ${engine === "useapi"
+        ? `<div class="row">${flowOk ? `<button class="btn primary" data-act="motion" data-id="${shot.id}" ${ready && fits && server.authed ? "" : "disabled"}>Render through useapi · ${cost} credits</button>` : `<button class="btn" data-act="accounts">Connect useapi.net</button>`}${pick}${still}</div>`
+        : `<details class="hand"><summary>Make it in Flow by hand · 4 steps</summary>${handClipSteps(shot, sel, dur, cost, fits)}</details><div class="row">${pick}${still}</div>`}
+      ${dur > shot.duration_sec ? `<p class="field-hint">Flow renders ${dur}s; the cut trims it to the shot's ${shot.duration_sec}s.</p>` : ""}`;
+  }
   return `<div class="frame-pair">
       <figure>${shot.first.pick && shot.first.locked ? `<img src="${mediaUrl(shot.first.pick)}" alt="First frame">` : `<div class="empty-frame">first frame</div>`}<figcaption>First</figcaption></figure>
       <span class="arrow" aria-hidden="true">→</span>
       <figure>${shot.last.locked ? `<img src="${mediaUrl(shot.last.pick)}" alt="Last frame">` : `<div class="empty-frame">${shot.last.skip ? "model decides" : "last frame"}</div>`}<figcaption>Last</figcaption></figure></div>
-    ${field("Action <em>only what moves between the two frames</em>", `shots.${i}.motion.prompt`, { area: true, rows: 3,
-      placeholder: `${shot.camera_move}. ${shot.action_description}` })}
-    <div class="row"><button class="btn small" data-act="draft-action" data-id="${shot.id}" ${server.authed && ready ? "" : "disabled"}>Write it with ${h(llmModel())}</button></div>
-    ${models.length ? `<label class="field"><span class="field-label">Flow video model</span>
-      <select data-bind="shots.${i}.motion.model" data-rerender="3">${models.map((x) => `<option value="${x.id}" ${x.id === sel?.id ? "selected" : ""} ${x.allowed ? "" : "disabled"}>${h(x.label)} · ${x.durations.length > 1 ? `from ${x.costs[x.durations[0]]} credits · ${x.durations[0]} to ${x.durations[x.durations.length - 1]}s` : `${x.costs[x.durations[0]]} credits · ${x.durations[0]}s`}${x.allowed ? "" : " (paid plan)"}</option>`).join("")}</select></label>` : ""}
-    ${sel && sel.durations.length > 1 ? `<label class="field"><span class="field-label">Clip length</span>
-      <select data-bind="shots.${i}.motion.duration" data-num="1" data-rerender="3">${sel.durations.map((d) => `<option value="${d}" ${d === dur ? "selected" : ""}>${d} seconds · ${sel.costs[d]} credits</option>`).join("")}</select></label>` : ""}
-    ${meter(cost)}
-    <div class="row">
-      ${flowOk ? `<button class="btn primary" data-act="motion" data-id="${shot.id}" ${ready && fits && server.authed ? "" : "disabled"}>Render through useapi · ${cost} credits</button>` : ""}
-      ${m.pick ? `<button class="btn go" data-act="lock" data-id="${shot.id}" data-slot="motion">Lock take ${m.takes.indexOf(m.pick) + 1}</button>` : ""}
-      <button class="btn ghost" data-act="still" data-id="${shot.id}" ${shot.first.locked ? "" : "disabled"}>Hold the still</button></div>
-    ${dur > shot.duration_sec ? `<p class="field-hint">Flow renders ${dur}s; trim to the shot's ${shot.duration_sec}s in the edit.</p>` : ""}
-    <details class="hand" ${flowOk ? "" : "open"}><summary>Make it in Flow by hand · no bridge, no subscription</summary>
-      ${handClipSteps(shot, sel, dur, cost, fits)}</details>
-    ${flowOk ? "" : `<p class="field-hint">Or <button class="linkish" data-act="accounts">connect useapi.net</button> to render from here (paid bridge).</p>`}
+    <div class="field"><span class="field-label">Motion engine</span>
+      <div class="choice engines" role="group" aria-label="Motion engine">${ENGINES.map(([id, label, cost, what]) => {
+        const off = !["hand", "useapi"].includes(id) && have[id] === false;
+        return `<button data-act="engine" data-id="${shot.id}" data-v="${id}" aria-pressed="${engine === id}" ${off ? "disabled" : ""} title="${h(what)}"><small>${h(off ? "not installed" : cost)}</small>${h(label)}</button>`;
+      }).join("")}</div></div>
+    ${body}
     ${takesGrid(shot, "motion")}`;
 }
 
@@ -655,13 +914,14 @@ function renderGate3() {
   el.innerHTML = `<div class="stack">
     ${slate(3, "Frames, then motion", "Production", cells)}
     ${card(["frames", "director"], "<b>03A</b> · How the free allowance is spent", `
-      <p class="lede">Frames are free and unlimited on the local GPU. Only Pass 2, the motion, spends Flow credits, and only after both frames are locked. Everything made so far, with the credits each clip cost, is in the <a href="/library">library</a>; out of credits, reuse a clip from there.</p>
+      <p class="lede">Frames are free and unlimited on the local GPU. Only Pass 2, the motion, spends Flow credits, and only after both frames are locked. Everything made so far, with the credits each clip cost, is in the <a href="/library${TEAM ? `?team=${TEAM}` : ""}">library</a>; out of credits, reuse a clip from there.</p>
       ${f ? `${meter(0)}<p class="field-hint">${f.plan === "free" ? "Free Google account: " : ""}${f.daily_budget} credits a day buys ${lite ? Math.floor(f.daily_budget / lite.costs[8]) : "?"} Veo 3.1 Lite or ${fast ? Math.floor(f.daily_budget / fast.costs[8]) : "?"} Veo 3.1 Fast clips. The server refuses any clip that would go over.${f.configured ? "" : " Flow is not connected yet."}</p>` : '<p class="muted small">Unlock with the access code to see the budget.</p>'}
       <div class="field"><span class="field-label">Frames come from <em>every unlocked first and last frame</em></span>
         <div class="choice" role="group" aria-label="Default frame source" style="grid-template-columns:1fr 1fr">
           <button data-act="frame-source" data-v="local" aria-pressed="${S.frame_source === "local"}"><small>Unlimited · this GPU</small>Local FLUX.2 klein</button>
           <button data-act="frame-source" data-v="hand" aria-pressed="${S.frame_source === "hand"}"><small>Free · you click in Flow</small>Flow by hand</button>
-          <button data-act="frame-source" data-v="flow" aria-pressed="${S.frame_source === "flow"}" style="grid-column:1 / -1"><small>0 credits · paid useapi.net bridge</small>Flow via useapi</button></div>
+          <button data-act="frame-source" data-v="gemini" aria-pressed="${S.frame_source === "gemini"}"><small>About 3 cents · your API key</small>Gemini API</button>
+          <button data-act="frame-source" data-v="flow" aria-pressed="${S.frame_source === "flow"}"><small>0 credits · paid useapi.net bridge</small>Flow via useapi</button></div>
         <span class="field-hint">Flow by hand: the app hands you the prompt and reference, you make the frame in your own Flow tab with Nano Banana, and bring the download back. Last frames use the locked first frame as their reference either way. Each shot can still pick its own source.</span></div>
       <label class="field"><span class="field-label">Flow image model <em>when a frame source is Flow image</em></span>
         <select data-bind="flow_frames">${(f?.image_models || ["nano-banana-2-lite"]).map((m) => `<option ${S.flow_frames === m ? "selected" : ""}>${m}</option>`).join("")}</select></label>`)}
@@ -669,7 +929,7 @@ function renderGate3() {
     ${card(["editsound", "director"], "<b>03B</b> · Voiceover scratch", `
       <p class="lede">Record a guide read on this phone. It stays a scratch: the audit asks for a human take.</p>
       <div class="row">${vo.recorder ? `<button class="btn primary" data-act="vo-stop">■ Stop <span class="num" id="vo-time">0s</span></button>` : `<button class="btn danger" data-act="vo-rec">● Record scratch</button>`}</div>
-      ${vo.url ? `<audio src="${vo.url}" controls style="width:100%"></audio><a class="btn small ghost" href="${vo.url}" download="vo_scratch.webm">Download</a>` : ""}
+      ${vo.url || S.vo_media ? `<audio src="${vo.url || mediaUrl(S.vo_media)}" controls style="width:100%"></audio>${S.vo_media ? `<p class="field-hint">Saved on the server for the team and the cut.</p>` : ""}` : ""}
       ${field("Read", "vo_note", { area: true, rows: 2, placeholder: "The lines as read, or a note for the edit" })}`)}
     ${card(["auditor", "frames", "editsound"], `<b>03C</b> · provenance.csv · ${S.provenance.length} rows`, `
       ${provTable()}
@@ -696,6 +956,7 @@ function renderGate4() {
   el.innerHTML = `<div class="stack">
     ${slate(4, "Seven checks", "Anti-slop audit", cells)}
     <div class="score" id="score" aria-live="polite"></div>
+    ${cutCard()}
     ${card(["auditor"], "<b>04A</b> · Auditor", `<div class="grid-2">${field("Auditor's name", "audit.auditor")}${field("Cut reviewed", "audit.cut", { mono: true })}</div>`)}
     ${CHECKS.map((c) => {
       const r = S.audit.checks[c.id] || {};
@@ -713,6 +974,35 @@ function renderGate4() {
     ${card(["auditor", "director"], "<b>04B</b> · What broke and how it was caught", field("Notes", "audit.notes", { area: true, rows: 4, placeholder: "Writer crew: …\nPrevis crew: …\nFrames crew: …\nEdit and Sound crew: …" }))}
     <div id="release"></div>
   </div>`;
+}
+
+function cutSegments() {
+  return S.shots.map((s) => ({
+    media: s.motion.locked && s.motion.pick ? s.motion.pick : s.first.locked ? s.first.pick : null,
+    duration: Number(s.duration_sec) || 5,
+    caption: s.voiceover_line,
+  }));
+}
+
+function cutCard() {
+  const segs = cutSegments();
+  const missing = segs.map((x, k) => (x.media ? null : k + 1)).filter(Boolean);
+  const job = Object.entries(S.jobs || {}).find(([, j]) => j.slot === "cut");
+  const latest = (S.cuts || [])[0];
+  const qc = latest?.qc;
+  const total = segs.reduce((n, x) => n + x.duration, 0);
+  return card(["editsound", "director", "auditor"], "<b>04A</b> · Render the cut", `
+    <p class="lede">Every shot in order: its locked motion take trimmed to the shot's length, or its first frame held as a still. Captions from the voiceover lines, and your voiceover scratch under it, loudness-matched. Rendered on this machine; ${S.shots.length} shots, ${total} seconds.</p>
+    <label class="row"><input type="checkbox" data-bind="render.burn" ${S.render?.burn !== false ? "checked" : ""} style="width:24px;height:24px"><span class="small">Burn in captions</span></label>
+    <label class="row"><input type="checkbox" data-bind="render.vo" ${S.render?.vo !== false ? "checked" : ""} ${S.vo_media ? "" : "disabled"} style="width:24px;height:24px"><span class="small">${S.vo_media ? "Use the voiceover scratch" : "No voiceover scratch yet (record one in Gate 03)"}</span></label>
+    ${missing.length ? `<p class="notice warn">Lock a first frame for shot ${missing.join(", ")} first.</p>` : ""}
+    <button class="btn primary" data-act="render-cut" ${missing.length || job || !server.authed ? "disabled" : ""}>${latest ? "Render a new version" : "Render the cut"}</button>
+    ${job ? `<p class="notice warn" aria-live="polite">${h(job[1].note || "Waiting in the render queue")} · <a href="/queue">queue</a></p>` : ""}
+    ${S.cut_error ? `<p class="notice bad">${h(S.cut_error)}</p>` : ""}
+    ${latest ? `<div class="picked"><video src="${mediaUrl(latest.media)}" controls playsinline preload="metadata" aria-label="The rendered cut"></video>
+      <p class="small muted">Version ${(S.cuts || []).length} · ${new Date(latest.created).toLocaleString()} · ${h(latest.prompt || "")}</p>
+      ${qc ? `<div class="machine"><b>Kit QC (qc_check.py): ${qc.passed ? "pass" : "fail"}</b><br>${qc.checks.map((c) => `${c.result === "pass" ? "✓" : "✕"} ${h(c.check)}: ${h(c.measured)} (${h(c.expected)})`).join("<br>")}</div>` : '<p class="field-hint">No QC: a custom pitch has no project bible to check against.</p>'}
+      <a class="btn small ghost" href="${mediaUrl(latest.media)}?download=1">Download cut.mp4</a></div>` : ""}`);
 }
 
 function refreshAudit() {
@@ -876,11 +1166,11 @@ async function startFrame(shot, slot) {
   const prompt = (t.prompt || (slot === "first" ? shot.visual_prompt : "")).trim();
   if (prompt.length < 5) return toast(slot === "last" ? "Say what has changed by the last frame." : "Write a frame prompt first.", "bad");
   const reference = slot === "last" ? shot.first.pick : (t.useRef && shot.ref ? shot.ref : null);
-  const body = { prompt, reference, frame: slot, shot: shot.id, ...jobLabel(shot, `${slot} frame`) };
+  const body = { prompt, reference, frame: slot, shot: shot.id, team: TEAM, ...jobLabel(shot, `${slot} frame`) };
   t.error = null;
   try {
-    const { job } = t.source === "flow"
-      ? await api.post("/api/flow/image", { ...body, model: S.flow_frames })
+    const { job } = t.source === "flow" ? await api.post("/api/flow/image", { ...body, model: S.flow_frames })
+      : t.source === "gemini" ? await api.post("/api/gemini/image", body)
       : await api.post("/api/local/keyframe", body);
     S.jobs[job.id] = { shot: shot.id, slot, note: "Queued" };
     save();
@@ -903,12 +1193,52 @@ async function startMotion(shot) {
   m.error = null;
   try {
     const { job } = await api.post("/api/flow/video", { prompt, model: model.id, duration, start: shot.first.pick,
-      end: shot.last.locked ? shot.last.pick : null, shot: shot.id, ...jobLabel(shot, "motion") });
+      end: shot.last.locked ? shot.last.pick : null, shot: shot.id, team: TEAM, ...jobLabel(shot, "motion") });
     S.jobs[job.id] = { shot: shot.id, slot: "motion", note: "Queued" };
     if (!m.prompt) m.prompt = prompt;
     save();
     buzz([15, 30, 15]);
     await loadStatus();
+    renderGate(3);
+    poll();
+  } catch (e) {
+    toast(e.message, "bad");
+  }
+}
+
+async function renderCut(btn) {
+  btn?.classList.add("busy");
+  try {
+    const { job } = await api.post("/api/render", {
+      segments: cutSegments(), burn: S.render?.burn !== false, vo: S.render?.vo !== false ? S.vo_media : null,
+      bible: PRESETS[S.brief.preset]?.bible || "", team: TEAM,
+      project: S.brief.project_title || "Untitled", label: `${S.brief.project_title || "Untitled"} · cut v${(S.cuts || []).length + 1}`,
+    });
+    S.jobs[job.id] = { shot: null, slot: "cut", note: "Waiting in the render queue" };
+    S.cut_error = null;
+    save();
+    renderGate(4);
+    poll();
+  } catch (e) {
+    toast(e.message, "bad");
+  } finally {
+    btn?.classList.remove("busy");
+  }
+}
+
+async function startLocalMotion(shot) {
+  const m = shot.motion;
+  const engine = motionEngine(shot);
+  const body = { engine, start: shot.first.pick, end: shot.last.locked ? shot.last.pick : null, duration: shot.duration_sec,
+    move: m.move || shot.camera_move, prompt: (m.prompt || `${shot.camera_move}. ${shot.action_description}`).trim(),
+    shot: shot.id, team: TEAM, ...jobLabel(shot, `motion (${engine})`) };
+  m.error = null;
+  try {
+    const { job } = await api.post("/api/local/motion", body);
+    S.jobs[job.id] = { shot: shot.id, slot: "motion", note: "Queued" };
+    if (!m.prompt && engine !== "camera") m.prompt = body.prompt;
+    save();
+    buzz([15, 30, 15]);
     renderGate(3);
     poll();
   } catch (e) {
@@ -929,12 +1259,37 @@ async function poll() {
         if (e.status === 404) { delete S.jobs[id]; save(); }
         continue;
       }
-      const shot = shotById(j.shot);
       const job = res.job;
+      if (j.slot === "cut") {
+        if (job.status === "done") {
+          delete S.jobs[id];
+          const meta = res.media[0];
+          if (meta && !(S.cuts || []).some((c) => c.media === meta.name)) {
+            S.cuts = [{ media: meta.name, qc: meta.qc || null, srt: meta.srt || "", created: meta.created, prompt: meta.prompt }, ...(S.cuts || [])];
+            upsertRow({ asset_id: "cut.mp4", stage: "edit", tool_or_model: meta.tool_or_model, seed: "",
+              prompt_or_input: `${meta.prompt}; shots: ${pickedAssets().filter((x) => x.dir !== "previs").map((x) => x.asset_id).join(", ")}`,
+              status: "PENDING_REVIEW", media: meta.name });
+          }
+          S.cut_error = null;
+          buzz([10, 30, 10]);
+          toast("The cut is rendered.", "good");
+        } else if (job.status === "failed" || job.status === "cancelled") {
+          delete S.jobs[id];
+          S.cut_error = job.error;
+          toast(job.error || "The render failed.", "bad");
+        } else {
+          j.note = job.note;
+        }
+        save();
+        if (!$("#gate-4").contains(document.activeElement)) renderGate(4);
+        continue;
+      }
+      const shot = shotById(j.shot);
       if (!shot) { delete S.jobs[id]; continue; }
       if (job.status === "done") {
         delete S.jobs[id];
         for (const meta of res.media.filter(Boolean)) {
+          if (shot[j.slot].takes.includes(meta.name)) continue;  // a teammate's phone got there first
           shot[j.slot].takes.push(meta.name);
           if (!shot[j.slot].pick) shot[j.slot].pick = meta.name;
           logTake(shot, j.slot, meta);
@@ -944,7 +1299,7 @@ async function poll() {
         save();
         if (j.slot === "motion") loadStatus();
         renderGate(3);
-      } else if (job.status === "failed") {
+      } else if (job.status === "failed" || job.status === "cancelled") {
         delete S.jobs[id];
         shot[j.slot].error = job.error;
         toast(`Shot ${shotNo(shot)}: ${job.error}`, "bad");
@@ -1070,12 +1425,23 @@ async function voRecord() {
     const rec = new MediaRecorder(stream);
     vo.chunks = [];
     rec.ondataavailable = (e) => e.data.size && vo.chunks.push(e.data);
-    rec.onstop = () => {
-      vo.blob = new Blob(vo.chunks, { type: rec.mimeType || "audio/webm" });
+    rec.onstop = async () => {
+      const type = (rec.mimeType || "audio/webm").split(";")[0];
+      vo.blob = new Blob(vo.chunks, { type });
       if (vo.url) URL.revokeObjectURL(vo.url);
       vo.url = URL.createObjectURL(vo.blob);
       stream.getTracks().forEach((t) => t.stop());
-      upsertRow({ asset_id: "vo_scratch.webm", stage: "vo", tool_or_model: "Phone microphone (human scratch read)", seed: "", prompt_or_input: S.vo_note || "Scratch read", status: "PENDING_REVIEW" });
+      renderGate(3);
+      // Keep it on the server so the team and the render can use it.
+      try {
+        const { media } = await upload(vo.blob, { "X-Label": `${S.brief.project_title || "Untitled"} · voiceover scratch`, "X-Project": S.brief.project_title || "", "X-Prompt": S.vo_note || "" });
+        S.vo_media = media.name;
+        upsertRow({ asset_id: `vo_scratch.${media.name.split(".").pop()}`, stage: "vo", tool_or_model: "Phone microphone (human scratch read)", seed: "",
+          prompt_or_input: S.vo_note || "Scratch read", status: "PENDING_REVIEW", media: media.name });
+        toast("Voiceover scratch saved for the cut.", "good");
+      } catch (e) {
+        toast(`Kept on this phone only: ${e.message}`, "bad");
+      }
       save();
       renderGate(3);
     };
@@ -1093,6 +1459,139 @@ function voStop() {
   vo.recorder?.stop();
   vo.recorder = null;
   buzz([15, 30]);
+}
+
+// ------------------------------------------------------------------ import a pack
+
+function parseCsv(text) {
+  const rows = [];
+  let row = [], cell = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"' && text[i + 1] === '"') { cell += '"'; i++; } else if (c === '"') q = false; else cell += c;
+    } else if (c === '"') q = true;
+    else if (c === ",") { row.push(cell); cell = ""; }
+    else if (c === "\n" || c === "\r") { if (c === "\r" && text[i + 1] === "\n") i++; row.push(cell); rows.push(row); row = []; cell = ""; }
+    else cell += c;
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  const [head, ...body] = rows.filter((r) => r.some((x) => x !== ""));
+  return body.map((r) => Object.fromEntries(head.map((k, i) => [k, r[i] ?? ""])));
+}
+
+const TYPES = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", mp4: "video/mp4", webm: "audio/webm", m4a: "audio/mp4", ogg: "audio/ogg" };
+
+async function restoreFile(zip, path, model = "", prompt = "") {
+  const data = await zip.bytes(path);
+  const ext = path.split(".").pop().toLowerCase();
+  if (!data || !TYPES[ext]) return null;
+  const { media } = await upload(new Blob([data], { type: TYPES[ext] }),
+    { "X-Source": "restore", "X-Label": `${S.brief.project_title || "Imported"} · ${path}`, "X-Model": model, "X-Prompt": prompt });
+  return media.name;
+}
+
+// An older pack, or one edited by hand: rebuild what the kit files describe.
+async function rebuild(zip, find) {
+  const st = fresh();
+  const brief = JSON.parse(await zip.text(find("brief.json")) || "{}");
+  const preset = Object.entries(PRESETS).find(([, p]) => p.client && p.client === brief.client)?.[0] || "custom";
+  const p = PRESETS[preset];
+  Object.assign(st.brief, { preset, client: brief.client || "", project_title: brief.project_title || "", target_audience: brief.target_audience || "",
+    core_feeling: brief.core_feeling || "", call_to_action: brief.call_to_action || "", key_message: brief.key_message || "",
+    runtime_sec: brief.runtime_sec || 30, tone: brief.tone || [], exclusions: brief.exclusions || [], references: (brief.references || []).join("\n") });
+  const research = find("research_log.csv") && parseCsv(await zip.text(find("research_log.csv")));
+  st.brief.facts = research ? research.map((r) => [r.source_id, r.claim]) : p.facts.map((f) => [...f]);
+  const shots = JSON.parse(await zip.text(find("shots.json")) || '{"shots":[]}').shots || [];
+  st.shots = shots.map((sh, i) => Object.assign(newShot(i, { label: `Shot ${i + 1}` }, preset), {
+    framing: sh.framing, lens_mm: sh.lens_mm, duration_sec: sh.duration_sec, camera_move: sh.camera_move, location_id: sh.location_id,
+    characters: sh.characters || [], action_description: sh.action_description || "", visual_prompt: sh.visual_prompt || "",
+    voiceover_line: sh.voiceover_line || "", source_ids: sh.source_ids || [], locked: true }));
+  if (find("provenance.csv")) st.provenance = parseCsv(await zip.text(find("provenance.csv")));
+  const prov = Object.fromEntries(st.provenance.map((r) => [r.asset_id, r]));
+  for (const path of zip.names) {
+    const m = path.match(/(?:^|\/)shot_(\d+)_(first_frame|last_frame|motion|previs_photo)(?:_take\d+)?\.(png|jpe?g|mp4)$/);
+    if (!m) continue;
+    const shot = st.shots[Number(m[1]) - 1];
+    if (!shot) continue;
+    const stem = path.split("/").pop().replace(/\.[^.]+$/, "");
+    const name = await restoreFile(zip, path, prov[stem]?.tool_or_model, prov[stem]?.prompt_or_input);
+    if (!name) continue;
+    if (m[2] === "previs_photo") { shot.ref = name; continue; }
+    const slot = { first_frame: "first", last_frame: "last", motion: "motion" }[m[2]];
+    shot[slot].takes.push(name);
+    shot[slot].pick = name;
+    shot[slot].locked = true;
+    if (prov[stem]) prov[stem].media = name;
+  }
+  st.shots.forEach((s) => { if (!s.last.locked) s.last.skip = true; if (!s.motion.locked && s.first.locked) s.motion.still = true; });
+  if (find("cut.mp4")) {
+    const name = await restoreFile(zip, find("cut.mp4"), "ffmpeg (XPSR Director assemble)");
+    if (name) st.cuts = [{ media: name, qc: JSON.parse(await zip.text(find("qc.json")) || "null"), srt: await zip.text(find("captions.srt")) || "", created: nowIso(), prompt: "Imported from a pack" }];
+  }
+  return st;
+}
+
+async function importPack(file, label) {
+  label?.classList.add("busy");
+  try {
+    const zip = await readZip(file);
+    const find = (n) => zip.names.find((x) => x === n || x.endsWith(`/${n}`));
+    let next;
+    const projFile = find("xpsr-director.json");
+    if (projFile) {
+      const proj = JSON.parse(await zip.text(projFile));
+      if (proj.format !== "xpsr-director-project") throw new Error("xpsr-director.json is not a Director project.");
+      let text = JSON.stringify(proj.state);
+      // Media the server still has stays; anything missing comes back from the ZIP.
+      for (const [path, name] of Object.entries(proj.media || {})) {
+        const have = await fetch(mediaUrl(name), { method: "HEAD", credentials: "same-origin" }).then((r) => r.ok).catch(() => false);
+        if (have) continue;
+        const fresh_ = await restoreFile(zip, find(path) || path);
+        if (fresh_) text = text.split(name).join(fresh_);
+      }
+      next = JSON.parse(text);
+      // Takes that were not in the pack and are gone from the server are dropped.
+      const names = new Set();
+      text.replace(/[0-9a-f]{16}\.(png|jpg|mp4|webm|m4a|ogg)/g, (n) => { names.add(n); return n; });
+      const alive = new Set();
+      for (const n of names) {
+        if (await fetch(mediaUrl(n), { method: "HEAD", credentials: "same-origin" }).then((r) => r.ok).catch(() => false)) alive.add(n);
+      }
+      for (const s of next.shots || []) {
+        for (const slot of ["first", "last", "motion"]) {
+          const t = s[slot];
+          t.takes = (t.takes || []).filter((n) => alive.has(n));
+          if (t.pick && !alive.has(t.pick)) { t.pick = null; t.locked = false; }
+        }
+        if (s.ref && !alive.has(s.ref)) s.ref = null;
+      }
+      next.cuts = (next.cuts || []).filter((c) => alive.has(c.media));
+      if (next.vo_media && !alive.has(next.vo_media)) next.vo_media = null;
+    } else if (find("brief.json")) {
+      next = await rebuild(zip, find);
+    } else {
+      throw new Error("This ZIP has no xpsr-director.json or brief.json.");
+    }
+    next.jobs = {};
+    if (TEAM) {
+      await api.post(`/api/teams/${TEAM}/ops`, { ops: [{ p: "", v: next, force: true }] });
+      team.synced = null;
+      team.version = -1;
+      S = normalize({ ...next, ...localOf(S) });
+      cache();
+      await pull();
+    } else {
+      S = normalize({ ...next, ...localOf(S) });
+      save();
+    }
+    renderAll();
+    toast(`Picked up "${S.brief.project_title || "the project"}" from the pack${projFile ? "" : " (rebuilt from the kit files: sign the gates again)"}.`, "good");
+  } catch (e) {
+    toast(`Could not import: ${e.message}`, "bad");
+  } finally {
+    label?.classList.remove("busy");
+  }
 }
 
 // ------------------------------------------------------------------ sheets
@@ -1122,7 +1621,9 @@ function openPack() {
       <p class="notice ${mtr.release ? "good" : "warn"}">${mtr.release ? `All seven checks pass; signed by ${h(S.audit.signature)}.` : "Draft: the audit is not at 7 of 7 with a human signature, so audit.md says so. Export it to keep working in the kit."}</p>
       <div class="tabs" role="tablist">${files.map((f) => `<button role="tab" aria-selected="${f.name === cur.name}" data-act="tab" data-name="${f.name}">${f.name}</button>`).join("")}</div>
       <pre class="preview" tabindex="0" aria-label="${h(cur.name)} preview">${h(cur.data)}</pre>
-      <label class="row"><input type="checkbox" id="with-media" checked ${media.length && server.authed ? "" : "disabled"} style="width:24px;height:24px"><span class="small">Include ${media.length} picked frame${media.length === 1 ? "" : "s"} and clip${media.length === 1 ? "" : "s"}${vo.blob ? " and the voiceover scratch" : ""}</span></label>
+      ${(S.cuts || [])[0] ? `<video src="${mediaUrl(S.cuts[0].media)}" controls playsinline preload="metadata" style="width:100%;background:#000" aria-label="The cut in this pack"></video>`
+        : `<p class="notice warn">No cut rendered yet. <button class="linkish" data-act="close-to-cut">Render the cut</button> in Gate 04 to put cut.mp4 in the pack.</p>`}
+      <label class="row"><input type="checkbox" id="with-media" checked ${server.authed ? "" : "disabled"} style="width:24px;height:24px"><span class="small">Include ${(S.cuts || [])[0] ? "cut.mp4, captions.srt, qc.json, " : ""}${media.length} picked frame${media.length === 1 ? "" : "s"} and clip${media.length === 1 ? "" : "s"}${S.vo_media || vo.blob ? " and the voiceover scratch" : ""}</span></label>
       <p class="field-hint">Unzip into your project folder (for example <span class="mono">my-project/</span>) and carry on with the kit's pipelines.</p>
     </div>
     <div class="sheet-foot"><button class="btn" data-act="copy-pack">Copy as text</button><button class="btn ${mtr.release ? "go" : "primary"}" data-act="zip">Download .zip</button></div>`);
@@ -1133,14 +1634,31 @@ async function downloadZip(btn) {
   const files = textFiles(S, mtr);
   btn.classList.add("busy");
   try {
+    const mediaMap = {};
     if ($("#with-media")?.checked) {
       for (const a of pickedAssets()) {
         const res = await fetch(mediaUrl(a.media), { credentials: "same-origin" });
         if (!res.ok) continue;
-        files.push({ name: `${a.dir}/${a.asset_id}.${a.media.split(".").pop()}`, data: new Uint8Array(await res.arrayBuffer()) });
+        const path = `${a.dir}/${a.asset_id}.${a.media.split(".").pop()}`;
+        files.push({ name: path, data: new Uint8Array(await res.arrayBuffer()) });
+        mediaMap[path] = a.media;
       }
-      if (vo.blob) files.push({ name: "audio/vo_scratch.webm", data: new Uint8Array(await vo.blob.arrayBuffer()) });
+      const grab = async (name) => { const r = await fetch(mediaUrl(name), { credentials: "same-origin" }); return r.ok ? new Uint8Array(await r.arrayBuffer()) : null; };
+      if (S.vo_media) { const d = await grab(S.vo_media); if (d) files.push({ name: `audio/vo_scratch.${S.vo_media.split(".").pop()}`, data: d }); }
+      else if (vo.blob) files.push({ name: "audio/vo_scratch.webm", data: new Uint8Array(await vo.blob.arrayBuffer()) });
+      if (S.vo_media) mediaMap[`audio/vo_scratch.${S.vo_media.split(".").pop()}`] = S.vo_media;
+      const cut = (S.cuts || [])[0];
+      if (cut) {
+        const d = await grab(cut.media);
+        if (d) { files.push({ name: "cut.mp4", data: d }); mediaMap["cut.mp4"] = cut.media; }
+        if (cut.srt) files.push({ name: "captions.srt", data: cut.srt.replace(/\n/g, "\r\n") });
+        if (cut.qc) files.push({ name: "qc.json", data: JSON.stringify({ ...cut.qc, video: "cut.mp4" }, null, 2) + "\n" });
+      }
     }
+    // Everything needed to pick the project up again with Import a pack.
+    const project = { ...sharedOf(S), jobs: {} };
+    files.push({ name: "xpsr-director.json", data: JSON.stringify({ format: "xpsr-director-project", version: 1,
+      exported: nowIso(), team: TEAM, media: mediaMap, state: project }, null, 1) + "\n" });
     const slug = (S.brief.project_title || "project").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
     const url = URL.createObjectURL(makeZip(files));
     const a = document.createElement("a");
@@ -1172,6 +1690,15 @@ async function openAccounts() {
       <div class="card"><div class="card-head"><span class="card-title"><b>Local writing model</b> · Ollama</span></div>
         <select data-bind="llm_model" aria-label="Local writing model">${models.map((m) => `<option ${m === llmModel() ? "selected" : ""}>${h(m)}</option>`).join("")}</select>
         <p class="field-hint">llama3.2:3b answers in seconds on this card; glm-4.7-flash writes better and takes about a minute.</p></div>
+      ${(() => { const g = server.status?.gemini || {}; return `<div class="card"><div class="card-head"><span class="card-title"><b>Gemini API</b> · Nano Banana with your key</span><span class="badge ${g.configured ? "free" : "cost"}">${g.configured ? "Key saved" : "No key"}</span></div>
+        <p class="lede">Google's official API, for frames. It has no free tier for image models: each image is billed to the key's Google Cloud project (a Google AI Pro subscription is not documented to cover it). The cap below stops the server before it spends more in a day.</p>
+        <form class="stack" data-form="gemini">
+          <label class="field"><span class="field-label">API key <em>from aistudio.google.com, kept on the director's machine</em></span><input type="password" name="key" autocomplete="off" placeholder="${g.configured ? "Saved. Paste a new one to replace it." : "Paste the key"}" class="mono-input"></label>
+          <div class="grid-2"><label class="field"><span class="field-label">Model</span><select name="model">${(g.models || []).map((m) => `<option value="${m.id}" ${m.id === g.model ? "selected" : ""}>${m.id} · $${m.usd.toFixed(3)}</option>`).join("")}</select></label>
+            <label class="field"><span class="field-label">Cap per day, $</span><input type="number" name="daily_usd" step="0.25" min="0" value="${g.daily_usd ?? 1}" class="mono-input"></label></div>
+          <p class="field-hint">Spent today: $${(g.spent_today || 0).toFixed(3)} of $${(g.daily_usd ?? 1).toFixed(2)}.</p>
+          <div class="row"><button class="btn primary" type="submit">Save</button>${g.configured ? '<button class="btn danger" type="button" data-act="forget-gemini">Forget key</button>' : ""}</div>
+        </form></div>`; })()}
       <div class="card"><div class="card-head"><span class="card-title"><b>Google Flow</b> · through useapi.net, optional</span><span class="badge ${f?.configured ? "free" : "cost"}">${f?.configured ? "Token saved" : "Not connected"}</span></div>
         <p class="lede">useapi.net runs Google Flow on your own Google account. Sign the Google account in on their setup page, then paste the useapi.net API token here. The token is saved on the director's machine, never in this browser or the repo.</p>
         <a class="btn" href="${h(f?.setup_url || "https://useapi.net/docs/start-here/setup-google-flow")}" target="_blank" rel="noopener noreferrer">Connect a Google account at useapi.net ↗</a>
@@ -1230,6 +1757,14 @@ document.addEventListener("change", async (e) => {
     else { el.value = signed ? 100 : 0; el.parentElement.querySelector(".slider-fill").style.width = `${el.value}%`; }
     return;
   }
+  if (el.dataset.file === "pack") {
+    const file = el.files?.[0];
+    el.value = "";
+    if (!file) return;
+    if (!confirm(`Replace ${TEAM ? "the team's" : "this"} project with the one in ${file.name}?`)) return;
+    await importPack(file, el.closest("label"));
+    return;
+  }
   if (el.dataset.file === "hand" || el.dataset.file === "hand-clip") {
     const file = el.files?.[0];
     if (file) await bringBack(shotById(el.dataset.id), el.dataset.file === "hand-clip" ? "motion" : el.dataset.slot, file, el.closest("label"));
@@ -1244,7 +1779,7 @@ document.addEventListener("change", async (e) => {
     try {
       const jpeg = file.type.startsWith("video") ? await videoFrame(file) : await toJpeg(file);
       const what = el.dataset.file === "ref" ? "blocking photo" : `${el.dataset.slot} frame (photo)`;
-      const { media } = await api.upload(jpeg, { "X-Label": jobLabel(shot, what).label, "X-Project": jobLabel(shot, what).project, "X-Frame": el.dataset.slot || "" });
+      const { media } = await upload(jpeg, { "X-Label": jobLabel(shot, what).label, "X-Project": jobLabel(shot, what).project, "X-Frame": el.dataset.slot || "" });
       if (el.dataset.file === "ref") {
         touchGate(el);
         shot.ref = media.name;
@@ -1302,7 +1837,18 @@ document.addEventListener("submit", async (e) => {
       await loadStatus();
       renderAll();
       poll();
+      if (TEAM) pull();
       toast("Unlocked. The GPU is yours.", "good");
+    } catch (err) { toast(err.message, "bad"); }
+  } else if (kind === "gemini") {
+    const body = { model: data.model, daily_usd: data.daily_usd };
+    if (data.key) body.key = data.key;
+    try {
+      await api.post("/api/gemini/key", body);
+      await loadStatus();
+      toast("Saved on the director's machine.", "good");
+      openAccounts();
+      renderGate(3);
     } catch (err) { toast(err.message, "bad"); }
   } else if (kind === "flow") {
     const body = { plan: data.plan, daily_credits: data.daily_credits, email: data.email || "" };
@@ -1408,6 +1954,13 @@ document.addEventListener("click", async (e) => {
       reopen3();
       save(); renderGate(3); break;
     case "motion": startMotion(shot); break;
+    case "team": openTeam(); break;
+    case "render-cut": renderCut(el); break;
+    case "copy-link":
+      try { await navigator.clipboard.writeText(`${location.origin}/t/${TEAM}`); toast("Link copied.", "good"); } catch { toast("Long-press the link to copy it.", "bad"); }
+      break;
+    case "engine": shot.motion.engine = el.dataset.v; buzz(); save(); renderGate(3); break;
+    case "local-motion": startLocalMotion(shot); break;
     case "draft-action": draftAction(shot, el); break;
     case "vo-rec": voRecord(); break;
     case "vo-stop": voStop(); break;
@@ -1429,10 +1982,23 @@ document.addEventListener("click", async (e) => {
     }
     case "zip": downloadZip(el); break;
     case "close": closeSheet(); break;
+    case "close-to-cut": closeSheet(); $("#gate-4")?.scrollIntoView(); break;
     case "accounts": openAccounts(); break;
     case "forget-token":
       if (!confirm("Remove the useapi.net token from the director's machine?")) break;
       try { await api.post("/api/flow/token", { token: "" }); await loadStatus(); openAccounts(); renderGate(3); toast("Token removed."); } catch (err) { toast(err.message, "bad"); }
+      break;
+    case "forget-gemini":
+      if (!confirm("Remove the Gemini API key from the director's machine?")) break;
+      try { await api.post("/api/gemini/key", { key: "" }); await loadStatus(); openAccounts(); renderGate(3); toast("Key removed."); } catch (err) { toast(err.message, "bad"); }
+      break;
+    case "visibility":
+      try {
+        const r = await api.post(`/api/teams/${TEAM}/settings`, { visibility: el.dataset.v });
+        team.visibility = r.team.visibility;
+        toast(r.team.visibility === "community" ? "Shared with the community: listed on the teams page." : "Private: only people with the link.", "good");
+        openTeam();
+      } catch (err) { toast(err.message, "bad"); }
       break;
     case "check-accounts": {
       el.classList.add("busy");
@@ -1531,6 +2097,10 @@ async function boot() {
   watchGates();
   poll();
   setInterval(() => { if (server.authed && !$("#gate-3").contains(document.activeElement)) loadStatus().then(() => renderRail()); }, 30000);
+  if (TEAM) {
+    await pull();
+    setInterval(() => { if (!document.hidden) pull(); }, 2500);
+  }
   if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "127.0.0.1" || location.hostname === "localhost")) {
     navigator.serviceWorker.register("/sw.js").catch(() => {});
   }

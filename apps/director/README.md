@@ -7,7 +7,9 @@ The workshop on a phone. Four gates, the same ones the kit's scripts use, each s
 3. **Production.** For every shot: a first frame, an optional last frame drawn from the first, then an action prompt that animates between them.
 4. **The audit.** The seven anti-slop checks, with a human signature that the release depends on.
 
-The **Pack** button bundles everything into the files the kit reads: `brief.md`, `brief.json`, `research_log.csv`, `shots.json`, `provenance.csv`, `audit.md`, and the picked frames and clips. `brief.json` and `shots.json` pass `schemas/validate.py`.
+At the end it **renders the cut**: a `cut.mp4` from every shot's locked clip or held still, with captions and the voiceover scratch, checked by the kit's `qc_check.py`. The **Pack** button bundles it with the files the kit reads: `brief.md`, `brief.json`, `research_log.csv`, `shots.json`, `provenance.csv`, `audit.md`, `captions.srt`, `qc.json`, and the picked frames and clips. `brief.json` and `shots.json` pass `schemas/validate.py`. The pack also carries the whole project, so **Import a pack** picks up exactly where it left off.
+
+Crews work together: each **team** gets its own link, and everyone on it edits the same project live from their own phone. A **queue** page shows every job in order, a **library** catalogues every file with what it cost, and an **admin** page sees and tidies everything.
 
 It is a small Python server (standard library only) and a web app with no build step and no outside scripts. It runs on the machine with the GPU; phones open it over the network.
 
@@ -22,13 +24,28 @@ It is a small Python server (standard library only) and a web app with no build 
 | First and last frames, instead | Google Flow images (Nano Banana), **by hand** in your own Flow tab | Google | Free: no credits, no subscription |
 | First and last frames, instead | Google Flow images through useapi.net (optional) | Google | 0 Flow credits; useapi.net is paid |
 | First and last frames, instead | A phone photo | The phone | Free |
-| Motion: first frame, last frame and action in, a clip out | Google Flow video (Veo 3.1, Omni 1.1 Flash), by hand or through useapi.net | Google | Flow credits, inside a daily budget |
+| First and last frames, instead | Gemini API (Nano Banana) with your own API key | Google | About $0.034 an image, inside a daily dollar cap |
+| Motion, instantly | A camera move (push, pan, tilt) over the still, dissolving to the last frame | This machine's CPU (ffmpeg) | Free: 1 to 3 seconds |
+| Motion, fast | LTX-Video 2B distilled through ComfyUI, from the first and last frames | This machine's GPU | Free: 59 seconds for 4 s, 87 seconds for 6.7 s |
+| Motion, the examples' model | Wan 2.2 5B through ComfyUI, from the first frame | This machine's GPU | Free: about 2 minutes for a draft, about 24 minutes at full quality |
+| Motion, from Google | Google Flow video (Veo 3.1, Omni 1.1 Flash), by hand or through useapi.net | Google | Flow credits, inside a daily budget |
+| The cut | ffmpeg, then the kit's `qc_check.py` | This machine's CPU | Free: 6 seconds for 30 seconds |
 
 The local model only drafts. Every suggestion lands in a box with a **Use** button, and nothing is in the brief until a person presses it.
 
 ## Start it
 
-Python 3.10 or newer, plus Ollama and ComfyUI for the GPU steps (see [environment setup](../../environment/README.md)).
+Python 3.10 or newer, and ffmpeg, plus Ollama and ComfyUI for the GPU steps (see [environment setup](../../environment/README.md)). For fast motion, put LTX-Video in ComfyUI (about 9.6 GB):
+
+```bash
+cd ~/ComfyUI/models
+curl -L -o checkpoints/ltxv-2b-0.9.8-distilled-fp8.safetensors \
+  https://huggingface.co/Lightricks/LTX-Video/resolve/main/ltxv-2b-0.9.8-distilled-fp8.safetensors
+curl -L -o text_encoders/t5xxl_fp8_e4m3fn_scaled.safetensors \
+  https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp8_e4m3fn_scaled.safetensors
+```
+
+Its license is free for any use, including commercial, for companies under $10 million a year in revenue. Engines that are not installed show as "not installed" in the picker.
 
 ```bash
 python3 apps/director/server.py
@@ -80,17 +97,30 @@ Shots use the kit's vocabulary (`schemas/shot_breakdown.schema.json`). A voiceov
 
 ### Gate 03: first frame, last frame, action
 
-![Shot 01 in production: pass 1, the locked first frame of a roaster over a steaming pot of beans; pass 1b, the locked last frame of the same room and roaster a moment later; pass 2, the two frames side by side with an arrow, the action prompt, a Veo 3.1 Lite option at 10 credits, a budget bar at 0 of 50 credits, and Connect Google Flow and Hold the still buttons.](../../docs/images/director/06-first-last-action.png)
+![Shot 01 in production: pass 1, the locked first frame of two roasters at a drum roaster in window light; pass 1b, the locked last frame of the same room a moment later; pass 2, the two frames side by side with an arrow, the motion engine picker with LTX-Video selected, the action prompt, and Render on the local GPU, free.](../../docs/images/director/06-first-last-action.png)
 
 This is the kit's two-pass rule made visible:
 
-1. **First frame.** Render takes, tap one to pick it, lock it. The source can be the local GPU, Flow by hand, Flow through useapi.net or a phone photo, set per shot or for the whole project.
+1. **First frame.** Render takes, tap one to pick it, lock it. The source can be the local GPU, the Gemini API, Flow by hand, Flow through useapi.net or a phone photo, set per shot or for the whole project.
 2. **Last frame, optional.** Say only what has changed. It is drawn with the locked first frame as its reference, so the room, the people and the light carry over. Skip it and the video model decides where the shot ends.
-3. **Action.** Describe only what moves between the two frames. The local model can write a draft. Then render on Flow, or **hold the still** and spend nothing.
+3. **Action.** Pick a motion engine, describe only what moves between the two frames (the local model can draft it), and render. Or **hold the still** and spend nothing.
+
+![Pass 2 with the motion engine picker: Camera move (instant, CPU, free), LTX-Video (1 to 2 minutes, GPU, free, selected), Wan 2.2 draft, Wan 2.2 full, Flow by hand and Flow via useapi, then the action prompt, a Write it with llama3.2:3b button, Render on the local GPU, free, and Hold the still.](../../docs/images/director/17-motion-engines.png)
+
+| Engine | Uses | Time on an RTX 2070 SUPER | Notes |
+| --- | --- | --- | --- |
+| Camera move | First frame, and the last frame if there is one | 1 to 3 seconds | ffmpeg moves the camera the way the shot says (push in, pull out, pan, tilt, handheld) and dissolves into the last frame through the middle third. Nothing in the frame changes shape, so it never invents anything. |
+| LTX-Video | First and last frames | About a minute | 832 by 480, up to 161 frames (6.7 seconds). The default when it is installed. |
+| Wan 2.2 draft | First frame | About 2 minutes | 640 by 352, up to 3 seconds: a quick look. |
+| Wan 2.2 full | First frame | About 24 minutes | 1280 by 704, up to 5 seconds: the quality of the kit's examples. |
+| Flow by hand | First and last frames | 1 to 3 minutes on Google | Collapsed steps: copy the action, save the frames, make it in your own Flow tab, bring the clip back. |
+| Flow via useapi | First and last frames | 1 to 3 minutes on Google | Paid bridge; see below. |
+
+A clip shorter than its shot holds its last frame in the cut; a longer one is trimmed. The local engines join the GPU queue, one at a time.
 
 Motion stays locked until the frames are locked, in the app and again on the server. Unlocking a first frame unlocks the last frame and motion built on it, and reopens picture lock.
 
-![The free-allowance card: frames are free on the local GPU, only motion spends Flow credits; a budget bar at 0 of 50 credits; a note that 50 credits a day buys 5 Veo 3.1 Lite or 2 Veo 3.1 Fast clips; and a two-way switch between Local FLUX.2 klein and Flow Nano Banana for every unlocked frame.](../../docs/images/director/05-free-allowance.png)
+![The free-allowance card: frames are free on the local GPU and only motion spends Flow credits, with a link to the library; a budget bar at 10 of 50 credits; a note that 50 credits a day buys 5 Veo 3.1 Lite or 2 Veo 3.1 Fast clips; and a switch for every unlocked frame between Local FLUX.2 klein, Flow by hand, Gemini API and Flow via useapi.](../../docs/images/director/05-free-allowance.png)
 
 ### Gate 04: the audit
 
@@ -100,7 +130,98 @@ Motion stays locked until the frames are locked, in the app and again on the ser
 
 Each check gets Pass or Fail and one line of evidence. A machine note shows what the app can count: cited lines, logged assets, last frames drawn from first frames. Check 1 can ask the local model to read every shot against the exclusions, but the auditor decides. **Slop risk** is simply the share of checks not yet passed. Check 7 cannot pass until a director's signature is typed, and the pack is marked for release only at 7 of 7.
 
+### Render the cut
+
+The first card in Gate 04 renders the whole spot on this machine:
+
+1. **Assemble.** Each shot's locked motion take is trimmed to the shot's length, or held on its last frame if it is short. A shot without motion holds its first frame.
+2. **Caption and mix.** The voiceover lines are burned in as captions (optional), and the voiceover scratch from Gate 03 goes underneath, normalised to -14 LUFS.
+3. **Check.** The kit's `qc_check.py` measures the result against the client's bible: resolution, frame rate, runtime, loudness and peaks. Check 5 of the audit shows the result.
+
+In testing, a 30-second, three-shot cut took 6 seconds and passed every check (1920 by 1080, 24 fps, 30.00 seconds, -15.1 LUFS, -1.5 dBTP). Every render is kept as a version. The newest goes into the pack as `cut.mp4`, with `captions.srt` and `qc.json`.
+
 ![The pack sheet: Draft pack, a warning that the audit is not at 7 of 7, tabs for brief.md, brief.json, research_log.csv and the rest, a preview of brief.md, a checkbox to include 4 picked frames and clips, and Copy as text and Download .zip buttons.](../../docs/images/director/10-pack.png)
+
+## Pick up from a pack
+
+![The Pick up where you left off box in Gate 01, with an Import a pack button.](../../docs/images/director/23-import-pack.png)
+
+Every pack carries `xpsr-director.json`: the whole project, with sign-offs, takes, the audit and the cut versions. **Import a pack** in Gate 01 brings it back on a personal project or a team, and works on a different server too:
+
+- **Media the server still has** is used as it is.
+- **Frames, clips, the cut and the voiceover in the ZIP** are uploaded again.
+- **Takes that are in neither** are dropped.
+
+A pack without that file, such as an older one or one edited by hand, is rebuilt from `brief.json`, `shots.json`, `research_log.csv`, `provenance.csv` and the frame files, with the gates left for the director to sign again.
+
+## Teams, the queue and the admin
+
+### Teams: one link per crew
+
+![The teams page: a New team form with Private (only people with the link) and Community (listed here for everyone) options and a Make team button, then the Ember crew team card with its link, Copy and Open buttons.](../../docs/images/director/19-teams.png)
+
+`/teams` makes a team and gives it a link, such as `https://<machine>.<tailnet>.ts.net/t/ember-crew`.
+
+- **Shared live:** everyone who opens the link, with the access code, works on the same project from their own phone. Changes arrive within a few seconds.
+- **Typing is safe:** the field you are typing in, and any half-typed exclusion, is never overwritten by a teammate's change.
+- **Stays on each phone:** your role and your name.
+- **Shared with the team:** the brief, shots, takes, audit, cuts and the voiceover.
+- **Same queue:** a frame or clip one person starts shows up for everyone.
+
+![The team sheet: who can find it, Private or Community; the team link with Copy link; your name; and who is here now with their roles.](../../docs/images/director/20-team-sheet.png)
+
+| Visibility | Who can find it | Link |
+| --- | --- | --- |
+| Private (the default) | Only people with the link. It is listed only on phones that have opened it. | Has a random tail, such as `/t/ember-crew-7f3a9c21`, so the name alone does not find it |
+| Community | Everyone in the workshop, on the teams page | Plain, such as `/t/open-crew` |
+
+Files belong to the team that made them, so the library shows a team only its own frames and clips. Anyone on a team can **share** a single frame or clip with the community from the library, and everyone then sees it under **Community** and can use it in their own shots.
+
+This is privacy by organisation, not by security. Everyone in the room has the same access code, so anyone who learns a private team's link can open it. Use separate servers for work that must stay apart.
+
+### The queue
+
+![The GPU lane of the queue: a running LTX motion job for team ember-crew, 61 seconds in, animating 161 frames at 832 by 480, usually 59 seconds; and a queued Wan draft, number 1, about a minute to start, with a Cancel button.](../../docs/images/director/18-queue-gpu-lane.png)
+
+`/queue` shows every job from every team, in order, refreshed every 2 seconds:
+
+- **Local GPU lane:** frames, LTX and Wan motion, and the writing model, one at a time and first come, first served.
+- **Render lane:** camera moves and cuts.
+- **Google Flow lane:** runs in parallel.
+
+Each job shows its place in line, how long it has run, and a typical time from recent runs. A job still waiting can be cancelled.
+
+### Admin
+
+![The admin page: every team, private ones included, each with Open, Files, Share with community or Make private, Rename and Delete; storage with a clean-up for takes nobody kept; the live queue; and today's Flow credits and Gemini spending.](../../docs/images/director/21-admin.png)
+
+`/admin` takes its own code, `XPSR_ADMIN_CODE`, which is separate from the room's access code. It is made on first start, and you read it with:
+
+```bash
+grep XPSR_ADMIN_CODE ~/.config/xpsr-director/env
+```
+
+What the admin can do:
+
+- **Teams:** see every team, private ones included, then open, rename, make private or share, and delete.
+- **Deleting a team:** optionally takes every file the team made with it.
+- **Library:** with **Everything** selected, see every file with its team, and delete any single file.
+- **Clean up:** count, then delete, team takes that no project uses and nobody shared, older than a number of days.
+- **Status:** the live queue, and today's Flow and Gemini spending.
+
+The admin session lasts a day. Change the code in the env file to sign every admin out.
+
+## Gemini API (your own key)
+
+![The Gemini API card: no free tier for image models, billed to the key's Google Cloud project; an API key field; a model menu with gemini-3.1-flash-lite-image at $0.034; a cap per day of $1; and spent today.](../../docs/images/director/22-gemini-key.png)
+
+Google's official API can make the frames too. Tap **FLOW** in the header, paste a key from [Google AI Studio](https://aistudio.google.com) into **Gemini API**, and choose **Gemini API** as a frame source.
+
+**It is not free.** Google's pricing page lists no free tier for any image model in October 2026. The cheapest, `gemini-3.1-flash-lite-image`, is about $0.034 per 1K image, billed to the key's Google Cloud project, and a Google AI Pro subscription is not documented to cover API use. So the server keeps a dollar ledger per day and refuses any image over the cap (`GEMINI_DAILY_USD`, $1.00 by default, about 30 images). The key is stored like the others: in the env file, never in the browser or the repo.
+
+The request uses the Interactions API (`POST /v1beta/interactions` with `response_format` set to an image), and falls back to `generateContent` if a model is not served there. For a last frame, the locked first frame goes along as the reference.
+
+**Why not embed Flow itself?** labs.google refuses to be shown inside another site, and Google sign-in does not work inside an embedded frame, so the app links to Flow in a new tab instead.
 
 ## Google Flow, by hand (free)
 
@@ -205,11 +326,14 @@ All optional, in `~/.config/xpsr-director/env` or the environment:
 | `FLOW_EMAIL` | none | Which connected Google account to use, if there are several. |
 | `OLLAMA_URL`, `OLLAMA_MODEL` | `http://127.0.0.1:11434`, `llama3.2:3b` | Writing model. |
 | `COMFYUI_URL` | `http://127.0.0.1:8188` | Frame renderer. Frames use `pipelines/02-production/workflows/flux2_klein_*.json`. |
+| `XPSR_ADMIN_CODE` | made on first start | The admin page's code. |
+| `GEMINI_API_KEY`, `GEMINI_IMAGE_MODEL`, `GEMINI_DAILY_USD` | none, `gemini-3.1-flash-lite-image`, `1.00` | Gemini API frames. Set from the app. |
 | `XPSR_ENV`, `XPSR_DATA` | `~/.config/xpsr-director/env`, `~/.local/share/xpsr-director` | Where secrets and media live. |
 
 ## Security notes
 
 - **Secrets stay out of the repo.** The env file lives in your home folder, not the repo, and is written with mode 600.
+- **The admin has a separate code and session.** Only it lists private teams or deletes anything.
 - **Every API request needs the code.** It arrives as an HttpOnly, SameSite=Strict session cookie (Secure behind Tailscale). Every POST also needs a custom header, so other sites cannot send requests on a visitor's behalf.
 - **Wrong codes are throttled.** Eight wrong codes from one address lock it out for ten minutes.
 - **The page loads nothing from other sites.** It sends a strict Content Security Policy. Media names are random, and the static file server refuses paths outside `web/`.
@@ -225,5 +349,8 @@ All optional, in `~/.config/xpsr-director/env` or the environment:
 | `web/pack.js`, `web/zip.js` | Builds the kit's files and the ZIP, with no library. |
 | `web/api.js` | Server calls, and photo and video-frame conversion before upload. |
 | `web/resources.*`, `web/library.*` | The resources and library pages. |
+| `web/queue.*`, `web/teams.*`, `web/admin.*`, `web/page-common.js` | The queue, teams and admin pages. |
+| `web/unzip.js` | Reads a pack back in for Import a pack. |
+| `../../pipelines/02-production/workflows/ltxv_2b_first_last_to_motion.json` | The LTX-Video first-and-last-frame workflow. |
 | `web/sw.js`, `manifest.webmanifest`, `icon*` | Offline shell and home-screen install. |
 | `web/fonts/` | JetBrains Mono and Inter Tight, bundled (SIL Open Font License). |

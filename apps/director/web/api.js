@@ -8,13 +8,22 @@ export class ApiError extends Error {
   }
 }
 
+// Which phone is asking: files made outside a team belong to it.
+export const CLIENT_ID = (() => {
+  try {
+    let id = localStorage.getItem("xpsr-client-id");
+    if (!id) { id = Math.random().toString(36).slice(2, 12).padEnd(8, "0"); localStorage.setItem("xpsr-client-id", id); }
+    return id;
+  } catch { return Math.random().toString(36).slice(2, 12).padEnd(8, "0"); }
+})();
+
 async function call(method, path, body, headers = {}) {
   let res;
   try {
     res = await fetch(path, {
       method,
       credentials: "same-origin",
-      headers: method === "GET" ? headers : { "X-XPSR": "1", ...headers },
+      headers: method === "GET" ? { "X-Client": CLIENT_ID, ...headers } : { "X-XPSR": "1", "X-Client": CLIENT_ID, ...headers },
       body,
     });
   } catch {

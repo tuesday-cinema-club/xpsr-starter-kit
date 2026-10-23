@@ -56,6 +56,11 @@ The biggest models this 8 GB card can run at all, used for [the summit pitch, pu
 | Shot breakdown, 6 shots, thinking on high | 30 minutes (2 attempts) |
 | One FLUX.2 [dev] 32B keyframe, 1920 by 1056, 28 steps, photo and depth references | 28 to 34 minutes (60 to 73 seconds per step) |
 | One Wan 2.2 5B motion clip, 121 frames at 1280 by 704 (5 seconds), 20 steps | 24 minutes |
+| One Wan 2.2 5B draft clip in XPSR Director, 73 frames at 640 by 352, 12 steps | 1 minute 56 seconds |
+| One LTX-Video 2B distilled clip in XPSR Director, 97 frames at 832 by 480 from a first and a last frame, 8 steps | 59 seconds |
+| The same, 161 frames (6.7 seconds) from a first frame | 87 seconds |
+| A camera move over a still in XPSR Director (ffmpeg, no model) | 1 to 3 seconds |
+| Rendering a 30-second, three-shot cut with captions and voiceover, plus `qc_check.py` | 6 seconds |
 | Kokoro-82M scratch voiceover, 6 lines, on the CPU | under 1 minute |
 | Whisper `turbo` on 30 seconds of audio, on the CPU | 60 seconds |
 | Qwen3-TTS voice clone, 6 lines, on the GPU | under 1 minute |
@@ -81,6 +86,7 @@ A CPU-only laptop will be slower for the model steps (think minutes, not seconds
 | GLM-4.7-Flash | Writing (bigger model) | MIT, per the model's Ollama listing |
 | FLUX.2 [klein] 4B (distilled) and Qwen3 4B text encoder | Keyframes (bigger model) | Apache 2.0 (the 9B klein variant uses a different, non-commercial license) |
 | Wan 2.2 5B | Motion (optional) | Apache 2.0 |
+| LTX-Video 2B 0.9.8 distilled, with the T5 XXL text encoder | Fast motion in [XPSR Director](../apps/director/README.md) | LTX-Video Open Weights License: free for any purpose, including commercial, for companies under $10 million a year in revenue, with use restrictions in its Attachment A. T5 XXL is Apache 2.0. |
 | gpt-oss-120b | Writing (pushing the limit) | Apache 2.0 |
 | FLUX.2 [dev] 32B | Keyframes (pushing the limit) | FLUX non-commercial license: read it before any paid use of the model or its output |
 | Mistral Small 3.1 24B | FLUX.2 [dev] text encoder | Apache 2.0 |

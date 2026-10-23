@@ -46,3 +46,8 @@ canvas.spark { width: 100%; height: 86px; display: block; background: var(--well
 .ledger-row { display: grid; grid-template-columns: 96px 1fr; gap: 10px; align-items: center; padding: 8px; background: var(--well); border: 1px solid var(--line); text-decoration: none; color: inherit; }
 .ledger-row img, .ledger-row video, .ledger-row .nofile { width: 96px; aspect-ratio: 16 / 9; object-fit: cover; background: #000; display: grid; place-items: center; font: 400 10px/1.2 var(--mono); color: var(--faint); text-align: center; }
 .ledger-row .refunded { text-decoration: line-through; color: var(--faint); }
+
+.vis { min-height: 60px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; background: var(--well); border: 1px solid var(--line); cursor: pointer; font: 700 14px/1.2 var(--sans); }
+.vis small { display: block; font: 400 11px/1.3 var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+.vis input { width: 20px; height: 20px; accent-color: var(--amber); }
+.vis:has(input:checked) { border-color: var(--amber); background: var(--amber-wash); }

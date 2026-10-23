@@ -1,8 +1,8 @@
 // Caches the app shell so the brief, shots and audit open with no network.
 // API calls and media always go to the network.
-const CACHE = "xpsr-director-v2";
-const SHELL = ["/", "/index.html", "/app.css", "/app.js", "/api.js", "/data.js", "/pack.js", "/zip.js",
-  "/resources.html", "/resources.js", "/resources.css", "/library.html", "/library.js", "/manifest.webmanifest", "/icon.svg",
+const CACHE = "xpsr-director-v5";
+const SHELL = ["/", "/index.html", "/app.css", "/app.js", "/api.js", "/data.js", "/pack.js", "/zip.js", "/unzip.js",
+  "/resources.html", "/resources.js", "/resources.css", "/library.html", "/library.js", "/queue.html", "/queue.js", "/teams.html", "/teams.js", "/page-common.js", "/admin.html", "/admin.js", "/manifest.webmanifest", "/icon.svg",
   "/fonts/inter-tight-latin-500-normal.woff2", "/fonts/inter-tight-latin-700-normal.woff2",
   "/fonts/inter-tight-latin-800-normal.woff2", "/fonts/jetbrains-mono-latin-400-normal.woff2",
   "/fonts/jetbrains-mono-latin-700-normal.woff2"];

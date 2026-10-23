@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0e11">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Every job waiting for or running on the workshop machine, in order, with cancel.">
+  <title>Render Queue</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/app.css">
+  <link rel="stylesheet" href="/resources.css">
+  <script type="module" src="/queue.js"></script>
+</head>
+<body class="res">
+  <header class="top">
+    <div class="top-bar">
+      <a class="brand" href="/" aria-label="Back to XPSR Director">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span><span class="brand-name">Queue</span><br><span class="brand-sub">Jobs in order</span></span>
+      </a>
+      <a class="btn small ghost" href="/teams">Teams</a>
+      <a class="btn small" href="/">Director</a>
+    </div>
+  </header>
+  <main id="page"><p class="muted">Loading…</p></main>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

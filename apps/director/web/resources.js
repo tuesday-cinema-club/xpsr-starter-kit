@@ -117,7 +117,7 @@ function render(d) {
         <div class="svc">
           <div class="svc-row"><span><b>Ollama</b> · writing</span><span class="${ol.up ? "" : "muted"}">${ol.up ? `${ol.loaded.length} model${ol.loaded.length === 1 ? "" : "s"} loaded` : "not running"}</span></div>
           ${ol.loaded.map((m) => `<div class="svc-row"><span>${h(m.name)}</span><span>${gb(m.vram || 0)} GB on GPU · ${gb(Math.max(0, (m.size || 0) - (m.vram || 0)))} GB in RAM</span></div>`).join("")}
-          <div class="svc-row"><span><b>ComfyUI</b> · frames</span><span class="${cu.up ? "" : "muted"}">${cu.up ? `${cu.running} running · ${cu.pending} waiting` : "not running"}</span></div>
+          <div class="svc-row"><span><b>ComfyUI</b> · frames and motion <a href="http://${location.hostname}:8188" target="_blank" rel="noopener">open ↗</a></span><span class="${cu.up ? "" : "muted"}">${cu.up ? `${cu.running} running · ${cu.pending} waiting` : "not running"}</span></div>
           <div class="svc-row"><span><b>Google Flow</b> · motion</span><span>${f.configured ? `${f.spent_today} of ${f.daily_budget} credits today${f.balance ? ` · balance ${f.balance.credits}` : ""}` : "not connected"}</span></div>
         </div>
         ${d.disks.map((k) => `<div><span class="field-label">${h(k.label)} disk · ${gb(k.used)} of ${gb(k.total)} GB</span><div class="bar"><span class="a" style="width:${pct(k.used, k.total)}%"></span></div></div>`).join("")}

@@ -72,7 +72,7 @@ Everything above, plus ComfyUI and one image model. See [the ComfyUI section of 
 [XPSR Director](apps/director/README.md) puts the four gates on a phone. The brief, the shot deck, first and last frames rendered on the workshop machine's GPU or made in Google Flow, motion from Flow inside the free daily credits, and the seven-check audit, each signed by a named person. One button packs it all into the files this kit reads.
 
 <p>
-  <img src="docs/images/director/06-first-last-action.png" width="260" alt="A shot in XPSR Director on a phone: a locked first frame, a locked last frame of the same room a moment later, and the action prompt with a 10-credit Veo 3.1 Lite option and a budget bar at 0 of 50 credits.">
+  <img src="docs/images/director/06-first-last-action.png" width="260" alt="A shot in XPSR Director on a phone: a locked first frame, a locked last frame of the same room a moment later, and the motion engine picker with LTX-Video selected to render on the local GPU for free.">
   <img src="docs/images/director/13-resources-desktop.png" width="520" alt="The live resources page: GPU 100 percent busy with graphics memory almost all ComfyUI, the CPU thread grid, system memory, engine status and recent jobs.">
 </p>
 
