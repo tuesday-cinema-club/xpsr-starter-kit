@@ -1,0 +1,5 @@
+id,fact,verified_by,status
+SRC-001,Every pipeline tool in this workshop runs 100% locally on indie hardware without cloud fees or subscriptions.,Lead Instructor,VERIFIED
+SRC-002,The architecture enforces One agent one job with human directors approving every gate before motion begins.,Summit Director,VERIFIED
+SRC-003,The full production stack utilizes Ollama Blender 3D previs ComfyUI Piper TTS Whisper and OpenTimelineIO.,Technical Crew,VERIFIED
+SRC-004,The 7-point anti-slop audit requires human signature provenance and technical QC before release.,Anti-Slop Auditor,VERIFIED

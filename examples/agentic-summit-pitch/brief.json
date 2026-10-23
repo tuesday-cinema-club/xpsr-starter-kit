@@ -1,0 +1,25 @@
+{
+  "project_title": "Agentic Workflows: Zero Cost, Infinite Potential",
+  "client": "Tuesday Cinema Club + XPSR Creator Summit",
+  "target_audience": "Indie filmmakers, animators, and directors tired of cloud slot machines and generic AI slop",
+  "core_feeling": "Empowered that real, repeatable cinema can be directed locally without subscription fees",
+  "call_to_action": "Join the Tuesday Cinema Club and clone the local starter kit",
+  "key_message": "Script the chores, craft the film. One agent, one job, human approval at every gate. Free, local, open source.",
+  "runtime_sec": 30,
+  "exclusions": [
+    "No cloud service vendor shilling",
+    "No artificial AI hype jargon or hallucinated promises",
+    "No unverified claims without human approval"
+  ],
+  "tone": [
+    "Charismatic",
+    "Grounded",
+    "Craft-focused",
+    "Anti-slop"
+  ],
+  "references": [
+    "Sidney Lumet's Making Movies (1995): rigorous craft discipline and relentless focus on story over gadgets",
+    "Open source manifesto documentaries: tangible terminal tools, artisan keyboards, workshop camaraderie",
+    "Modern cinema trailers: rich sidelight, natural skin tones, measured deliberate cuts"
+  ]
+}

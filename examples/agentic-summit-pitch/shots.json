@@ -1,0 +1,60 @@
+{
+  "scene_id": "SC01",
+  "scene_name": "The Manifesto",
+  "shots": [
+    {
+      "shot_number": 1,
+      "framing": "Medium",
+      "lens_mm": 50,
+      "duration_sec": 9,
+      "camera_move": "Push In",
+      "location_id": "edit_studio",
+      "characters": [
+        "instructor"
+      ],
+      "action_description": "In a warm creative studio with editing monitors and camera rigs softly glowing behind, the instructor looks directly into lens with an engaging, warm smile, speaking directly to fellow creators.",
+      "visual_prompt": "medium shot of a charismatic filmmaker with shoulder-length wavy brown hair, warm smiling eyes, full well-groomed beard, wearing a casual black sweater in a warm cinema studio with dual monitors and camera equipment in the background, warm practical sidelight, shallow depth of field, 35mm film photograph",
+      "voiceover_line": "Stop rolling the dice on cloud prompts. You do not need a hundred dollar subscription to direct AI cinema.",
+      "source_ids": [
+        "SRC-001"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 2,
+      "framing": "Close Up",
+      "lens_mm": 85,
+      "duration_sec": 9,
+      "camera_move": "Pan Right",
+      "location_id": "edit_studio",
+      "characters": [],
+      "action_description": "Close up of an artisan workstation display showing a 3D wireframe previs and Blender depth map node tree, glowing mechanical keyboard, and local terminal window.",
+      "visual_prompt": "close up shot of a cinema editing monitor showing a 3D wireframe and depth map node graph, glowing keyboard in a dark editing suite, shallow depth of field, warm practical light, 35mm film photograph",
+      "voiceover_line": "Every agent has one job. Every gate is approved by you. We script the chores, but you craft the film.",
+      "source_ids": [
+        "SRC-002",
+        "SRC-003"
+      ],
+      "claims_sourced": true
+    },
+    {
+      "shot_number": 3,
+      "framing": "Wide",
+      "lens_mm": 35,
+      "duration_sec": 12,
+      "camera_move": "Push In",
+      "location_id": "screening_room",
+      "characters": [
+        "instructor"
+      ],
+      "action_description": "In the Tuesday Cinema Club screening room, the instructor holds a vintage wooden film slate, illuminated by a warm cinema projector beam cutting through subtle atmosphere.",
+      "visual_prompt": "wide shot of a charismatic filmmaker with shoulder-length wavy brown hair, full beard, wearing a black sweater, holding a vintage cinema film slate in front of an arthouse projector beam with soft dust motes, cinematic atmospheric lighting, 35mm photograph",
+      "voiceover_line": "Take back your cut, your voice, and your vision. Zero cost, infinite potential. Welcome to the Tuesday Cinema Club.",
+      "source_ids": [
+        "SRC-004",
+        "SRC-001"
+      ],
+      "claims_sourced": true
+    }
+  ]
+}

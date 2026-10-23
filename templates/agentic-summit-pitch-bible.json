@@ -1,0 +1,38 @@
+{
+  "project_id": "TCC_SUMMIT_PITCH_01",
+  "title": "Agentic Workflows: Zero Cost, Infinite Potential (Summit Pitch)",
+  "characters": [
+    {
+      "id": "instructor",
+      "name": "The Summit Instructor",
+      "visual_lock": "A charismatic filmmaker with shoulder-length wavy brown hair, warm smiling eyes, full well-groomed beard, wearing a casual black sweater in a warm cinema studio",
+      "consent_on_file": true
+    }
+  ],
+  "locations": [
+    {
+      "id": "edit_studio",
+      "name": "Cinema Edit Suite",
+      "description": "Warm ambient creative suite with cinema camera rigs, dual timeline color grading monitors, warm practical lamps, film reels"
+    },
+    {
+      "id": "screening_room",
+      "name": "Tuesday Cinema Club Screening Room",
+      "description": "Intimate arthouse cinema room with warm wood accents, a cinema projector beam cutting through soft ambient haze, vintage director clapperboard"
+    }
+  ],
+  "visual_rules": {
+    "palette": ["#1C1D21", "#C73E1D", "#E0A96D", "#3B5249", "#DDE2E5"],
+    "palette_names": ["obsidian black", "ember crimson", "warm amber", "deep sage", "studio silver"],
+    "lighting_key": "Cinematic warm practical sidelight, rich contrast, soft golden rim light, atmospheric haze",
+    "aspect_ratio": "16:9",
+    "fps": 24,
+    "style_prompt": "35mm documentary and cinema photograph, rich warm practical light, shallow depth of field, fine film grain, natural skin texture, cinematic realism",
+    "negative_prompt": "plastic skin, oversaturated, deformed hands, extra fingers, cartoon, 3d render, watermark, text"
+  },
+  "exclusions": [
+    "No cloud service vendor shilling",
+    "No artificial AI hype jargon or hallucinated promises",
+    "No unverified claims without human approval"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "workflow": "flux2_klein_previs_reference.json",
+  "checkpoint": "flux-2-klein-4b.safetensors",
+  "checkpoint_sha256_short": "ec3d4e733a",
+  "controlnet": null,
+  "reference_image": "instructor_reference.jpg",
+  "frames": [
+    {
+      "shot_number": 1,
+      "file": "shot_01_keyframe.png",
+      "seed": 420891,
+      "prompt": "medium shot of a charismatic filmmaker with shoulder-length wavy brown hair, warm smiling eyes, full well-groomed beard, wearing a casual black sweater in a warm cinema studio with dual monitors and camera equipment in the background, warm practical sidelight, shallow depth of field, 35mm film photograph",
+      "guide": "instructor_reference.jpg",
+      "seconds": 36.8
+    },
+    {
+      "shot_number": 2,
+      "file": "shot_02_keyframe.png",
+      "seed": 420892,
+      "prompt": "close up shot of a cinema editing monitor showing a 3D wireframe and depth map node graph, glowing keyboard in a dark editing suite, shallow depth of field, warm practical light, 35mm film photograph",
+      "guide": "instructor_reference.jpg",
+      "seconds": 36.8
+    },
+    {
+      "shot_number": 3,
+      "file": "shot_03_keyframe.png",
+      "seed": 420893,
+      "prompt": "wide shot of a charismatic filmmaker with shoulder-length wavy brown hair, full beard, wearing a black sweater, holding a vintage cinema film slate in front of an arthouse projector beam with soft dust motes, cinematic atmospheric lighting, 35mm photograph",
+      "guide": "instructor_reference.jpg",
+      "seconds": 36.8
+    }
+  ]
+}

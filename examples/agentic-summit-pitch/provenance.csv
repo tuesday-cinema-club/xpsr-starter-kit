@@ -1,0 +1,3 @@
+asset_id,timestamp,stage,tool_or_model,checkpoint_hash,seed,prompt_or_input,human_approver,status
+vo_scratch.wav,2026-10-23T01:10:45Z,dialogue,piper-tts/en_US-bryce-medium (SCRATCH stand-in for human VO),N/A,N/A,"Stop rolling the dice on cloud prompts. You do not need a hundred dollar subscription to direct AI cinema. / Every agent has one job. Every gate is approved by you. We script the chores, but you craft the film. / Take back your cut, your voice, and your vision. Zero cost, infinite potential. Welcome to the Tuesday Cinema Club.",,PENDING_REVIEW
+cut.mp4,2026-10-23T01:11:57Z,edit,ffmpeg animatic (assemble_animatic.py),N/A,N/A,approved keyframes + vo_scratch.wav + captions.srt,,PENDING_REVIEW
